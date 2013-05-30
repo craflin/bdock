@@ -1,0 +1,11 @@
+
+targets = {
+  bdock2 = cppApplication + {
+    buildDir = "Build/$(configuration)"
+    root = "Src"
+    files = {
+      "Src/bdock2/**.cpp" = cppSource
+      "Src/bdock2/**.h"
+    }
+  }
+}
