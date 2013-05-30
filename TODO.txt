@@ -1,0 +1,12 @@
+Tasks:
+  - Installer
+  - System-Tray Icons
+  - Besseres Uhrzeitdings
+  - Mehr Konfigurationsmöglichkeiten
+
+
+Bugs:
+  Full screen application:
+    - Wenn eine Anwendung in einen Fullscreen Modus wechselt, dann sollte die Dockbar verschwinden. (VLC z.B.)
+    - Wenn manche Anwendungen in den Fullscreen Modus wechseln, dann verliert die Dockbar ihren Topmost zustand (Beim Flash Player z.B.)
+
