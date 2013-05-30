@@ -1,8 +1,9 @@
 
+platforms = { "Win32", "x64" }
 targets = {
   bdock2 = cppApplication + {
-    buildDir = "Build/$(configuration)"
-    root = "Src"
+    buildDir = "Build/$(configuration)_$(platform)"
+    root = "Src/bdock2"
     files = {
       "Src/bdock2/**.cpp" = cppSource
       "Src/bdock2/**.h"
