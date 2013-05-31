@@ -4,6 +4,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\bdock2\bdock2.cpp" />
-    <ClInclude Include="Src\bdock2\bdock2.h" />
+    <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
 </Project>

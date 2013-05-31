@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Plugins\Launcher2\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher2\launcher.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher2\stdafx.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher2\systools.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher2\wmi.cpp" />
+    <ClInclude Include="Src\Plugins\Launcher2\launcher.h" />
+    <ClInclude Include="Src\Plugins\Launcher2\resource.h" />
+    <ClInclude Include="Src\Plugins\Launcher2\stdafx.h" />
+    <ClInclude Include="Src\Plugins\Launcher2\systools.h" />
+    <ClInclude Include="Src\Plugins\Launcher2\targetver.h" />
+    <ClInclude Include="Src\Plugins\Launcher2\wmi.h" />
+    <ResourceCompile Include="Src\Plugins\Launcher2\launcher.rc" />
+    <ClInclude Include="Src\bdock2.h" />
+  </ItemGroup>
+</Project>

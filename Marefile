@@ -1,12 +1,43 @@
 
 platforms = { "Win32", "x64" }
+
+defines = { "UNICODE", "_UNICODE" }
+
+plugins = { "Launcher2" }
+
 targets = {
+
   bdock2 = cppApplication + {
+    dependencies = plugins
     buildDir = "Build/$(configuration)_$(platform)"
-    root = "Src/bdock2"
+    root = { "Src/bdock2", "Src" }
     files = {
       "Src/bdock2/**.cpp" = cppSource
       "Src/bdock2/**.h"
+      "Src/bdock2.h"
     }
   }
+
+  "$(plugins)" = cppDynamicLibrary + {
+    buildDir = "Build/$(configuration)_$(platform)/$(target)"
+    folder = "Plugins"
+    root = { "Src/Plugins/$(target)", "Src" }
+    cppFlags += { "/Yu" }
+    files = {
+      "Src/Plugins/$(target)/**.cpp" = cppSource
+      "Src/Plugins/$(target)/stdafx.cpp" = cppSource + {
+        cppFlags += { "/Yc" }
+      }
+      if target == "Launcher" {
+        "Src/Plugins/$(target)/wmi.cpp" = cppSource + {
+          cppFlags -= { "/Yu" }
+        }
+      }
+      "Src/Plugins/$(target)/**.h"
+      "Src/Plugins/$(target)/**.rc" = rcSource
+      "Src/bdock2.h"
+    }
+  }
+
 }
+
