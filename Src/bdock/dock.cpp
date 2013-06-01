@@ -325,6 +325,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     if(wParam == 0)
     {
       KillTimer(hwnd, 0);
+      /*
       Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
       if(!dock->activeHwndRudeFullscreen)
       {
@@ -332,6 +333,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
         dock->update();
       }
+      */
     }
     else
     {
@@ -386,6 +388,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
         {
+          /*
           Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
           bool wasRudeFullscreen = dock->activeHwndRudeFullscreen;
           dock->activeHwnd = (HWND)lParam;
@@ -398,6 +401,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
             KillTimer(hwnd, 0);
             SetTimer(hwnd, 0, 100, NULL);
           }
+          */
         }
         break;
       }

@@ -3,6 +3,65 @@
 
 #include "stdafx.h"
 
+
+#ifdef _DEBUG
+
+#pragma comment ( linker, "/subsystem:console" )
+
+// Console main function, this code is from WinMainCRTStartup()
+int _tmain( DWORD, TCHAR**, TCHAR** )
+{
+  // set the event handler
+  struct Console
+  {
+    static BOOL WINAPI CtrlHandler(DWORD dwCtrlType)
+    {
+      switch(dwCtrlType)
+      {
+      case CTRL_C_EVENT:
+      case CTRL_BREAK_EVENT:
+      case CTRL_CLOSE_EVENT:
+      case CTRL_LOGOFF_EVENT:
+      case CTRL_SHUTDOWN_EVENT:
+        ExitProcess(0);
+        break;
+      }
+      return TRUE;
+    }
+  };
+  SetConsoleCtrlHandler(Console::CtrlHandler, TRUE);
+
+  // get command line
+  LPTSTR lpszCommandLine = ::GetCommandLine();
+  if(lpszCommandLine == NULL)
+    return -1;
+  if(*lpszCommandLine == _T('\"'))
+  {
+    do
+    {
+      lpszCommandLine = ::CharNext(lpszCommandLine);
+    } while(*lpszCommandLine != _T('\"') && *lpszCommandLine);
+    if(*lpszCommandLine == _T('\"'))
+      lpszCommandLine = ::CharNext(lpszCommandLine);
+  }
+  else
+  {
+    while(*lpszCommandLine != _T(' ') && *lpszCommandLine)
+      lpszCommandLine = ::CharNext(lpszCommandLine);
+  }
+  while(*lpszCommandLine && *lpszCommandLine <= _T(' '))
+    lpszCommandLine = ::CharNext(lpszCommandLine);
+ 
+  // call win32 main function
+  STARTUPINFO StartupInfo;
+  StartupInfo.dwFlags = 0;
+  ::GetStartupInfo(&StartupInfo);
+  return _tWinMain(::GetModuleHandle(NULL), NULL, lpszCommandLine, (StartupInfo.dwFlags & STARTF_USESHOWWINDOW) ? StartupInfo.wShowWindow : SW_SHOWDEFAULT);
+}
+
+#endif
+
+
 LRESULT CALLBACK  wndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK  aboutDlgProc(HWND, UINT, WPARAM, LPARAM);
 

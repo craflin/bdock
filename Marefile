@@ -1,7 +1,14 @@
 
 platforms = { "Win32", "x64" }
+configurations = { "Debug", "Release" }
 
-defines = { "UNICODE", "_UNICODE" }
+defines = { "UNICODE", "_UNICODE", "_WIN32" }
+if configuration == "Debug" {
+  defines += { "DEBUG", "_DEBUG" }
+}
+if configuration == "Release" {
+  defines += { "NDEBUG" }
+}
 
 plugins = { "launcher", "clock", "hidetaskbar", "systemtray" }
 
