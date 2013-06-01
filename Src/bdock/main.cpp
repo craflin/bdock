@@ -27,11 +27,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         CreateDirectory(storageFile.c_str(), 0);
       storageFile += L"/config.bd";
       storage.load(storageFile.c_str());
-    }    
+    }
   }
   if(storage.getNumSectionCount() == 0)
   {
-    storage.setNumSectionCount(2);
+    storage.setNumSectionCount(1);
 
     // launcher dock
     storage.enterNumSection(0);
@@ -44,6 +44,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     storage.leave();
     storage.leave();
 
+    /*
     // system tray dock
     storage.enterNumSection(1);
     storage.setInt("alignment", Settings::right);
@@ -56,6 +57,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     storage.setStr("name", L"clock", 0);
     storage.leave();
     storage.leave();
+    */
   }
 
 	// create docks

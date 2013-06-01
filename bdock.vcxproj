@@ -155,9 +155,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\bdock\assert.cpp" />
-    <ClCompile Include="Src\bdock\bdock.cpp" />
     <ClCompile Include="Src\bdock\dock.cpp" />
     <ClCompile Include="Src\bdock\icon.cpp" />
+    <ClCompile Include="Src\bdock\main.cpp" />
     <ClCompile Include="Src\bdock\plugin.cpp" />
     <ClCompile Include="Src\bdock\settings.cpp" />
     <ClCompile Include="Src\bdock\skin.cpp" />
