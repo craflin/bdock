@@ -64,6 +64,7 @@ private:
   static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
   static INT_PTR CALLBACK aboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
+  static bool isFullscreen(HWND hwnd);
 };
 
 #endif

@@ -9,4 +9,6 @@ Bugs:
   Full screen application:
     - Wenn eine Anwendung in einen Fullscreen Modus wechselt, dann sollte die Dockbar verschwinden. (VLC z.B.)
     - Wenn manche Anwendungen in den Fullscreen Modus wechseln, dann verliert die Dockbar ihren Topmost zustand (Beim Flash Player z.B.)
+  Context menu:
+    - Launcher: Wenn man per rechts auf ein Icon clickt, dann erscheint das Kontextmenü und das Icon wird "inaktiv" (Hintergrund verschwindet) wenn das Kontextmenü beendet wird, dann bleibt das Icon inaktiv, obwohl die anwendung wieder Input-Focus hat.
 

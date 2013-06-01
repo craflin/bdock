@@ -9,6 +9,9 @@ if configuration == "Debug" {
 if configuration == "Release" {
   defines += { "NDEBUG" }
 }
+if platform == "x64" {
+  defines += { "_WIN64" }
+}
 
 plugins = { "launcher", "clock", "hidetaskbar", "systemtray" }
 

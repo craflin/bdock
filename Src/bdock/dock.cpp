@@ -322,20 +322,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     }
     break;
   case WM_TIMER:
-    if(wParam == 0)
-    {
-      KillTimer(hwnd, 0);
-      /*
-      Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-      if(!dock->activeHwndRudeFullscreen)
-      {
-        //MessageBeep(MB_ICONERROR);
-        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-        dock->update();
-      }
-      */
-    }
-    else
+    if(wParam != 0)
     {
       Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
       if(dock->timers.find((Timer*)wParam) != dock->timers.end())    
@@ -353,7 +340,6 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         DialogBox(hinstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hwnd, aboutDlgProc);
         break;
       case IDM_EXIT:
-        //DestroyWindow(hwnd);
         PostQuitMessage(0);
         break;
       default:
@@ -387,21 +373,27 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       {
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
-        {
-          /*
-          Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-          bool wasRudeFullscreen = dock->activeHwndRudeFullscreen;
-          dock->activeHwnd = (HWND)lParam;
-          if(wParam == HSHELL_RUDEAPPACTIVATED)
-            dock->activeHwndRudeFullscreen = GetWindowLong(dock->activeHwnd, GWL_EXSTYLE) & WS_EX_TOPMOST ? true : false;
-          else
-            dock->activeHwndRudeFullscreen = false;
-          if(wasRudeFullscreen && !dock->activeHwndRudeFullscreen)
-          {
-            KillTimer(hwnd, 0);
-            SetTimer(hwnd, 0, 100, NULL);
-          }
+        /*
+        if(wParam == HSHELL_RUDEAPPACTIVATED)
+          printf("HSHELL_RUDEAPPACTIVATED\n");
+        if(wParam == HSHELL_WINDOWACTIVATED)
+          printf("HSHELL_WINDOWACTIVATED\n");
           */
+        {
+          bool hideWindow = isFullscreen((HWND)lParam) && wParam == HSHELL_RUDEAPPACTIVATED;
+          if(!!IsWindowVisible(hwnd) == hideWindow)
+          {
+            if(!hideWindow)
+            {
+              ShowWindow(hwnd, SW_SHOW);
+              //printf("show\n");
+            }
+            else
+            {
+              ShowWindow(hwnd, SW_HIDE);
+              //printf("hide\n");
+            }
+          }
         }
         break;
       }
@@ -532,4 +524,27 @@ void Dock::updateTimer(Timer* timer)
     KillTimer(hwnd, (UINT_PTR)timer);
     SetTimer(hwnd, (UINT_PTR)timer, timer->interval, 0);
   }
+}
+
+bool Dock::isFullscreen(HWND hwnd)
+{
+  HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONULL);
+  if(!hMon)
+    return false;
+  MONITORINFO mi;
+  mi.cbSize = sizeof(mi);
+  if(!GetMonitorInfo(hMon, &mi))
+    return false;
+
+  RECT clientRect;
+  if(!GetClientRect(hwnd, &clientRect))
+    return false;
+  POINT pt = {0};
+  ClientToScreen(hwnd, &pt),
+  clientRect.left += pt.x;
+  clientRect.right += pt.x;
+  clientRect.top += pt.y;
+  clientRect.bottom += pt.y;
+  
+  return clientRect.left <= mi.rcWork.left && clientRect.top <= mi.rcWork.top && clientRect.right >= mi.rcWork.right && clientRect.bottom >= mi.rcWork.bottom;
 }
