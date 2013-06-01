@@ -1,6 +1,5 @@
 Build
-Debug
-x64/Debug
+ipch
 *.sdf
 *.suo
 *.vcxproj.user
