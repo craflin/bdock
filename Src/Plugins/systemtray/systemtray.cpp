@@ -139,20 +139,20 @@ bool SystemTray::init()
   // register window class
   if(!wndClass)
   {
-	  WNDCLASSEX wcex;
-	  wcex.cbSize = sizeof(WNDCLASSEX);
-	  wcex.style			= 0; 
-	  wcex.lpfnWndProc	= wndProc;
-	  wcex.cbClsExtra		= 0;
-	  wcex.cbWndExtra		= 0;
-	  wcex.hInstance		= hmodule;
-	  wcex.hIcon			= 0;
-	  wcex.hCursor		= 0;
-	  wcex.hbrBackground	= 0; //(HBRUSH)(COLOR_WINDOW+1);
-	  wcex.lpszMenuName	= 0; //MAKEINTRESOURCE(IDC_BDOCK);
-	  wcex.lpszClassName	= L"BDOCKSystemTray";
-	  wcex.hIconSm		= 0;
-	  wndClass = RegisterClassEx(&wcex);
+    WNDCLASSEX wcex;
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.style      = 0; 
+    wcex.lpfnWndProc  = wndProc;
+    wcex.cbClsExtra    = 0;
+    wcex.cbWndExtra    = 0;
+    wcex.hInstance    = hmodule;
+    wcex.hIcon      = 0;
+    wcex.hCursor    = 0;
+    wcex.hbrBackground  = 0; //(HBRUSH)(COLOR_WINDOW+1);
+    wcex.lpszMenuName  = 0; //MAKEINTRESOURCE(IDC_BDOCK);
+    wcex.lpszClassName  = L"BDOCKSystemTray";
+    wcex.hIconSm    = 0;
+    wndClass = RegisterClassEx(&wcex);
     if(!wndClass)
       return false;
   }
@@ -274,8 +274,8 @@ void SystemTray::removeIcon(PNOTIFYICONDATA32 nid)
 
 LRESULT CALLBACK SystemTray::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
-	{
+  switch (message)
+  {
   case WM_CREATE:
     {
       LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
@@ -311,8 +311,8 @@ LRESULT CALLBACK SystemTray::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
     break;
   default:
     return DefWindowProc(hwnd, message, wParam, lParam);
-	}
-	return 0;
+  }
+  return 0;
 }
 
 int SystemTray::mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int message, int x, int y)

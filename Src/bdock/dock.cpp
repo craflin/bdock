@@ -30,23 +30,23 @@ bool Dock::init(HINSTANCE hinstance)
 
   // register window class
   {
-	  WNDCLASSEX wcex;
+    WNDCLASSEX wcex;
 
-	  wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.cbSize = sizeof(WNDCLASSEX);
 
-	  wcex.style			= CS_DBLCLKS; //CS_HREDRAW | CS_VREDRAW;
-	  wcex.lpfnWndProc	= wndProc;
-	  wcex.cbClsExtra		= 0;
-	  wcex.cbWndExtra		= 0;
-	  wcex.hInstance		= hinstance;
-	  wcex.hIcon			= LoadIcon(hinstance, MAKEINTRESOURCE(IDI_BDOCK));
-	  wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	  wcex.hbrBackground	= 0; //(HBRUSH)(COLOR_WINDOW+1);
-	  wcex.lpszMenuName	= 0; //MAKEINTRESOURCE(IDC_BDOCK);
-	  wcex.lpszClassName	= _T("BDOCK");
-	  wcex.hIconSm		= LoadIcon(hinstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.style      = CS_DBLCLKS; //CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc  = wndProc;
+    wcex.cbClsExtra    = 0;
+    wcex.cbWndExtra    = 0;
+    wcex.hInstance    = hinstance;
+    wcex.hIcon      = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_BDOCK));
+    wcex.hCursor    = LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground  = 0; //(HBRUSH)(COLOR_WINDOW+1);
+    wcex.lpszMenuName  = 0; //MAKEINTRESOURCE(IDC_BDOCK);
+    wcex.lpszClassName  = _T("BDOCK");
+    wcex.hIconSm    = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_SMALL));
 
-	  RegisterClassEx(&wcex);
+    RegisterClassEx(&wcex);
   }
 
   // load skin
@@ -313,8 +313,8 @@ bool Dock::handleMouseEvent(UINT message, int x, int y)
 
 LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
-	{
+  switch (message)
+  {
   case WM_CREATE:
     {
       LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
@@ -343,22 +343,22 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       }
     }
     break;
-	case WM_COMMAND:
+  case WM_COMMAND:
     {
-		  switch (LOWORD(wParam))
-		  {
-		  case IDM_ABOUT:
-			  DialogBox(hinstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hwnd, aboutDlgProc);
-			  break;
-		  case IDM_EXIT:
-			  //DestroyWindow(hwnd);
+      switch (LOWORD(wParam))
+      {
+      case IDM_ABOUT:
+        DialogBox(hinstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hwnd, aboutDlgProc);
+        break;
+      case IDM_EXIT:
+        //DestroyWindow(hwnd);
         PostQuitMessage(0);
-			  break;
-		  default:
-			  return DefWindowProc(hwnd, message, wParam, lParam);
-		  }
+        break;
+      default:
+        return DefWindowProc(hwnd, message, wParam, lParam);
+      }
     }
-		break;
+    break;
   case WM_LBUTTONDOWN:
   case WM_LBUTTONUP:
   case WM_LBUTTONDBLCLK:
@@ -375,10 +375,10 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
   case WM_CONTEXTMENU:
     ((Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->handleContextMenu(LOWORD(lParam), HIWORD(lParam));
     break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
+  case WM_DESTROY:
+    PostQuitMessage(0);
+    break;
+  default:
     static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
     if(message == wm_shellhook)
       switch(wParam)
@@ -401,28 +401,28 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         }
         break;
       }
-		return DefWindowProc(hwnd, message, wParam, lParam);
-	}
-	return 0;
+    return DefWindowProc(hwnd, message, wParam, lParam);
+  }
+  return 0;
 }
 
 INT_PTR CALLBACK Dock::aboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
+  UNREFERENCED_PARAMETER(lParam);
+  switch (message)
+  {
+  case WM_INITDIALOG:
+    return (INT_PTR)TRUE;
 
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
+  case WM_COMMAND:
+    if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+    {
+      EndDialog(hDlg, LOWORD(wParam));
+      return (INT_PTR)TRUE;
+    }
+    break;
+  }
+  return (INT_PTR)FALSE;
 }
 
 DWORD Dock::showMenu(HMENU hmenu, int x, int y)

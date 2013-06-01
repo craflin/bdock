@@ -25,7 +25,7 @@ bool HideTaskBar::init()
 {
   if(!hidden)
   {
-	  if(!showTaskBar(false, originalState))
+    if(!showTaskBar(false, originalState))
       return false;
     hidden = true;
   }
@@ -34,10 +34,10 @@ bool HideTaskBar::init()
 
 bool HideTaskBar::showTaskBar(bool show, LPARAM& state) const
 {
-  APPBARDATA	apd = {0};
+  APPBARDATA  apd = {0};
 
-	apd.cbSize = sizeof(apd);
-	apd.hWnd = FindWindow(L"Shell_TrayWnd", NULL);
+  apd.cbSize = sizeof(apd);
+  apd.hWnd = FindWindow(L"Shell_TrayWnd", NULL);
   if(!apd.hWnd)
     return false;
 

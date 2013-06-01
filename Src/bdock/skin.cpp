@@ -17,7 +17,7 @@ bool Skin::Bitmap::load(const wchar* file)
     return false;
 
   BITMAP bm;
-	::GetObject(bmp, sizeof( bm ), &bm);
+  ::GetObject(bmp, sizeof( bm ), &bm);
   size.cx = bm.bmWidth;
   size.cy = bm.bmHeight;
   return true;

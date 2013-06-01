@@ -84,7 +84,7 @@ extern "C" BOOL wmiInit()
     // Connect to WMI through the IWbemLocator::ConnectServer method
 
     
-	
+  
     // Connect to the root\cimv2 namespace with
     // the current user and obtain pointer pSvc
     // to make IWbemServices calls.

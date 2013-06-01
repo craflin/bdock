@@ -3,16 +3,16 @@
 
 #include "stdafx.h"
 
-LRESULT CALLBACK	wndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	aboutDlgProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK  wndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK  aboutDlgProc(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
+  UNREFERENCED_PARAMETER(hPrevInstance);
+  UNREFERENCED_PARAMETER(lpCmdLine);
 
   // load storage
   std::wstring storageFile;
@@ -60,7 +60,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     */
   }
 
-	// create docks
+  // create docks
   std::set<Dock*> docks;
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
   {
@@ -71,16 +71,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
       docks.insert(dock);
   }
 
-	// Main message loop:
+  // Main message loop:
   MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		//if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+  while (GetMessage(&msg, NULL, 0, 0))
+  {
+    //if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+    {
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
+    }
+  }
 
   // delete docks
   for(std::set<Dock*>::iterator i = docks.begin(), end = docks.end(); i != end; ++i)
@@ -91,7 +91,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   if(!storageFile.empty())
     storage.save(storageFile.c_str());
 
-	return (int) msg.wParam;
+  return (int) msg.wParam;
 }
 
 

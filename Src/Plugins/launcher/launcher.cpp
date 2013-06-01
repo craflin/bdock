@@ -82,20 +82,20 @@ bool Launcher::init()
   // register window class
   if(!wndClass)
   {
-	  WNDCLASSEX wcex;
-	  wcex.cbSize = sizeof(WNDCLASSEX);
-	  wcex.style			= 0; 
-	  wcex.lpfnWndProc	= wndProc;
-	  wcex.cbClsExtra		= 0;
-	  wcex.cbWndExtra		= 0;
-	  wcex.hInstance		= hmodule;
-	  wcex.hIcon			= 0;
-	  wcex.hCursor		= 0;
-	  wcex.hbrBackground	= 0; //(HBRUSH)(COLOR_WINDOW+1);
-	  wcex.lpszMenuName	= 0; //MAKEINTRESOURCE(IDC_BDOCK);
-	  wcex.lpszClassName	= L"BDOCKLauncher";
-	  wcex.hIconSm		= 0;
-	  wndClass = RegisterClassEx(&wcex);
+    WNDCLASSEX wcex;
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.style      = 0; 
+    wcex.lpfnWndProc  = wndProc;
+    wcex.cbClsExtra    = 0;
+    wcex.cbWndExtra    = 0;
+    wcex.hInstance    = hmodule;
+    wcex.hIcon      = 0;
+    wcex.hCursor    = 0;
+    wcex.hbrBackground  = 0; //(HBRUSH)(COLOR_WINDOW+1);
+    wcex.lpszMenuName  = 0; //MAKEINTRESOURCE(IDC_BDOCK);
+    wcex.lpszClassName  = L"BDOCKLauncher";
+    wcex.hIconSm    = 0;
+    wndClass = RegisterClassEx(&wcex);
     if(!wndClass)
       return false;
   }
@@ -328,15 +328,15 @@ typedef struct
 
 LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
-	{
+  switch (message)
+  {
   case WM_CREATE:
     {
       LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
       SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
     }
     break;
-	default:
+  default:
     {
       static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
       if(message == wm_shellhook)
@@ -397,8 +397,8 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
       }
       return DefWindowProc(hwnd, message, wParam, lParam);
     }
-	}
-	return 0;
+  }
+  return 0;
 }
 
 bool Launcher::getCommandLine(HWND hwnd, std::wstring& path, std::wstring& param)

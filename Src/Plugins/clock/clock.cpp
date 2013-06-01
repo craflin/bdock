@@ -19,18 +19,18 @@ Clock::~Clock()
 bool Clock::init()
 {
   // create dib bitmap
-	BITMAPINFO bi;
-	memset(&bi, 0, sizeof(BITMAPINFOHEADER));
+  BITMAPINFO bi;
+  memset(&bi, 0, sizeof(BITMAPINFOHEADER));
 
-	bi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-	bi.bmiHeader.biWidth       =  32;
-	bi.bmiHeader.biHeight      = -32;  // negative --> top-down DIB
-	bi.bmiHeader.biPlanes      = 1;
-	bi.bmiHeader.biBitCount    = 32;
-	bi.bmiHeader.biCompression = BI_RGB;
+  bi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
+  bi.bmiHeader.biWidth       =  32;
+  bi.bmiHeader.biHeight      = -32;  // negative --> top-down DIB
+  bi.bmiHeader.biPlanes      = 1;
+  bi.bmiHeader.biBitCount    = 32;
+  bi.bmiHeader.biCompression = BI_RGB;
 
   HDC hdc = CreateCompatibleDC(NULL);
-	bitmap = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, (void**)&bitmapData, NULL, 0);
+  bitmap = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, (void**)&bitmapData, NULL, 0);
   DeleteDC(hdc);
   if(!bitmap)
     return false;
