@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\bdock\assert.cpp" />
+    <ClCompile Include="Src\bdock\bdock.cpp" />
+    <ClCompile Include="Src\bdock\dock.cpp" />
+    <ClCompile Include="Src\bdock\icon.cpp" />
+    <ClCompile Include="Src\bdock\plugin.cpp" />
+    <ClCompile Include="Src\bdock\settings.cpp" />
+    <ClCompile Include="Src\bdock\skin.cpp" />
+    <ClCompile Include="Src\bdock\stdafx.cpp" />
+    <ClCompile Include="Src\bdock\storage.cpp" />
+    <ClInclude Include="Src\bdock\assert.h" />
+    <ClInclude Include="Src\bdock\bdock.h" />
+    <ClInclude Include="Src\bdock\dock.h" />
+    <ClInclude Include="Src\bdock\icon.h" />
+    <ClInclude Include="Src\bdock\plugin.h" />
+    <ClInclude Include="Src\bdock\Resource.h" />
+    <ClInclude Include="Src\bdock\settings.h" />
+    <ClInclude Include="Src\bdock\skin.h" />
+    <ClInclude Include="Src\bdock\stdafx.h" />
+    <ClInclude Include="Src\bdock\storage.h" />
+    <ClInclude Include="Src\bdock\targetver.h" />
+    <ClInclude Include="Src\bdock\timer.h" />
+    <ResourceCompile Include="Src\bdock\bdock.rc" />
+    <ClInclude Include="Src\bdock2.h" />
+  </ItemGroup>
+</Project>

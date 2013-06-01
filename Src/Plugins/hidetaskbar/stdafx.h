@@ -13,11 +13,9 @@
 
 #include <shellapi.h>
 
-#include <stdio.h>
-
-#include "../bdock/bdock.h"
+#include "../../bdock/bdock.h"
 
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "clock.h"
+#include "hidetaskbar.h"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Plugins\clock\clock.cpp" />
+    <ClCompile Include="Src\Plugins\clock\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\clock\stdafx.cpp" />
+    <ClInclude Include="Src\Plugins\clock\clock.h" />
+    <ClInclude Include="Src\Plugins\clock\stdafx.h" />
+    <ClInclude Include="Src\Plugins\clock\targetver.h" />
+    <ClInclude Include="Src\bdock2.h" />
+  </ItemGroup>
+</Project>

@@ -3,32 +3,41 @@ platforms = { "Win32", "x64" }
 
 defines = { "UNICODE", "_UNICODE" }
 
-plugins = { "Launcher2" }
+plugins = { "launcher", "clock", "hidetaskbar", "systemtray" }
 
 targets = {
 
-  bdock2 = cppApplication + {
+  bdock = cppApplication + {
     dependencies = plugins
     buildDir = "Build/$(configuration)_$(platform)"
-    root = { "Src/bdock2", "Src" }
+    root = { "Src/bdock", "Src" }
+    cppFlags += { "/Yu" }
+    libs = { "Msimg32" }
     files = {
-      "Src/bdock2/**.cpp" = cppSource
-      "Src/bdock2/**.h"
+      "Src/bdock/**.cpp" = cppSource
+      "Src/bdock/stdafx.cpp" = cppSource + {
+        cppFlags += { "/Yc" }
+      }
+      "Src/bdock/**.h"
+      "Src/bdock/**.rc" = rcSource
       "Src/bdock2.h"
     }
   }
 
   "$(plugins)" = cppDynamicLibrary + {
     buildDir = "Build/$(configuration)_$(platform)/$(target)"
+    output = "Build/$(configuration)_$(platform)/$(target).dll"
     folder = "Plugins"
     root = { "Src/Plugins/$(target)", "Src" }
     cppFlags += { "/Yu" }
+    libs = { "bdock" }
+    libPaths = { "Build/$(configuration)_$(platform)" }
     files = {
       "Src/Plugins/$(target)/**.cpp" = cppSource
       "Src/Plugins/$(target)/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
       }
-      if target == "Launcher" {
+      if target == "launcher" {
         "Src/Plugins/$(target)/wmi.cpp" = cppSource + {
           cppFlags -= { "/Yu" }
         }

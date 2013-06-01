@@ -13,9 +13,12 @@
 
 #include <shellapi.h>
 
-#include "../bdock/bdock.h"
+#include <string>
+#include <hash_map>
+
+#include "../../bdock/bdock.h"
 
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "hidetaskbar.h"
+#include "systemtray.h"

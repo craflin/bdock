@@ -19,27 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2F0F4956-FF3C-B85E-D02D-1DBBF6AA062E}</ProjectGuid>
-    <RootNamespace>Launcher2</RootNamespace>
+    <ProjectGuid>{BF52B9E3-3FDA-DE80-1161-37B8C9795E8F}</ProjectGuid>
+    <RootNamespace>bdock</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -60,24 +60,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\Launcher2\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\Launcher2\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\Launcher2\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\Launcher2\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\Launcher2\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\Launcher2\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\Launcher2\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\Launcher2\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Launcher2</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Launcher2</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Launcher2</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Launcher2</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bdock</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bdock</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bdock</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bdock</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -93,6 +93,7 @@
     </ProjectReference>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -112,6 +113,7 @@
     <Link>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>Msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -128,6 +130,7 @@
     </ProjectReference>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,27 +150,52 @@
     <Link>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>Msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Plugins\Launcher2\dllmain.cpp" />
-    <ClCompile Include="Src\Plugins\Launcher2\launcher.cpp" />
-    <ClCompile Include="Src\Plugins\Launcher2\stdafx.cpp">
+    <ClCompile Include="Src\bdock\assert.cpp" />
+    <ClCompile Include="Src\bdock\bdock.cpp" />
+    <ClCompile Include="Src\bdock\dock.cpp" />
+    <ClCompile Include="Src\bdock\icon.cpp" />
+    <ClCompile Include="Src\bdock\plugin.cpp" />
+    <ClCompile Include="Src\bdock\settings.cpp" />
+    <ClCompile Include="Src\bdock\skin.cpp" />
+    <ClCompile Include="Src\bdock\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Src\Plugins\Launcher2\systools.cpp" />
-    <ClCompile Include="Src\Plugins\Launcher2\wmi.cpp" />
-    <ClInclude Include="Src\Plugins\Launcher2\launcher.h" />
-    <ClInclude Include="Src\Plugins\Launcher2\resource.h" />
-    <ClInclude Include="Src\Plugins\Launcher2\stdafx.h" />
-    <ClInclude Include="Src\Plugins\Launcher2\systools.h" />
-    <ClInclude Include="Src\Plugins\Launcher2\targetver.h" />
-    <ClInclude Include="Src\Plugins\Launcher2\wmi.h" />
-    <ResourceCompile Include="Src\Plugins\Launcher2\launcher.rc" />
+    <ClCompile Include="Src\bdock\storage.cpp" />
+    <ClInclude Include="Src\bdock\assert.h" />
+    <ClInclude Include="Src\bdock\bdock.h" />
+    <ClInclude Include="Src\bdock\dock.h" />
+    <ClInclude Include="Src\bdock\icon.h" />
+    <ClInclude Include="Src\bdock\plugin.h" />
+    <ClInclude Include="Src\bdock\Resource.h" />
+    <ClInclude Include="Src\bdock\settings.h" />
+    <ClInclude Include="Src\bdock\skin.h" />
+    <ClInclude Include="Src\bdock\stdafx.h" />
+    <ClInclude Include="Src\bdock\storage.h" />
+    <ClInclude Include="Src\bdock\targetver.h" />
+    <ClInclude Include="Src\bdock\timer.h" />
+    <ResourceCompile Include="Src\bdock\bdock.rc" />
     <ClInclude Include="Src\bdock2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="launcher.vcxproj">
+      <Project>{F3E08B51-1935-8A8F-58F1-7A678759F60C}</Project>
+    </ProjectReference>
+    <ProjectReference Include="clock.vcxproj">
+      <Project>{05531B19-BB84-6B18-C09F-979EEB429AD3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="hidetaskbar.vcxproj">
+      <Project>{E7F69C07-8200-7B6D-85D0-3CA690369BEE}</Project>
+    </ProjectReference>
+    <ProjectReference Include="systemtray.vcxproj">
+      <Project>{C14F0D79-CBC4-A247-97AD-413265C6BDAD}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

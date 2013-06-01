@@ -11,18 +11,13 @@
 // Windows Header Files:
 #include <windows.h>
 
-#include <Psapi.h>
 #include <shellapi.h>
 
-#include <map>
-#include <set>
-#include <vector>
+#include <stdio.h>
 
-#include "../../bdock2.h"
+#include "../../bdock/bdock.h"
 
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "launcher.h"
-#include "wmi.h"
-#include "systools.h"
+#include "clock.h"
