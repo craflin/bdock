@@ -335,18 +335,26 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
         {
         case HSHELL_WINDOWACTIVATED:
         case HSHELL_RUDEAPPACTIVATED:
+          //if(wParam == HSHELL_WINDOWACTIVATED)
+          //  printf("HSHELL_WINDOWACTIVATED\n");
+          //else
+          //  printf("HSHELL_RUDEAPPACTIVATED\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->activateIcon((HWND)lParam);
           break;
         case HSHELL_WINDOWCREATED:
+          //printf("HSHELL_WINDOWCREATED\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->addIcon((HWND)lParam);
           break;
         case HSHELL_WINDOWDESTROYED:
+          //printf("HSHELL_WINDOWDESTROYED\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->removeIcon((HWND)lParam);
           break;
         case HSHELL_REDRAW:
+          //printf("HSHELL_REDRAW\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->updateIcon((HWND)lParam, false);
           break;
         case HSHELL_GETMINRECT:
+          //printf("HSHELL_GETMINRECT\n");
           {
             LPSHELLHOOKINFO2 shi = (LPSHELLHOOKINFO2)lParam;
             Launcher* launcher = (Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA);

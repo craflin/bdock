@@ -379,26 +379,21 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       {
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
-        /*
-        if(wParam == HSHELL_RUDEAPPACTIVATED)
-          printf("HSHELL_RUDEAPPACTIVATED\n");
-        if(wParam == HSHELL_WINDOWACTIVATED)
-          printf("HSHELL_WINDOWACTIVATED\n");
-          */
         {
           bool hideWindow = isFullscreen((HWND)lParam) && wParam == HSHELL_RUDEAPPACTIVATED;
           if(!!IsWindowVisible(hwnd) == hideWindow)
           {
             if(!hideWindow)
             {
+              Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+              LONG windowStyle = GetWindowLong(hwnd, GWL_STYLE);
+              SetWindowLong(hwnd, GWL_STYLE, windowStyle | WS_VISIBLE);
+              dock->update(0);
+              SetWindowLong(hwnd, GWL_STYLE, windowStyle);
               ShowWindow(hwnd, SW_SHOW);
-              //printf("show\n");
             }
             else
-            {
               ShowWindow(hwnd, SW_HIDE);
-              //printf("hide\n");
-            }
           }
         }
         break;
