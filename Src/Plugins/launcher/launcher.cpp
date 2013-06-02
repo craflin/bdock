@@ -103,11 +103,12 @@ bool Launcher::init()
   hwnd = CreateWindowEx(NULL, L"BDOCKLauncher", NULL, NULL, NULL, NULL, NULL, NULL, HWND_MESSAGE, NULL, hmodule, this);
   if(!hwnd)
     return false;
-
-  RegisterShellHookWindow(hwnd);
+  if(!RegisterShellHookWindow(hwnd))
+    return false;
 
   activeHwnd = GetForegroundWindow();
-  EnumWindows(EnumWindowsProc, (LPARAM)this);
+  if(!EnumWindows(EnumWindowsProc, (LPARAM)this))
+    return false;
   return true;
 }
 
@@ -115,7 +116,6 @@ bool Launcher::hasTaskBarIcon(HWND hwnd)
 {
   if(IsWindowVisible(hwnd) && GetParent(hwnd) == 0)
   {
-    
     DWORD exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     HANDLE owner = GetWindow(hwnd, GW_OWNER);
     if((!(exstyle & WS_EX_TOOLWINDOW) && owner == 0) || (exstyle & WS_EX_APPWINDOW && owner != 0))
@@ -132,24 +132,17 @@ bool Launcher::hasTaskBarIcon(HWND hwnd)
 
 void Launcher::addIcon(HWND hwnd)
 {  
-#if 0
-  if(/*!(style & WS_SYSMENU) &&*/
-    (/*style & WS_POPUP || */style & WS_CHILD) && !(exstyle & WS_EX_APPWINDOW))
-    return;
-  if(exstyle & WS_EX_TOOLWINDOW)
-    return;
-#endif
   if(!hasTaskBarIcon(hwnd))
     return;
 
   if(icons.find(hwnd) != icons.end())
     return; // wtf
 
-  
+  // get command line
   std::wstring path, parameters;
-  /*if(!*/getCommandLine(hwnd, path, parameters)/*)
-    return*/;
+  getCommandLine(hwnd, path, parameters);
 
+  // there might be a launcher for this window. if so, use launcher icon
   for(std::vector<Icon*>::iterator i = launchers.begin(), end = launchers.end(); i != end; ++i)
   {
     IconData* iconData = (IconData*)(*i)->userData;
@@ -163,9 +156,7 @@ void Launcher::addIcon(HWND hwnd)
     }
   }
 
-  wchar title[32];
-  GetWindowText(hwnd, title, 32);
-
+  // add icon
   HICON hicon;
   hicon = (HICON)SendMessage(hwnd, WM_GETICON, ICON_BIG, 0); 
   if(!hicon)
@@ -249,7 +240,7 @@ void Launcher::removeIcon(HWND hwnd)
   IconData* iconData = (IconData*)icon->userData;
   if(iconData->pinned)
   {
-    // maybe TODO: try to find an used pinned icon that fits on this launcher. adopt the hwnd and remove that icon.
+    // maybe TODO: try to find a not-pinned icon compatible with this launcher. adopt the hwnd and remove that icon.
 
     // find launcher index
     uint pos = 0;
@@ -276,7 +267,6 @@ void Launcher::removeIcon(HWND hwnd)
         icon->icon = bitmap;
       }
     }
-
 
     iconData->hwnd = 0;
     icon->flags |= IF_GHOST;
@@ -371,25 +361,6 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
               shi->bottom = short(rect.bottom);
               return 1;
             }
-
-             // hmm geht nicht
-/*
-            HWND org = FindWindow("Shell_TrayWnd", 0);
-            org = FindWindowEx(org, 0, "ReBarWindow32", 0);
-            org = FindWindowEx(org, 0, "MSTaskSwWClass", 0);
-            LRESULT adsdasb = SendMessage(org, message, wParam, lParam);
-
-            shi->rc.left = shi->rc.top = 900;
-            shi->rc.right = shi->rc.bottom = 1000;
-            shi->rc.bottom = shi->rc.top + GetSystemMetrics(SM_CYCAPTION);
-
-            shi->rc.left = shi->rc.top = shi->rc.right = shi->rc.bottom = 00;
-
-            shi->rc.right = shi->rc.bottom = 1;
-            
-            return 1;
-            
-*/       
           }
           break;
         }
@@ -408,7 +379,7 @@ bool Launcher::getCommandLine(HWND hwnd, std::wstring& path, std::wstring& param
     return false;
   
   if(!wmiRequestFormat(L"SELECT CommandLine FROM Win32_Process WHERE (ProcessId=%u)", pid))
-    return false;             
+    return false;
   if(!wmiGetNextResult())
     return false;
 

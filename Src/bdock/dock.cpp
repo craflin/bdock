@@ -3,8 +3,8 @@
 #include "stdafx.h"
 #include "resource.h"
 
-
-HINSTANCE Dock::hinstance;
+ATOM Dock::wndClass = 0;
+HINSTANCE Dock::hinstance = 0;
 
 Dock::Dock(Storage* storage) : storage(storage), settings(storage), hwnd(0), skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0),
 activeHwnd(0), activeHwndRudeFullscreen(false) {}
@@ -27,9 +27,11 @@ Dock::~Dock()
 bool Dock::init(HINSTANCE hinstance)
 {
   ASSERT(!hwnd);
+  ASSERT(!Dock::hinstance || Dock::hinstance == hinstance);
   Dock::hinstance = hinstance;
 
   // register window class
+  if(!wndClass)
   {
     WNDCLASSEX wcex;
 
@@ -47,7 +49,9 @@ bool Dock::init(HINSTANCE hinstance)
     wcex.lpszClassName  = _T("BDOCK");
     wcex.hIconSm    = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_SMALL));
 
-    RegisterClassEx(&wcex);
+    wndClass = RegisterClassEx(&wcex);
+    if(!wndClass)
+      return false;
   }
 
   // load skin
@@ -78,7 +82,8 @@ bool Dock::init(HINSTANCE hinstance)
   for(std::unordered_set<Timer*>::iterator i = timers.begin(), end = timers.end(); i != end; ++i)
     SetTimer(hwnd,(UINT_PTR)*i, (*i)->interval, 0);
 
-  RegisterShellHookWindow(hwnd);
+  if(!RegisterShellHookWindow(hwnd))
+    return false;
 
   // show window
   calcIconRects(0, firstIcon);

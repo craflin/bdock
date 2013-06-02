@@ -33,7 +33,9 @@ public:
   DWORD showMenu(HMENU hmenu, int x, int y);
 
 private:
-  Storage* storage;  
+  static ATOM wndClass;
+
+  Storage* storage;
   HWND hwnd;
   Skin* skin;
   HBITMAP bmp;
