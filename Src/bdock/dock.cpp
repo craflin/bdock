@@ -13,6 +13,7 @@ Dock::~Dock()
 {
   if(hwnd)
   {
+    DeregisterShellHookWindow(hwnd);
     DestroyWindow(hwnd);
     hwnd = 0;
   }
@@ -540,7 +541,8 @@ bool Dock::isFullscreen(HWND hwnd)
   if(!GetClientRect(hwnd, &clientRect))
     return false;
   POINT pt = {0};
-  ClientToScreen(hwnd, &pt),
+  if(!ClientToScreen(hwnd, &pt))
+    return false;
   clientRect.left += pt.x;
   clientRect.right += pt.x;
   clientRect.top += pt.y;
