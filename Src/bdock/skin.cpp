@@ -40,12 +40,14 @@ void Skin::Bitmap::draw(HDC dest, int x, int y) const
   DeleteDC(tmp);
 }
 
-Skin::Skin() : bgBrush(CreateSolidBrush(0)) {}
+Skin::Skin() : bgBrush(CreateSolidBrush(0)), bg(0) {}
 
 Skin::~Skin()
 {
   if(bgBrush)
     DeleteObject(bgBrush);
+  if(bg)
+    DeleteObject(bg);
 }
 
 bool Skin::init(const wchar* name)
@@ -57,33 +59,27 @@ bool Skin::init(const wchar* name)
  
   file.resize(flen);
   file += L"leftBg.bmp";
-  if(!leftBg.load(file.c_str()))
-    return false;
+  leftBg.load(file.c_str());
 
   file.resize(flen);
   file += L"rightBg.bmp";
-  if(!rightBg.load(file.c_str()))
-    return false;
+  rightBg.load(file.c_str());
 
   file.resize(flen);
   file += L"midBg.bmp";
-  if(!midBg.load(file.c_str()))
-    return false;
+  midBg.load(file.c_str());
 
   file.resize(flen);
   file += L"activeBg.bmp";
-  if(!activeBg.load(file.c_str()))
-    return false;
+  activeBg.load(file.c_str());
 
   file.resize(flen);
   file += L"fullBg.bmp";
-  if(!fullBg.load(file.c_str()))
-    return false;
+  fullBg.load(file.c_str());
 
   file.resize(flen);
   file += L"halfBg.bmp";
-  if(!halfBg.load(file.c_str()))
-    return false;
+  halfBg.load(file.c_str());
 
   return true;
 }
@@ -93,7 +89,8 @@ void Skin::draw(HDC dest, const SIZE& size, const RECT& update)
 {
   FillRect(dest, &update, bgBrush);
 
-  /*
+  if(!leftBg.bmp || !rightBg.bmp || !midBg.bmp)
+    return;
 
   if(!bg || size.cx != bgSize.cx || size.cy != bgSize.cy)
   {
@@ -109,28 +106,28 @@ void Skin::draw(HDC dest, const SIZE& size, const RECT& update)
     HDC src = CreateCompatibleDC(NULL);
     HBRUSH trans = CreateSolidBrush(RGB(0, 0, 0));
 
-    HBITMAP oldSrcBmp = (HBITMAP)SelectObject(src, leftBg);
-    BitBlt(dest, 0, size.cy - leftSize.cy, leftSize.cx, leftSize.cy, src, 0, 0, SRCCOPY);
-    if(size.cy > leftSize.cy)
+    HBITMAP oldSrcBmp = (HBITMAP)SelectObject(src, leftBg.bmp);
+    BitBlt(dest, 0, size.cy - leftBg.size.cy, leftBg.size.cx, leftBg.size.cy, src, 0, 0, SRCCOPY);
+    if(size.cy > leftBg.size.cy)
     {
-      RECT rect = { 0, 0, leftSize.cx, size.cy - leftSize.cy};
+      RECT rect = { 0, 0, leftBg.size.cx, size.cy - leftBg.size.cy};
       FillRect(dest, &rect, trans);
     }
 
-    SelectObject(src, midBg);
-    StretchBlt(dest, leftSize.cx, size.cy - midSize.cy, size.cx - leftSize.cx - rightSize.cx, midSize.cy, 
-      src, 0, 0, midSize.cx, midSize.cy, SRCCOPY);
-    if(size.cy > midSize.cy)
+    SelectObject(src, midBg.bmp);
+    StretchBlt(dest, leftBg.size.cx, size.cy - midBg.size.cy, size.cx - leftBg.size.cx - rightBg.size.cx, midBg.size.cy, 
+      src, 0, 0, midBg.size.cx, midBg.size.cy, SRCCOPY);
+    if(size.cy > midBg.size.cy)
     {
-      RECT rect = { leftSize.cx, 0, size.cx - rightSize.cx, size.cy - midSize.cy};
+      RECT rect = { leftBg.size.cx, 0, size.cx - rightBg.size.cx, size.cy - midBg.size.cy};
       FillRect(dest, &rect, trans);
     }
 
-    SelectObject(src, rightBg);
-    BitBlt(dest, size.cx - rightSize.cx, size.cy - rightSize.cy, rightSize.cx, rightSize.cy, src, 0, 0, SRCCOPY);
-    if(size.cy > rightSize.cy)
+    SelectObject(src, rightBg.bmp);
+    BitBlt(dest, size.cx - rightBg.size.cx, size.cy - rightBg.size.cy, rightBg.size.cx, rightBg.size.cy, src, 0, 0, SRCCOPY);
+    if(size.cy > rightBg.size.cy)
     {
-      RECT rect = { 0, 0, size.cx - rightSize.cx, size.cy - rightSize.cy};
+      RECT rect = { 0, 0, size.cx - rightBg.size.cx, size.cy - rightBg.size.cy};
       FillRect(dest, &rect, trans);
     }
 
@@ -150,5 +147,4 @@ void Skin::draw(HDC dest, const SIZE& size, const RECT& update)
   
   SelectObject(src, oldBmp);
   DeleteDC(src);
-  */
 }

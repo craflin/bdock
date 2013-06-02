@@ -39,6 +39,8 @@ public:
 
 private:
   HBRUSH bgBrush;
+  HBITMAP bg;
+  SIZE bgSize;
 };
 
 #endif

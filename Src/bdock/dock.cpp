@@ -145,19 +145,19 @@ void Dock::draw(HDC dest, const RECT& update)
     const RECT& rect(icon->rect);
     if(rect.left >= update.left && rect.right <= update.right)
     {
-      if(icon->flags & IF_ACTIVE)
+      if(icon->flags & IF_ACTIVE && skin->activeBg.bmp)
       {
         const SIZE& size(skin->activeBg.size);
         skin->activeBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
       }
       else
       {
-        if(icon->flags & IF_HALFBG)
+        if(icon->flags & IF_HALFBG && skin->halfBg.bmp)
         {
           const SIZE& size(skin->halfBg.size);
           skin->halfBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + settings.iconHeight / 2 + (settings.iconHeight - size.cx) / 2);
         }
-        if(icon->flags & IF_FULLBG)
+        if(icon->flags & IF_FULLBG && skin->fullBg.bmp)
         {
           const SIZE& size(skin->fullBg.size);
           skin->fullBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
@@ -178,8 +178,9 @@ void Dock::update(RECT* update)
   {
 
     size.cx = (lastIcon ? lastIcon->rect.right : settings.leftMargin) + settings.rightMargin;
-    if(size.cx < skin->leftBg.size.cx + skin->rightBg.size.cx)
-      size.cx = skin->leftBg.size.cx + skin->rightBg.size.cx;
+    if(skin->leftBg.bmp && skin->rightBg.bmp && skin->midBg.bmp)
+      if(size.cx < skin->leftBg.size.cx + skin->rightBg.size.cx)
+        size.cx = skin->leftBg.size.cx + skin->rightBg.size.cx;
     size.cy = settings.barHeight;
   }
 
