@@ -34,8 +34,8 @@ private:
   API::Dock dockAPI;
   API::Plugin* plugin;
   HMODULE hmodule;
-  std::set<Icon*> icons;
-  stdext::hash_set<Timer*> timers;
+  std::unordered_set<Icon*> icons;
+  std::unordered_set<Timer*> timers;
   Icon* lastIcon;
 
   void addIcon(Icon* icon);

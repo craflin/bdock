@@ -65,7 +65,7 @@ Storage::~Storage()
 
 void Storage::free()
 {
-  for(stdext::hash_map<std::string, Storage*>::iterator i = storages.begin(), end = storages.end(); i != end; ++i)
+  for(std::unordered_map<std::string, Storage*>::iterator i = storages.begin(), end = storages.end(); i != end; ++i)
     delete i->second;
   for(std::vector<Storage*>::iterator i = array.begin(), end = array.end(); i != end; ++i)
     delete *i;
@@ -88,7 +88,7 @@ void Storage::setCurrentStorage(Storage* storage)
 bool Storage::enterSection(const char* name)
 {
   std::string key(name);
-  stdext::hash_map<std::string, Storage*>::iterator i = current->storages.find(key);
+  std::unordered_map<std::string, Storage*>::iterator i = current->storages.find(key);
   if(i == current->storages.end())
   {
     Storage* storage = new Storage(current);
@@ -140,7 +140,7 @@ Storage* Storage::getNumSection(uint pos)
 bool Storage::deleteSection(const char* name)
 {
   std::string key(name);
-  stdext::hash_map<std::string, Storage*>::iterator i = current->storages.find(key);
+  std::unordered_map<std::string, Storage*>::iterator i = current->storages.find(key);
   if(i == current->storages.end())
     return false;
   else  
@@ -185,7 +185,7 @@ bool Storage::setNumSectionCount(uint size)
 
 const wchar* Storage::getStr(const char* name, uint* length, const wchar* default, uint defaultLength) const
 {
-  stdext::hash_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
+  std::unordered_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
   if(i == current->entries.end())
   {
     if(length)
@@ -206,7 +206,7 @@ const wchar* Storage::getStr(const char* name, uint* length, const wchar* defaul
 
 int Storage::getInt(const char* name, int default) const
 {
-  stdext::hash_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
+  std::unordered_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
   if(i == current->entries.end())
     return default;
   const Variant& val(i->second);
@@ -217,7 +217,7 @@ int Storage::getInt(const char* name, int default) const
 
 uint Storage::getUInt(const char* name, uint default) const
 {
-  stdext::hash_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
+  std::unordered_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
   if(i == current->entries.end())
     return default;
   const Variant& val(i->second);
@@ -228,7 +228,7 @@ uint Storage::getUInt(const char* name, uint default) const
 
 bool Storage::getData(const char* name, char** data, uint* length, const char* defaultData, uint defaultLength) const
 {
-  stdext::hash_map<std::string, Variant>::iterator i = current->entries.find(std::string(name));
+  std::unordered_map<std::string, Variant>::iterator i = current->entries.find(std::string(name));
   if(i == current->entries.end())
   {
     *data = (char*)defaultData;
@@ -289,7 +289,7 @@ bool Storage::setData(const char* name, char* data, uint length)
 
 bool Storage::deleteEntry(const char* name)
 {
-  stdext::hash_map<std::string, Variant>::iterator i = current->entries.find(std::string(name));
+  std::unordered_map<std::string, Variant>::iterator i = current->entries.find(std::string(name));
   if(i == current->entries.end())
     return false;
   current->entries.erase(i);
@@ -420,7 +420,7 @@ bool Storage::save(HANDLE hFile) const
   uint size = (uint)entries.size();
   if(!write(hFile, &size, sizeof(size)))
     return false;
-  for(stdext::hash_map<std::string, Variant>::const_iterator i = entries.begin(), end = entries.end(); i != end; ++i)
+  for(std::unordered_map<std::string, Variant>::const_iterator i = entries.begin(), end = entries.end(); i != end; ++i)
   {
     const std::string& key(i->first);
     const Variant& var(i->second);
@@ -453,7 +453,7 @@ bool Storage::save(HANDLE hFile) const
   size = (uint)storages.size();
   if(!write(hFile, &size, sizeof(size)))
     return false;
-  for(stdext::hash_map<std::string, Storage*>::const_iterator i = storages.begin(), end = storages.end(); i != end; ++i)
+  for(std::unordered_map<std::string, Storage*>::const_iterator i = storages.begin(), end = storages.end(); i != end; ++i)
   {
     const std::string& key(i->first);
     Storage* storage(i->second);

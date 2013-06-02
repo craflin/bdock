@@ -149,7 +149,7 @@ bool Plugin::updateIcons(API::Icon** icons, uint count)
 
 bool Plugin::getIconRect(API::Icon* icon, RECT* rect)
 {
-  std::set<Icon*>::iterator i = icons.find((Icon*)icon);
+  std::unordered_set<Icon*>::iterator i = icons.find((Icon*)icon);
   if(i == icons.end())
     return false;
   *rect = (*i)->rect;

@@ -30,7 +30,7 @@ Launcher::~Launcher()
     if(iconData->hwnd == 0)
       delete iconData;
   }
-  for(std::map<HWND,Icon*>::iterator i = icons.begin(), end = icons.end(); i != end; ++i)
+  for(std::unordered_map<HWND, Icon*>::iterator i = icons.begin(), end = icons.end(); i != end; ++i)
     delete (IconData*)i->second->userData;
 
 
@@ -195,7 +195,7 @@ void Launcher::activateIcon(HWND hwnd)
   Icon* updateIcons[2];
   uint updateIconsCount = 0;
 
-  std::map<HWND,Icon*>::iterator i = icons.find(activeHwnd);
+  std::unordered_map<HWND, Icon*>::iterator i = icons.find(activeHwnd);
   if(i != icons.end() && i->second->flags & IF_ACTIVE)
   {
     i->second->flags &= ~IF_ACTIVE;
@@ -360,7 +360,7 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
           {
             LPSHELLHOOKINFO2 shi = (LPSHELLHOOKINFO2)lParam;
             Launcher* launcher = (Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-            std::map<HWND,Icon*>::iterator i = launcher->icons.find(shi->hwnd);
+            std::unordered_map<HWND,Icon*>::iterator i = launcher->icons.find(shi->hwnd);
             if(i != launcher->icons.end())
             {
               RECT rect;

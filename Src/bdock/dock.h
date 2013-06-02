@@ -39,9 +39,9 @@ private:
   HBITMAP bmp;
   SIZE size;
   int iconCount;
-  std::set<Plugin*> plugins;
+  std::unordered_set<Plugin*> plugins;
   Icon* lastHitIcon;
-  stdext::hash_set<Timer*> timers;
+  std::unordered_set<Timer*> timers;
   HWND activeHwnd;
   bool activeHwndRudeFullscreen;
 

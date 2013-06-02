@@ -74,7 +74,7 @@ bool Dock::init(HINSTANCE hinstance)
     0, 0, 0, 0, NULL, NULL, hinstance, this);
   if (!hwnd)
     return false;
-  for(stdext::hash_set<Timer*>::iterator i = timers.begin(), end = timers.end(); i != end; ++i)
+  for(std::unordered_set<Timer*>::iterator i = timers.begin(), end = timers.end(); i != end; ++i)
     SetTimer(hwnd,(UINT_PTR)*i, (*i)->interval, 0);
 
   RegisterShellHookWindow(hwnd);

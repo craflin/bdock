@@ -120,14 +120,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   }
 
   // create docks
-  std::set<Dock*> docks;
+  std::vector<Dock*> docks(storage.getNumSectionCount());
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
   {
     Dock* dock = new Dock(storage.getNumSection(i));
     if(!dock->init(hInstance))
       delete dock;
     else
-      docks.insert(dock);
+      docks.push_back(dock);
   }
 
   // Main message loop:
@@ -142,7 +142,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   }
 
   // delete docks
-  for(std::set<Dock*>::iterator i = docks.begin(), end = docks.end(); i != end; ++i)
+  for(std::vector<Dock*>::iterator i = docks.begin(), end = docks.end(); i != end; ++i)
     delete *i;
   docks.clear();
 

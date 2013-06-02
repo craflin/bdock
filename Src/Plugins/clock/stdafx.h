@@ -13,7 +13,7 @@
 
 #include <shellapi.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "../../bdock2.h"
 

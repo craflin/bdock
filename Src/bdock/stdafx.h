@@ -14,17 +14,13 @@
 #include <shlobj.h>
 
 // C RunTime Header Files
-#include <stdlib.h>
+#include <cstdlib>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
 
-#include <set> // TODO: repalce all sets with unordered_set
-#include <map> // TODO: replace all maps with unordered_map
 #include <vector>
 #include <string>
-#include <hash_map> // TODO: replace all hash_maps with unordered_map
-#include <hash_set> // TODO: replace all hash_sets with unordered_set
 #include <unordered_map>
 #include <unordered_set>
 

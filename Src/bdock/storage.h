@@ -84,8 +84,8 @@ private:
     void free();
   };
 
-  stdext::hash_map<std::string, Variant> entries;
-  stdext::hash_map<std::string, Storage*> storages;
+  std::unordered_map<std::string, Variant> entries;
+  std::unordered_map<std::string, Storage*> storages;
   std::vector<Storage*> array;
   Storage* current;
   Storage* parent;

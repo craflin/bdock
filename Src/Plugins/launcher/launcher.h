@@ -35,7 +35,7 @@ private:
   HICON defaultIcon;
   HWND hwnd;
   HWND activeHwnd;
-  std::map<HWND, Icon*> icons;
+  std::unordered_map<HWND, Icon*> icons;
   std::vector<Icon*> launchers;
 
   static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
