@@ -85,18 +85,9 @@ LRESULT CALLBACK TrayWndProcHook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 ATOM SystemTray::wndClass = 0;
 int SystemTray::instances = 0;
 
-SystemTray::SystemTray()
+SystemTray::SystemTray(Dock& dock) : dock(dock)
 {
   ++instances;
-
-  // load procs from main application dynamically, since we do not want to have
-  // a hard dependency on that application. otherwise the systemtray.dll cannot
-  // be injected into the explorer.
-  HMODULE hMainModule = GetModuleHandle(NULL);
-  createIcon = (PCREATEICON)GetProcAddress(hMainModule, "createIcon");
-  destroyIcon = (PDESTROYICON)GetProcAddress(hMainModule, "destroyIcon");
-  updateIcon = (PUPDATEICON)GetProcAddress(hMainModule, "updateIcon");
-  createBitmapFromIcon = (PCREATEBITMAPFROMICON)GetProcAddress(hMainModule, "createBitmapFromIcon");
 } 
 
 SystemTray::~SystemTray()
@@ -205,7 +196,7 @@ void SystemTray::addIcon(PNOTIFYICONDATA32 nid)
     return;
   
   HBITMAP bmp = createBitmapFromIcon((HICON)nid->hIcon, 0);
-  Icon* icon = createIcon(this, bmp, IF_SMALL);
+  Icon* icon = dock.createIcon(bmp, IF_SMALL);
   if(!icon)
   {
     DeleteObject(bmp);
@@ -213,7 +204,7 @@ void SystemTray::addIcon(PNOTIFYICONDATA32 nid)
   }
   IconData* iconData;
   icon->userData = iconData = new IconData((HICON)nid->hIcon, icon, nid);
-  icon->mouseEventProc = mouseEventProc;
+  icon->handleMouseEvent = handleMouseEvent;
 //  if(nid->uFlags & NIF_GUID)
 //    memcpy(&iconData->guidItem, &nid->guidItem, sizeof(GUID));
   icons[key] = icon;
@@ -238,7 +229,7 @@ void SystemTray::updateIcon2(PNOTIFYICONDATA32 nid)
     if(icon->icon)
       DeleteObject(icon->icon);
     icon->icon = createBitmapFromIcon((HICON)nid->hIcon, 0);
-    updateIcon(this, iconData->icon);
+    dock.updateIcon(iconData->icon);
   }
   if(nid->hWnd)
     iconData->hwnd = (HWND)nid->hWnd;
@@ -268,7 +259,7 @@ void SystemTray::removeIcon(PNOTIFYICONDATA32 nid)
 
   Icon* icon = i->second;
   delete (IconData*)icon->userData;
-  destroyIcon(this, icon);
+  dock.destroyIcon(icon);
   icons.erase(i);
 }
 
@@ -315,7 +306,7 @@ LRESULT CALLBACK SystemTray::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
   return 0;
 }
 
-int SystemTray::mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int message, int x, int y)
+int SystemTray::handleMouseEvent(Icon* icon, unsigned int message, int x, int y)
 {
   switch(message)
   {

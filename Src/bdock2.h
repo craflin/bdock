@@ -6,8 +6,6 @@
 #ifndef Bdock2_H
 #define Bdock2_H
 
-#include <windows.h>
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -15,6 +13,7 @@ extern "C"
 
 struct Icon;
 struct Timer;
+struct Plugin;
 
 struct Icon
 {
@@ -37,18 +36,18 @@ struct Timer
   void* userData;
 };
 
-struct Plugin
+struct Dock
 {
-  int (*addIcon)(struct Icon* icon);
+  struct Icon* (*createIcon)(HBITMAP icon, unsigned int flags);
+  int (*destroyIcon)(struct Icon* icon);
   int (*updateIcon)(struct Icon* icon);
-  int (*removeIcon)(struct Icon* icon);  
+  int (*updateIcons)(struct Icon** icons, unsigned int count);
   int (*getIconRect)(struct Icon* icon, RECT* rect);
   DWORD (*showMenu)(HMENU hmenu, int x, int y);
-  HBITMAP (*createBitmapFromIcon)(HICON icon, SIZE* size);
 
-  int (*addTimer)(struct Timer* timer);
+  struct Timer* (*createTimer)(unsigned int interval);
   int (*updateTimer)(struct Timer* timer);
-  int (*removeTimer)(struct Timer* timer);
+  int (*destroyTimer)(struct Timer* timer);
 
   int (*enterStorageSection)(const char* name);
   int (*enterStorageNumSection)(unsigned int pos);

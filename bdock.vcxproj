@@ -169,7 +169,6 @@
     </ClCompile>
     <ClCompile Include="Src\bdock\storage.cpp" />
     <ClInclude Include="Src\bdock\assert.h" />
-    <ClInclude Include="Src\bdock\bdock.h" />
     <ClInclude Include="Src\bdock\dock.h" />
     <ClInclude Include="Src\bdock\icon.h" />
     <ClInclude Include="Src\bdock\plugin.h" />

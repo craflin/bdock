@@ -5,10 +5,7 @@ HMODULE hmodule = 0;
 
 HWND hookedWnd = 0;
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-           )
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {  
   switch (ul_reason_for_call)
   {
@@ -48,21 +45,19 @@ BOOL APIENTRY DllMain( HMODULE hModule,
   return TRUE;
 }
 
-#define LAUNCHER_API __declspec(dllexport)
-
-extern "C" LAUNCHER_API struct Plugin* create(void)
+extern "C" __declspec(dllexport) struct Plugin* create(struct Dock* dock)
 {
-  return new SystemTray;
+  return (Plugin*) new SystemTray(*dock);
 }
 
-extern "C" LAUNCHER_API int init(struct Plugin* plugin)
+extern "C" __declspec(dllexport) int init(struct Plugin* plugin)
 {
   if(!((SystemTray*)plugin)->init())
     return -1;
   return 0;
 }
 
-extern "C" LAUNCHER_API void destroy(struct Plugin* plugin)
+extern "C" __declspec(dllexport) void destroy(struct Plugin* plugin)
 {
   delete (SystemTray*)plugin;
 }

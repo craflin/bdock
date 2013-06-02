@@ -2,9 +2,12 @@
 #ifndef Launcher_H
 #define Launcher_H
 
+class Launcher;
+
 class IconData
 {
 public:
+  Launcher& launcher;
   HICON hicon;
   Icon* icon;
   HWND hwnd;
@@ -12,14 +15,14 @@ public:
   std::wstring parameters;
   bool pinned;
 
-  IconData(HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters);
+  IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters);
   ~IconData();
 };
 
-class Launcher : public Plugin
+class Launcher
 {
 public:
-  Launcher();
+  Launcher(Dock& dock);
   ~Launcher();
 
   bool init();
@@ -27,13 +30,15 @@ public:
 private:
   static ATOM wndClass;
   static int instances;
+
+  Dock& dock;
   HICON defaultIcon;
   HWND hwnd;
   HWND activeHwnd;
-  std::map<HWND,Icon*> icons;
+  std::map<HWND, Icon*> icons;
   std::vector<Icon*> launchers;
 
-  static int mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int message, int x, int y);
+  static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
 
   static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
   static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);

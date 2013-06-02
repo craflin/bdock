@@ -9,7 +9,7 @@ extern HMODULE hmodule;
 ATOM Launcher::wndClass = 0;
 int Launcher::instances = 0;
 
-Launcher::Launcher() : defaultIcon(LoadIcon(NULL, IDI_APPLICATION)), hwnd(0), activeHwnd(0)
+Launcher::Launcher(Dock& dock) : dock(dock), defaultIcon(LoadIcon(NULL, IDI_APPLICATION)), hwnd(0), activeHwnd(0)
 {
   if(instances == 0)
     wmiInit();
@@ -52,27 +52,27 @@ Launcher::~Launcher()
 bool Launcher::init()
 {
   // load launcher
-  for(int i = 0, count = getStorageNumSectionCount(this); i < count; ++i)
+  for(int i = 0, count = dock.getStorageNumSectionCount(); i < count; ++i)
   {
-    enterStorageNumSection(this, i);
+    dock.enterStorageNumSection(i);
     BITMAP* header;
     char* data;
     unsigned int len;
     HBITMAP bitmap = 0;
-    if(!getStorageData(this, "iconHeader", (char**)&header, &len, 0, 0) && len == sizeof(BITMAP))
-      if(!getStorageData(this, "iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
+    if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len == sizeof(BITMAP))
+      if(!dock.getStorageData("iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
         bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
-    const wchar* path = getStorageString(this, "path", 0, L"", 0);
-    const wchar* parameters = getStorageString(this, "parameters", 0, L"", 0);
-    leaveStorageSection(this);
+    const wchar* path = dock.getStorageString("path", 0, L"", 0);
+    const wchar* parameters = dock.getStorageString("parameters", 0, L"", 0);
+    dock.leaveStorageSection();
 
-    Icon* icon = ::createIcon(this, bitmap, IF_GHOST);
+    Icon* icon = dock.createIcon(bitmap, IF_GHOST);
     if(!icon)
       DeleteObject(bitmap);
     else
     {
-      icon->mouseEventProc = mouseEventProc;
-      IconData* iconData = new IconData(0, icon, 0, path, parameters);;
+      icon->handleMouseEvent = handleMouseEvent;
+      IconData* iconData = new IconData(*this, 0, icon, 0, path, parameters);;
       icon->userData = iconData;
       iconData->pinned = true;
       launchers.push_back(icon);
@@ -174,14 +174,14 @@ void Launcher::addIcon(HWND hwnd)
     hicon = defaultIcon;
 
   HBITMAP bitmap = createBitmapFromIcon(hicon, 0);
-  Icon* icon = ::createIcon(this, bitmap, hwnd == activeHwnd ? IF_ACTIVE : 0);
+  Icon* icon = dock.createIcon(bitmap, hwnd == activeHwnd ? IF_ACTIVE : 0);
   if(!icon)
   {
     DeleteObject(bitmap);
     return;
   }
-  icon->mouseEventProc = mouseEventProc;
-  icon->userData = new IconData(hicon, icon, hwnd, path, parameters);
+  icon->handleMouseEvent = handleMouseEvent;
+  icon->userData = new IconData(*this, hicon, icon, hwnd, path, parameters);
   //GetWindowText(hwnd, newIcon->title, sizeof(newIcon->title));
 
   icons[hwnd] = icon;
@@ -210,7 +210,7 @@ void Launcher::activateIcon(HWND hwnd)
     activeHwnd = hwnd;
   }
 
-  ::updateIcons(this, updateIcons, updateIconsCount);
+  dock.updateIcons(updateIcons, updateIconsCount);
 }
 
 void Launcher::updateIcon(HWND hwnd, bool forceUpdate)
@@ -237,7 +237,7 @@ void Launcher::updateIcon(HWND hwnd, bool forceUpdate)
     forceUpdate = true;
   }
   if(forceUpdate)
-    ::updateIcon(this, icon);
+    dock.updateIcon(icon);
 }
 
 void Launcher::removeIcon(HWND hwnd)
@@ -260,15 +260,15 @@ void Launcher::removeIcon(HWND hwnd)
     // try to restore the icon from storage
     if(pos < (uint)launchers.size())
     {
-      enterStorageNumSection(this, pos);
+      dock.enterStorageNumSection(pos);
       BITMAP* header;
       char* data;
       unsigned int len;
       HBITMAP bitmap = 0;
-      if(!getStorageData(this, "iconHeader", (char**)&header, &len, 0, 0) && len == sizeof(BITMAP))
-        if(!getStorageData(this, "iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
+      if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len == sizeof(BITMAP))
+        if(!dock.getStorageData("iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
           bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
-      leaveStorageSection(this);
+      dock.leaveStorageSection();
       if(bitmap)
       {
         if(icon->icon)
@@ -281,12 +281,12 @@ void Launcher::removeIcon(HWND hwnd)
     iconData->hwnd = 0;
     icon->flags |= IF_GHOST;
     icon->flags &= ~IF_ACTIVE;
-    ::updateIcon(this, icon);
+    dock.updateIcon(icon);
   }
   else
   {
     delete iconData;
-    ::destroyIcon(this, icon);
+    dock.destroyIcon(icon);
   }
   icons.erase(hwnd);
 }
@@ -364,7 +364,7 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
             if(i != launcher->icons.end())
             {
               RECT rect;
-              getIconRect(launcher, i->second, &rect);
+              launcher->dock.getIconRect(i->second, &rect);
               shi->left = short(rect.left);
               shi->top = short(rect.top);
               shi->right = short(rect.right);
@@ -487,7 +487,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
     SetMenuDefaultItem(hmenu, 0, MF_BYPOSITION);
 
   HWND hwnd = iconData->hwnd; // copy hwnd since the window may close and iconData may be destroyed while showMenu()
-  DWORD cmd = showMenu(this, hmenu, x, y);
+  DWORD cmd = dock.showMenu(hmenu, x, y);
   DestroyMenu(hmenu);
   
   if(!cmd)
@@ -512,13 +512,13 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
       if(pos != launchers.end() - launchers.begin())
       {
         launchers.erase(launchers.begin() + pos);
-        deleteStorageNumSection(this, (uint)pos);
+        dock.deleteStorageNumSection((uint)pos);
       }
 
       if(!iconData->hwnd)
       {
         delete iconData;
-        ::destroyIcon(this, icon);
+        dock.destroyIcon(icon);
       }
     }
     else
@@ -536,23 +536,23 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
       {
         uint pos = (uint)launchers.size();
         launchers.push_back(icon);
-        enterStorageNumSection(this, pos);
-        setStorageString(this, "path", iconData->path.c_str(), (uint)iconData->path.length());
-        setStorageString(this, "parameters", iconData->parameters.c_str(), (uint)iconData->parameters.length());
+        dock.enterStorageNumSection(pos);
+        dock.setStorageString("path", iconData->path.c_str(), (uint)iconData->path.length());
+        dock.setStorageString("parameters", iconData->parameters.c_str(), (uint)iconData->parameters.length());
         BITMAP bm;
         if(GetObject(icon->icon, sizeof(BITMAP), &bm))
         {
-          setStorageData(this, "iconHeader", (char*)&bm, sizeof(bm));
+          dock.setStorageData("iconHeader", (char*)&bm, sizeof(bm));
           uint size = bm.bmWidthBytes * bm.bmHeight;
           char* buffer = (char*)malloc(size);
           if(buffer)
           {
             if(GetBitmapBits(icon->icon, size, buffer))
-              setStorageData(this, "iconData", buffer, size);
+              dock.setStorageData("iconData", buffer, size);
             free(buffer);
           }
         }
-        leaveStorageSection(this);
+        dock.leaveStorageSection();
       }
     }
     break;
@@ -566,18 +566,19 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
   }
 }
 
-int Launcher::mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int message, int x, int y)
+int Launcher::handleMouseEvent(Icon* icon, unsigned int message, int x, int y)
 {
+  IconData* iconData = (IconData*) icon->userData;
   switch(message)
   {
   case WM_LBUTTONUP:
     {
-      HWND hwnd = ((IconData*)icon->userData)->hwnd;
+      HWND hwnd = iconData->hwnd;
       if(hwnd)
       {
         if(!IsWindow(hwnd))
         {
-          ((Launcher*)plugin)->removeIcon(hwnd);
+          iconData->launcher.removeIcon(hwnd);
           break;
         }
 
@@ -600,12 +601,12 @@ int Launcher::mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int mes
       }
       else
       {        
-        ((Launcher*)plugin)->launch(*icon);
+        iconData->launcher.launch(*icon);
       }
     }
     break;
   case WM_CONTEXTMENU:
-    ((Launcher*)plugin)->showContextMenu(icon, x, y);
+    iconData->launcher.showContextMenu(icon, x, y);
     break;
   default:
     return -1;
@@ -613,8 +614,8 @@ int Launcher::mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int mes
   return 0;
 }
 
-IconData::IconData(HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters) : 
-  hicon(hicon), icon(icon), hwnd(hwnd), path(path), parameters(parameters), pinned(false) {}
+IconData::IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters) :
+  launcher(launcher), hicon(hicon), icon(icon), hwnd(hwnd), path(path), parameters(parameters), pinned(false) {}
 
 IconData::~IconData()
 {

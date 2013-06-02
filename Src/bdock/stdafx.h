@@ -19,16 +19,18 @@
 #include <memory.h>
 #include <tchar.h>
 
-#include <set> // TODO: repalce all sets with hash_sets
-#include <map> // TODO: replace all maps with hash_maps
+#include <set> // TODO: repalce all sets with unordered_set
+#include <map> // TODO: replace all maps with unordered_map
 #include <vector>
 #include <string>
-#include <hash_map>
-#include <hash_set>
+#include <hash_map> // TODO: replace all hash_maps with unordered_map
+#include <hash_set> // TODO: replace all hash_sets with unordered_set
+#include <unordered_map>
+#include <unordered_set>
 
 namespace API
 {
-#include "bdock.h"
+#include "../bdock2.h"
 };
 
 typedef unsigned int uint;

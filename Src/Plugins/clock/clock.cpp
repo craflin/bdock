@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 
-Clock::Clock() : bitmap(0), font(0), bgBrush(0), icon(0), timer(0) {}
+Clock::Clock(Dock& dock) : dock(dock), bitmap(0), font(0), bgBrush(0), icon(0), timer(0) {}
 
 Clock::~Clock()
 {
@@ -55,26 +55,27 @@ bool Clock::init()
 
   // add clock icon to dock
   //createIcon(this, 0, IF_SMALL);
-  icon = createIcon(this, bitmap, IF_HALFBG);
+  icon = dock.createIcon(bitmap, IF_HALFBG);
   if(!icon)
     return false;
 
   // add update timer
-  timer = createTimer(this, 60 * 1000 - st.wSecond * 1000 - st.wMilliseconds);
-  timer->timerProc = timerProc;
+  timer = dock.createTimer(60 * 1000 - st.wSecond * 1000 - st.wMilliseconds);
   if(!timer)
     return false;
+  timer->handleTimerEvent = handleTimerEvent;
+  timer->userData = this;
 
   return true;
 }
 
-int Clock::timerProc(Plugin* plugin, Timer* timer)
+int Clock::handleTimerEvent(Timer* timer)
 {
-  Clock* clock = (Clock*)plugin;
+  Clock* clock = (Clock*) timer->userData;
   clock->update();
-  updateIcon(clock, clock->icon);
+  clock->dock.updateIcon(clock->icon);
   timer->interval = 60 * 1000 - clock->st.wSecond * 1000 - clock->st.wMilliseconds;
-  updateTimer(clock, timer);
+  clock->dock.updateTimer(timer);
   return 0;
 }
 

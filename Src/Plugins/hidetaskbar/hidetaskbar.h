@@ -2,7 +2,7 @@
 #ifndef HideTaskBar_H
 #define HideTaskBar_H
 
-class HideTaskBar : public Plugin
+class HideTaskBar
 {
 public:
   HideTaskBar();

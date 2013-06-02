@@ -2,15 +2,16 @@
 #ifndef Clock_H
 #define Clock_H
 
-class Clock : public Plugin
+class Clock
 {
 public:
-  Clock();
+  Clock(Dock& dock);
   ~Clock();
 
   bool init();
 
 private:
+  Dock& dock;
   HBITMAP bitmap;
   HFONT font;
   HBRUSH bgBrush;
@@ -20,10 +21,9 @@ private:
   Timer* timer;
   SYSTEMTIME st;
 
-  static int timerProc(Plugin* plugin, Timer* timer);
+  static int handleTimerEvent(Timer* timer);
 
   void update();
-  
 };
 
 #endif //Clock_H

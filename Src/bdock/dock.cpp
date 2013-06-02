@@ -268,7 +268,7 @@ void Dock::handleContextMenu(int x, int y)
   ScreenToClient(hwnd, &pt); 
 
   Icon* icon = hitTest(pt.x, pt.y);
-  if(icon && icon->mouseEventProc && icon->mouseEventProc(icon->plugin->key, icon, WM_CONTEXTMENU, x, y) == 0)
+  if(icon && icon->handleMouseEvent && icon->handleMouseEvent(icon, WM_CONTEXTMENU, x, y) == 0)
     return;
 
   /*
@@ -306,7 +306,7 @@ Icon* Dock::hitTest(int x, int y)
 bool Dock::handleMouseEvent(UINT message, int x, int y)
 {
   Icon* icon = hitTest(x, y);
-  if(icon && icon->mouseEventProc && icon->mouseEventProc(icon->plugin->key, icon, message, x + pos.x, y + pos.y) == 0)
+  if(icon && icon->handleMouseEvent && icon->handleMouseEvent(icon, message, x + pos.x, y + pos.y) == 0)
     return true;
   return false;
 }
@@ -325,10 +325,10 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     if(wParam != 0)
     {
       Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-      if(dock->timers.find((Timer*)wParam) != dock->timers.end())    
+      if(dock->timers.find((Timer*)wParam) != dock->timers.end())
       {
         Timer* timer = (Timer*)wParam;
-        timer->timerProc(timer->plugin->key, timer);
+        timer->handleTimerEvent(timer);
       }
     }
     break;

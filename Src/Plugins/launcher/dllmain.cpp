@@ -3,10 +3,7 @@
 
 HMODULE hmodule = 0;
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-           )
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {  
   switch (ul_reason_for_call)
   {
@@ -23,22 +20,19 @@ BOOL APIENTRY DllMain( HMODULE hModule,
   return TRUE;
 }
 
-#define LAUNCHER_API __declspec(dllexport)
-
-extern "C" LAUNCHER_API struct Plugin* create(void)
+extern "C" __declspec(dllexport) struct Plugin* create(struct Dock* dock)
 {
-  return new Launcher;
+  return (Plugin*) new Launcher(*dock);
 }
 
-extern "C" LAUNCHER_API int init(struct Plugin* plugin)
+extern "C" __declspec(dllexport) int init(struct Plugin* plugin)
 {
   if(!((Launcher*)plugin)->init())
     return -1;
   return 0;
 }
 
-extern "C" LAUNCHER_API void destroy(struct Plugin* plugin)
+extern "C" __declspec(dllexport) void destroy(struct Plugin* plugin)
 {
   delete (Launcher*)plugin;
 }
-

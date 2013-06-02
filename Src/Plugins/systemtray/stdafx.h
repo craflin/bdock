@@ -16,9 +16,10 @@
 #include <string>
 #include <hash_map>
 
-#include "../../bdock/bdock.h"
+#include "../../bdock2.h"
 
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
 #include "systemtray.h"
+#include "systools.h"

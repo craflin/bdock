@@ -6,8 +6,10 @@
     <ClCompile Include="Src\Plugins\systemtray\dllmain.cpp" />
     <ClCompile Include="Src\Plugins\systemtray\stdafx.cpp" />
     <ClCompile Include="Src\Plugins\systemtray\systemtray.cpp" />
+    <ClCompile Include="Src\Plugins\systemtray\systools.cpp" />
     <ClInclude Include="Src\Plugins\systemtray\stdafx.h" />
     <ClInclude Include="Src\Plugins\systemtray\systemtray.h" />
+    <ClInclude Include="Src\Plugins\systemtray\systools.h" />
     <ClInclude Include="Src\Plugins\systemtray\targetver.h" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>

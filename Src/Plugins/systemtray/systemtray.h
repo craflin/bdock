@@ -54,32 +54,24 @@ public:
   ~IconData();
 };
 
-class SystemTray : public Plugin
+class SystemTray
 {
 public:
-  SystemTray();
+  SystemTray(Dock& dock);
   ~SystemTray();
 
   bool init();
 
 private:
-  DllInjection dllInjection;
   static ATOM wndClass;
   static int instances;
+
+  Dock& dock;
+  DllInjection dllInjection;
   HWND hwnd;
   stdext::hash_map<std::string, Icon*> icons;
 
-  typedef struct Icon* (*PCREATEICON)(struct Plugin* plugin, HBITMAP icon, unsigned int flags);
-  typedef int (*PDESTROYICON)(struct Plugin* plugin, struct Icon* icon);
-  typedef int (*PUPDATEICON)(struct Plugin* plugin, struct Icon* icon);
-  typedef HBITMAP (*PCREATEBITMAPFROMICON)(HICON icon, SIZE* size);
-
-  PCREATEICON createIcon;
-  PDESTROYICON destroyIcon;
-  PUPDATEICON updateIcon;
-  PCREATEBITMAPFROMICON createBitmapFromIcon;
-
-  static int mouseEventProc(struct Plugin* plugin, Icon* icon, unsigned int message, int x, int y);
+  static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
   static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
   void addIcon(PNOTIFYICONDATA32 nid);
