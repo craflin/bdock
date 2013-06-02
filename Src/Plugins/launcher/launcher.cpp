@@ -198,8 +198,8 @@ void Launcher::activateIcon(HWND hwnd)
   {
     i->second->flags |= IF_ACTIVE;
     updateIcons[updateIconsCount++] = i->second;
-    activeHwnd = hwnd;
   }
+  activeHwnd = hwnd;
 
   dock.updateIcons(updateIcons, updateIconsCount);
 }
