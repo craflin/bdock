@@ -3,23 +3,19 @@
 
 #include "stdafx.h"
 
+extern HMODULE hmodule;
+
 int HideTaskBar::instances = 0;
 bool HideTaskBar::hidden = false;
 LPARAM HideTaskBar::originalState;
+
+ATOM HideTaskBar::wndClass = 0;
+HWND HideTaskBar::hwnd = 0;
 
 HideTaskBar::HideTaskBar()
 {
   ++instances;
 } 
-
-HideTaskBar::~HideTaskBar()
-{
-  --instances;
-  if(instances == 0 && hidden)
-  { // unhide
-    showTaskBar(true, originalState);
-  }
-}
 
 bool HideTaskBar::init()
 {
@@ -29,10 +25,63 @@ bool HideTaskBar::init()
       return false;
     hidden = true;
   }
+  
+  if(!hwnd)
+  {
+    // register system menu monitor window class
+    if(!wndClass)
+    {
+      WNDCLASSEX wcex;
+      wcex.cbSize = sizeof(WNDCLASSEX);
+      wcex.style      = 0; 
+      wcex.lpfnWndProc  = wndProc;
+      wcex.cbClsExtra    = 0;
+      wcex.cbWndExtra    = 0;
+      wcex.hInstance    = hmodule;
+      wcex.hIcon      = 0;
+      wcex.hCursor    = 0;
+      wcex.hbrBackground  = 0; //(HBRUSH)(COLOR_WINDOW+1);
+      wcex.lpszMenuName  = 0; //MAKEINTRESOURCE(IDC_BDOCK);
+      wcex.lpszClassName  = L"BDOCKSysMenuMon";
+      wcex.hIconSm    = 0;
+      wndClass = RegisterClassEx(&wcex);
+      if(!wndClass)
+        return false;
+    }
+
+    // create system menu monitor window
+    hwnd = CreateWindowEx(NULL, L"BDOCKSysMenuMon", NULL, NULL, NULL, NULL, NULL, NULL, HWND_MESSAGE, NULL, hmodule, this);
+    if(!hwnd)
+      return false;
+    if(!RegisterShellHookWindow(hwnd))
+      return false;
+  }
   return true;
 }
 
-bool HideTaskBar::showTaskBar(bool show, LPARAM& state) const
+HideTaskBar::~HideTaskBar()
+{
+  --instances;
+  if(instances == 0)
+  {
+      // unhide
+      if(hidden)
+      {
+        showTaskBar(true, originalState);
+        hidden = false;
+      }
+
+      // destroy system menu monitor window
+      if(hwnd)
+      {
+        DeregisterShellHookWindow(hwnd);
+        DestroyWindow(hwnd);
+        hwnd = 0;
+      }
+  }
+}
+
+bool HideTaskBar::showTaskBar(bool show, LPARAM& state)
 {
   APPBARDATA  apd = {0};
 
@@ -70,3 +119,34 @@ bool HideTaskBar::showTaskBar(bool show, LPARAM& state) const
   }
   return true;
 }
+
+LRESULT CALLBACK HideTaskBar::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
+  if(message == wm_shellhook)
+    switch(wParam)
+    {
+    case HSHELL_RUDEAPPACTIVATED:
+    case HSHELL_WINDOWACTIVATED:
+      {
+        HWND activeWnd = (HWND) lParam;
+        bool hideTaskBar = activeWnd != 0;
+        if(!hideTaskBar)
+        {
+          HWND startMenu = FindWindowExA(GetDesktopWindow(), 0, 0, "Start menu");
+          if(!startMenu || !IsWindowVisible(startMenu))
+            hideTaskBar = true;
+        }
+        if(hideTaskBar != hidden)
+        {
+          if(!showTaskBar(!hideTaskBar, HideTaskBar::originalState))
+            return false;
+          hidden = hideTaskBar;
+        }
+      }
+      break;
+    }
+  return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+

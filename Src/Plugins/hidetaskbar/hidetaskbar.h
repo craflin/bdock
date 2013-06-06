@@ -15,8 +15,12 @@ private:
   static bool hidden;
   static LPARAM originalState;
 
-  bool showTaskBar(bool show, LPARAM& state) const;
+  static ATOM wndClass;
+  static HWND hwnd;
 
+  static bool showTaskBar(bool show, LPARAM& state);
+
+  static LRESULT CALLBACK HideTaskBar::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 #endif //HideTaskBar_H
