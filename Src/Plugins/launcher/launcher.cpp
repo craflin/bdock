@@ -584,6 +584,9 @@ int Launcher::handleMouseEvent(Icon* icon, unsigned int message, int x, int y)
       }
     }
     break;
+  case WM_MBUTTONUP:
+    iconData->launcher.launch(*icon);
+    break;
   case WM_CONTEXTMENU:
     iconData->launcher.showContextMenu(icon, x, y);
     break;
