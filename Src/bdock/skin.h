@@ -23,10 +23,14 @@ public:
     friend class Skin;
   };
 
+  // dock backround
   Bitmap leftBg;
   Bitmap rightBg;
   Bitmap midBg;
+
+  // icon background
   Bitmap activeBg;
+  Bitmap defaultBg;
   Bitmap fullBg;
   Bitmap halfBg;
 

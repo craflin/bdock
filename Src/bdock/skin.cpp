@@ -74,6 +74,10 @@ bool Skin::init(const wchar* name)
   activeBg.load(file.c_str());
 
   file.resize(flen);
+  file += L"defaultBg.bmp";
+  defaultBg.load(file.c_str());
+
+  file.resize(flen);
   file += L"fullBg.bmp";
   fullBg.load(file.c_str());
 

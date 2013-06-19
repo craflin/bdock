@@ -152,6 +152,11 @@ void Dock::draw(HDC dest, const RECT& update)
       }
       else
       {
+        if(!(icon->flags & (IF_HALFBG | IF_FULLBG)) && skin->defaultBg.bmp)
+        {
+          const SIZE& size(skin->activeBg.size);
+          skin->defaultBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
+        }
         if(icon->flags & IF_HALFBG && skin->halfBg.bmp)
         {
           const SIZE& size(skin->halfBg.size);
