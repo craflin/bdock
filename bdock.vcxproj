@@ -172,7 +172,7 @@
     <ClInclude Include="Src\bdock\dock.h" />
     <ClInclude Include="Src\bdock\icon.h" />
     <ClInclude Include="Src\bdock\plugin.h" />
-    <ClInclude Include="Src\bdock\Resource.h" />
+    <ClInclude Include="Src\bdock\resource.h" />
     <ClInclude Include="Src\bdock\settings.h" />
     <ClInclude Include="Src\bdock\skin.h" />
     <ClInclude Include="Src\bdock\stdafx.h" />
@@ -180,6 +180,8 @@
     <ClInclude Include="Src\bdock\targetver.h" />
     <ClInclude Include="Src\bdock\timer.h" />
     <ResourceCompile Include="Src\bdock\bdock.rc" />
+    <None Include="Src\bdock\bdock.ico" />
+    <None Include="Src\bdock\small.ico" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
   <ItemGroup>

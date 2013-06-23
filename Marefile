@@ -30,6 +30,7 @@ targets = {
       }
       "Src/bdock/**.h"
       "Src/bdock/**.rc" = rcSource
+      "Src/bdock/*.ico"
       "Src/bdock2.h"
     }
   }

@@ -18,13 +18,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -41,10 +39,12 @@ IDI_SMALL               ICON                    "small.ico"
 // Menu
 //
 
-IDC_BDOCK MENU 
+IDC_BDOCK MENU
 BEGIN
     POPUP "&Dock"
     BEGIN
+        MENUITEM "&About bdock",                IDM_ABOUT
+        MENUITEM SEPARATOR
         MENUITEM "E&xit",                       IDM_EXIT
     END
     POPUP "&Help"
@@ -59,15 +59,16 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 77
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About bdock"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            128,IDC_STATIC,14,14,21,20
-    LTEXT           "bdock, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2009",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+    ICON            IDI_BDOCK,IDC_STATIC,14,14,20,20
+    LTEXT           "bdock",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright 2009-2013 Colin Graf",IDC_STATIC,42,26,114,14
+    DEFPUSHBUTTON   "OK",IDOK,113,56,50,14,WS_GROUP
+    LTEXT           "Apache License, Version 2.0",IDC_STATIC,42,39,114,14
 END
 
 
@@ -77,14 +78,14 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 163
         TOPMARGIN, 7
-        BOTTOMMARGIN, 55
+        BOTTOMMARGIN, 70
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -126,13 +127,13 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_APP_TITLE           "bdock"
     IDC_BDOCK               "BDOCK"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
