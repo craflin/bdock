@@ -334,6 +334,24 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     }
     break;
   case WM_TIMER:
+    if(wParam == 0) // check full screen app timer
+    {
+        bool hideWindow = isFullscreen(GetForegroundWindow());
+        if(!!IsWindowVisible(hwnd) == hideWindow)
+        {
+          if(!hideWindow)
+          {
+            Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+            LONG windowStyle = GetWindowLong(hwnd, GWL_STYLE);
+            SetWindowLong(hwnd, GWL_STYLE, windowStyle | WS_VISIBLE);
+            dock->update(0);
+            SetWindowLong(hwnd, GWL_STYLE, windowStyle);
+            ShowWindow(hwnd, SW_SHOW);
+          }
+          else
+            ShowWindow(hwnd, SW_HIDE);
+        }
+  }
     if(wParam != 0)
     {
       Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
@@ -381,11 +399,15 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
   default:
     static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
     if(message == wm_shellhook)
+    {
       switch(wParam)
       {
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
         {
+          KillTimer(hwnd, 0);
+          SetTimer(hwnd, 0, 300, 0);
+          /*
           bool hideWindow = isFullscreen((HWND)lParam) && wParam == HSHELL_RUDEAPPACTIVATED;
           if(!!IsWindowVisible(hwnd) == hideWindow)
           {
@@ -401,9 +423,11 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
             else
               ShowWindow(hwnd, SW_HIDE);
           }
+          */
         }
         break;
       }
+    }
     return DefWindowProc(hwnd, message, wParam, lParam);
   }
   return 0;
