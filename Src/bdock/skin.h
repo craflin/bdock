@@ -1,7 +1,6 @@
 
 
-#ifndef Skin_H
-#define Skin_H
+#pragma once
 
 class Skin 
 {
@@ -46,5 +45,3 @@ private:
   HBITMAP bg;
   SIZE bgSize;
 };
-
-#endif

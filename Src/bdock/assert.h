@@ -1,6 +1,5 @@
 
-#ifndef Assert_H
-#define Assert_H
+#pragma once
 
 #ifdef _DEBUG
 
@@ -20,5 +19,3 @@ public:
 #define VERIFY(e) e
 #define TRACE(...)
 #endif
-
-#endif //!Assert_H

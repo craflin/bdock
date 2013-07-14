@@ -1,6 +1,5 @@
 
-#ifndef Plugin_H
-#define Plugin_H
+#pragma once
 
 class Icon;
 class Dock;
@@ -75,5 +74,3 @@ private:
     static int deleteStorageEntry(const char* name);
   };
 };
-
-#endif

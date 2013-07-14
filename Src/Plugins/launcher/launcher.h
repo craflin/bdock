@@ -1,6 +1,5 @@
 
-#ifndef Launcher_H
-#define Launcher_H
+#pragma once
 
 class Launcher;
 
@@ -54,6 +53,3 @@ private:
   bool launch(Icon& icon);
   bool getCommandLine(HWND hwnd, std::wstring& path, std::wstring& parameters);
 };
-
-#endif //Launcher_H
-

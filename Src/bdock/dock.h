@@ -1,6 +1,5 @@
 
-#ifndef Dock_H
-#define Dock_H
+#pragma once
 
 class Icon;
 class Plugin;
@@ -70,5 +69,3 @@ private:
 
   static bool isFullscreen(HWND hwnd);
 };
-
-#endif

@@ -1,6 +1,5 @@
 
-#ifndef SettingsDlg_H
-#define SettingsDlg_H
+#pragma once
 
 class Storage;
 
@@ -22,6 +21,3 @@ private:
   virtual bool onInitDialog();
   virtual bool onCommand(UINT command, HWND source);
 };
-
-
-#endif

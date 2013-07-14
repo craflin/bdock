@@ -1,6 +1,5 @@
 
-#ifndef HideTaskBar_H
-#define HideTaskBar_H
+#pragma once
 
 class HideTaskBar
 {
@@ -22,6 +21,4 @@ private:
 
   static LRESULT CALLBACK HideTaskBar::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
-
-#endif //HideTaskBar_H
 

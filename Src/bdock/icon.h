@@ -1,6 +1,5 @@
 
-#ifndef Icon_H
-#define Icon_H
+#pragma once
 
 class Plugin;
 class Dock;
@@ -18,5 +17,3 @@ public:
 
   void draw(HDC dest, const Settings& settings);
 };
-
-#endif

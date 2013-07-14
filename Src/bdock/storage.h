@@ -1,6 +1,5 @@
 
-#ifndef Storage_H
-#define Storage_H
+#pragma once
 
 class Storage
 {
@@ -101,5 +100,3 @@ private:
   bool write(HANDLE hFile, const void* buffer, uint size) const;
 
 };
-
-#endif 

@@ -3,8 +3,7 @@
 * @author Colin Graf
 */
 
-#ifndef Bdock2_H
-#define Bdock2_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C"
@@ -74,5 +73,3 @@ struct Dock
 #ifdef __cplusplus
 }
 #endif 
-
-#endif //Bdock2_H

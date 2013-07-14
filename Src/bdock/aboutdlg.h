@@ -1,6 +1,5 @@
 
-#ifndef AboutDlg_H
-#define AboutDlg_H
+#pragma once
 
 class AboutDlg : public WinAPI::Dialog
 {
@@ -12,6 +11,3 @@ public:
 private:
   virtual bool onDlgMessage(UINT message, WPARAM wParam, LPARAM lParam);
 };
-
-
-#endif

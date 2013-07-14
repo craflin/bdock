@@ -1,6 +1,5 @@
 
-#ifndef SystemTray_H
-#define SystemTray_H
+#pragma once
 
 class DllInjection
 {
@@ -79,6 +78,3 @@ private:
   void removeIcon(PNOTIFYICONDATA32 nid);
   void setIconVersion(PNOTIFYICONDATA32 nid);
 };
-
-#endif //SystemTray_H
-

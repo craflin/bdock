@@ -1,6 +1,5 @@
 
-#ifndef Settings_H
-#define Settings_H
+#pragma once
 
 class Settings
 {
@@ -27,5 +26,3 @@ public:
 
   Settings(Storage* storage);
 };
-
-#endif

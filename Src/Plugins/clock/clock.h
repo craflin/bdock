@@ -1,6 +1,5 @@
 
-#ifndef Clock_H
-#define Clock_H
+#pragma once
 
 class Clock
 {
@@ -25,6 +24,3 @@ private:
 
   void update();
 };
-
-#endif //Clock_H
-

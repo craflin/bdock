@@ -1,6 +1,5 @@
 
-#ifndef WMI_H
-#define WMI_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C"
@@ -17,6 +16,3 @@ BOOL wmiGetStrValue(LPCWSTR name, LPCWSTR* result);
 #ifdef __cplusplus
 }
 #endif
-
-#endif
-
