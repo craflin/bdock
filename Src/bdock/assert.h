@@ -1,7 +1,7 @@
 
 #pragma once
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 
 class Assert
 {
