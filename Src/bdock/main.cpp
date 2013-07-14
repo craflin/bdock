@@ -3,8 +3,7 @@
 
 #include "stdafx.h"
 
-
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(DEBUG_CONSOLE)
 
 #pragma comment(linker, "/subsystem:console")
 
@@ -73,11 +72,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
+  WinAPI::Application application(hInstance, ICC_LINK_CLASS);
+
   // load storage
   std::wstring storageFile;
   Storage storage;
   {
-    wchar path[MAX_PATH];
+    WCHAR path[MAX_PATH];
     if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path))) 
     {
       storageFile = path;
@@ -119,11 +120,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     */
   }
 
+  // autostart?
+  //SHGetFolderPath(
+  //if(storage.getInt("autostart", 1) 
+
   // create docks
   std::vector<Dock*> docks(storage.getNumSectionCount());
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
   {
-    Dock* dock = new Dock(storage.getNumSection(i));
+    Dock* dock = new Dock(storage, storage.getNumSection(i));
     if(!dock->init(hInstance))
       delete dock;
     else
@@ -131,15 +136,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   }
 
   // Main message loop:
-  MSG msg;
-  while (GetMessage(&msg, NULL, 0, 0))
-  {
-    //if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-    {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-    }
-  }
+  UINT exitCode = application.run();
 
   // delete docks
   for(std::vector<Dock*>::iterator i = docks.begin(), end = docks.end(); i != end; ++i)
@@ -150,5 +147,5 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   if(!storageFile.empty())
     storage.save(storageFile.c_str());
 
-  return (int) msg.wParam;
+  return (int) exitCode;
 }

@@ -15,7 +15,7 @@ public:
   Settings settings;
   POINT pos;
 
-  Dock(Storage* storage);
+  Dock(Storage& globalStorage, Storage* dockStorage);
   ~Dock();
 
   bool init(HINSTANCE hinstance);
@@ -29,12 +29,15 @@ public:
   void updateTimer(Timer* timer);
   void update();
 
+  bool showSettingsDlg();
+
   // api functions
   DWORD showMenu(HMENU hmenu, int x, int y);
 
 private:
   static ATOM wndClass;
 
+  Storage& globalStorage;
   Storage* storage;
   HWND hwnd;
   Skin* skin;
@@ -64,7 +67,6 @@ private:
   bool handleMouseEvent(UINT message, int x, int y);
 
   static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-  static INT_PTR CALLBACK aboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
   static bool isFullscreen(HWND hwnd);
 };

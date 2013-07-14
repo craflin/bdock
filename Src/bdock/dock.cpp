@@ -1,12 +1,11 @@
 
 
 #include "stdafx.h"
-#include "resource.h"
 
 ATOM Dock::wndClass = 0;
 HINSTANCE Dock::hinstance = 0;
 
-Dock::Dock(Storage* storage) : storage(storage), settings(storage), hwnd(0), skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0),
+Dock::Dock(Storage& globalStorage, Storage* dockStorage) : globalStorage(globalStorage), storage(dockStorage), settings(dockStorage), hwnd(0), skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0),
 activeHwnd(0), activeHwndRudeFullscreen(false) {}
 
 Dock::~Dock()
@@ -351,7 +350,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
           else
             ShowWindow(hwnd, SW_HIDE);
         }
-  }
+    }
     if(wParam != 0)
     {
       Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
@@ -367,7 +366,13 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       switch (LOWORD(wParam))
       {
       case IDM_ABOUT:
-        DialogBox(hinstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hwnd, aboutDlgProc);
+        AboutDlg().show(hwnd);
+        break;
+      case IDM_SETTINGS:
+        {
+          Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+          dock->showSettingsDlg();
+        }
         break;
       case IDM_EXIT:
         PostQuitMessage(0);
@@ -431,25 +436,6 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     return DefWindowProc(hwnd, message, wParam, lParam);
   }
   return 0;
-}
-
-INT_PTR CALLBACK Dock::aboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-  UNREFERENCED_PARAMETER(lParam);
-  switch (message)
-  {
-  case WM_INITDIALOG:
-    return (INT_PTR)TRUE;
-
-  case WM_COMMAND:
-    if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-    {
-      EndDialog(hDlg, LOWORD(wParam));
-      return (INT_PTR)TRUE;
-    }
-    break;
-  }
-  return (INT_PTR)FALSE;
 }
 
 DWORD Dock::showMenu(HMENU hmenu, int x, int y)
@@ -579,4 +565,35 @@ bool Dock::isFullscreen(HWND hwnd)
   clientRect.bottom += pt.y;
   
   return clientRect.left <= mi.rcWork.left && clientRect.top <= mi.rcWork.top && clientRect.right >= mi.rcWork.right && clientRect.bottom >= mi.rcWork.bottom;
+}
+
+bool Dock::showSettingsDlg()
+{
+  TCHAR startupLinkFilePath[MAX_PATH];
+  VERIFY(WinAPI::Shell::getFolderPath(CSIDL_STARTUP, startupLinkFilePath, MAX_PATH));
+  _tcscat_s(startupLinkFilePath, _T("\\bdock.lnk"));
+  
+  bool startup = GetFileAttributes(startupLinkFilePath) != INVALID_FILE_ATTRIBUTES;
+  globalStorage.setUInt("autostart", startup);
+
+  if(SettingsDlg(globalStorage).show(hwnd) != IDOK)
+    return false;
+
+  if(globalStorage.getUInt("autostart", 0))
+  {
+    if(GetFileAttributes(startupLinkFilePath) == INVALID_FILE_ATTRIBUTES)
+    {
+      TCHAR moduleFileName[MAX_PATH];
+      GetModuleFileName(WinAPI::Application::getInstance(), moduleFileName, MAX_PATH);
+      WinAPI::Shell::createLink(moduleFileName, startupLinkFilePath, _T(""));
+    }
+  }
+  else
+  {
+    if(GetFileAttributes(startupLinkFilePath) != INVALID_FILE_ATTRIBUTES)
+      DeleteFile(startupLinkFilePath);
+  }
+
+
+  return true;
 }

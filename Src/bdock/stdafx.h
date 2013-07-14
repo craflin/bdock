@@ -7,11 +7,9 @@
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
+#include "winapi.h"
 
-#include <shlobj.h>
+#include <shlobj.h> // TODO: get rid of this
 
 // C RunTime Header Files
 #include <cstdlib>
@@ -23,6 +21,8 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+
+#include "resource.h"
 
 namespace API
 {
@@ -40,6 +40,7 @@ typedef wchar_t wchar;
 #include "timer.h"
 #include "plugin.h"
 #include "dock.h"
-
+#include "aboutdlg.h"
+#include "settingsdlg.h"
 
 
