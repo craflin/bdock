@@ -9,6 +9,6 @@
     <ClInclude Include="Src\Plugins\HideTaskbar\HideTaskbar.h" />
     <ClInclude Include="Src\Plugins\HideTaskbar\stdafx.h" />
     <ClInclude Include="Src\Plugins\HideTaskbar\targetver.h" />
-    <ClInclude Include="Src\bdock2.h" />
+    <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>

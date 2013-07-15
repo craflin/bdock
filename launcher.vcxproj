@@ -159,7 +159,12 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\Plugins\Launcher\SysTools.cpp" />
-    <ClCompile Include="Src\Plugins\Launcher\wmi.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher\wmi.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClInclude Include="Src\Plugins\Launcher\Launcher.h" />
     <ClInclude Include="Src\Plugins\Launcher\resource.h" />
     <ClInclude Include="Src\Plugins\Launcher\stdafx.h" />
@@ -167,7 +172,7 @@
     <ClInclude Include="Src\Plugins\Launcher\targetver.h" />
     <ClInclude Include="Src\Plugins\Launcher\wmi.h" />
     <ResourceCompile Include="Src\Plugins\Launcher\launcher.rc" />
-    <ClInclude Include="Src\bdock2.h" />
+    <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

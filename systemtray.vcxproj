@@ -163,7 +163,7 @@
     <ClInclude Include="Src\Plugins\SystemTray\SystemTray.h" />
     <ClInclude Include="Src\Plugins\SystemTray\SysTools.h" />
     <ClInclude Include="Src\Plugins\SystemTray\targetver.h" />
-    <ClInclude Include="Src\bdock2.h" />
+    <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

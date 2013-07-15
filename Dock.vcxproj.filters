@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Dock\AboutDlg.cpp" />
+    <ClCompile Include="Src\Dock\Assert.cpp" />
+    <ClCompile Include="Src\Dock\Dock.cpp" />
+    <ClCompile Include="Src\Dock\Icon.cpp" />
+    <ClCompile Include="Src\Dock\main.cpp" />
+    <ClCompile Include="Src\Dock\Plugin.cpp" />
+    <ClCompile Include="Src\Dock\Settings.cpp" />
+    <ClCompile Include="Src\Dock\SettingsDlg.cpp" />
+    <ClCompile Include="Src\Dock\Skin.cpp" />
+    <ClCompile Include="Src\Dock\stdafx.cpp" />
+    <ClCompile Include="Src\Dock\Storage.cpp" />
+    <ClCompile Include="Src\Dock\WinAPI.cpp" />
+    <ClInclude Include="Src\Dock\AboutDlg.h" />
+    <ClInclude Include="Src\Dock\Assert.h" />
+    <ClInclude Include="Src\Dock\Dock.h" />
+    <ClInclude Include="Src\Dock\Icon.h" />
+    <ClInclude Include="Src\Dock\Plugin.h" />
+    <ClInclude Include="Src\Dock\resource.h" />
+    <ClInclude Include="Src\Dock\Settings.h" />
+    <ClInclude Include="Src\Dock\SettingsDlg.h" />
+    <ClInclude Include="Src\Dock\Skin.h" />
+    <ClInclude Include="Src\Dock\stdafx.h" />
+    <ClInclude Include="Src\Dock\Storage.h" />
+    <ClInclude Include="Src\Dock\targetver.h" />
+    <ClInclude Include="Src\Dock\Timer.h" />
+    <ClInclude Include="Src\Dock\WinAPI.h" />
+    <ResourceCompile Include="Src\Dock\bdock.rc" />
+    <None Include="Src\Dock\bdock.ico" />
+    <None Include="Src\Dock\small.ico" />
+    <ClInclude Include="Src\Dock2.h" />
+  </ItemGroup>
+</Project>

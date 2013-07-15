@@ -13,7 +13,7 @@
 
 #include <shellapi.h>
 
-#include "../../bdock2.h"
+#include "../../Dock2.h"
 
 typedef unsigned int uint;
 typedef wchar_t wchar;

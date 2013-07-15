@@ -17,25 +17,26 @@ plugins = { "Launcher", "Clock", "HideTaskbar", "SystemTray" }
 
 targets = {
 
-  bdock = cppApplication + {
+  Dock = cppApplication + {
     dependencies = plugins
     buildDir = "Build/$(configuration)_$(platform)"
-    root = { "Src/bdock", "Src" }
+    output = "Build/$(configuration)_$(platform)/BDock.exe"
+    root = { "Src/Dock", "Src" }
     cppFlags += { "/Yu" }
     linkFlags += { "\"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'\"" }
     libs = { "Msimg32" }
     files = {
-      "Src/bdock/**.cpp" = cppSource
-      "Src/bdock/stdafx.cpp" = cppSource + {
+      "Src/Dock/**.cpp" = cppSource
+      "Src/Dock/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
       }
-      "Src/bdock/winapi.cpp" = cppSource + {
+      "Src/Dock/WinAPI.cpp" = cppSource + {
         cppFlags += { -"/Yu" }
       }
-      "Src/bdock/**.h"
-      "Src/bdock/**.rc" = rcSource
-      "Src/bdock/*.ico"
-      "Src/bdock2.h"
+      "Src/Dock/**.h"
+      "Src/Dock/**.rc" = rcSource
+      "Src/Dock/*.ico"
+      "Src/Dock2.h"
     }
   }
 
@@ -50,14 +51,14 @@ targets = {
       "Src/Plugins/$(target)/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
       }
-      if target == "launcher" {
+      if target == "Launcher" {
         "Src/Plugins/$(target)/wmi.cpp" = cppSource + {
           cppFlags -= { "/Yu" }
         }
       }
       "Src/Plugins/$(target)/**.h"
       "Src/Plugins/$(target)/**.rc" = rcSource
-      "Src/bdock2.h"
+      "Src/Dock2.h"
     }
   }
 

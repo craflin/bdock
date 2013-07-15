@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BF52B9E3-3FDA-DE80-1161-37B8C9795E8F}</ProjectGuid>
-    <RootNamespace>bdock</RootNamespace>
+    <ProjectGuid>{035213F3-19F5-7901-29D5-5B4EE3561543}</ProjectGuid>
+    <RootNamespace>Dock</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,13 +70,13 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bdock</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BDock</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bdock</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BDock</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bdock</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BDock</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bdock</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BDock</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -158,47 +158,46 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\bdock\AboutDlg.cpp" />
-    <ClCompile Include="Src\bdock\Assert.cpp" />
-    <ClCompile Include="Src\bdock\Dock.cpp" />
-    <ClCompile Include="Src\bdock\Icon.cpp" />
-    <ClCompile Include="Src\bdock\main.cpp" />
-    <ClCompile Include="Src\bdock\Plugin.cpp" />
-    <ClCompile Include="Src\bdock\Settings.cpp" />
-    <ClCompile Include="Src\bdock\SettingsDlg.cpp" />
-    <ClCompile Include="Src\bdock\Skin.cpp" />
-    <ClCompile Include="Src\bdock\stdafx.cpp">
+    <ClCompile Include="Src\Dock\AboutDlg.cpp" />
+    <ClCompile Include="Src\Dock\Assert.cpp" />
+    <ClCompile Include="Src\Dock\Dock.cpp" />
+    <ClCompile Include="Src\Dock\Icon.cpp" />
+    <ClCompile Include="Src\Dock\main.cpp" />
+    <ClCompile Include="Src\Dock\Plugin.cpp" />
+    <ClCompile Include="Src\Dock\Settings.cpp" />
+    <ClCompile Include="Src\Dock\SettingsDlg.cpp" />
+    <ClCompile Include="Src\Dock\Skin.cpp" />
+    <ClCompile Include="Src\Dock\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Src\bdock\Storage.cpp" />
-    <ClCompile Include="Src\bdock\WinAPI.cpp" />
-    <ClCompile Include="Src\bdock\winapi.cpp">
+    <ClCompile Include="Src\Dock\Storage.cpp" />
+    <ClCompile Include="Src\Dock\WinAPI.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClInclude Include="Src\bdock\AboutDlg.h" />
-    <ClInclude Include="Src\bdock\Assert.h" />
-    <ClInclude Include="Src\bdock\Dock.h" />
-    <ClInclude Include="Src\bdock\Icon.h" />
-    <ClInclude Include="Src\bdock\Plugin.h" />
-    <ClInclude Include="Src\bdock\resource.h" />
-    <ClInclude Include="Src\bdock\Settings.h" />
-    <ClInclude Include="Src\bdock\SettingsDlg.h" />
-    <ClInclude Include="Src\bdock\Skin.h" />
-    <ClInclude Include="Src\bdock\stdafx.h" />
-    <ClInclude Include="Src\bdock\Storage.h" />
-    <ClInclude Include="Src\bdock\targetver.h" />
-    <ClInclude Include="Src\bdock\Timer.h" />
-    <ClInclude Include="Src\bdock\WinAPI.h" />
-    <ResourceCompile Include="Src\bdock\bdock.rc" />
-    <None Include="Src\bdock\bdock.ico" />
-    <None Include="Src\bdock\small.ico" />
-    <ClInclude Include="Src\bdock2.h" />
+    <ClInclude Include="Src\Dock\AboutDlg.h" />
+    <ClInclude Include="Src\Dock\Assert.h" />
+    <ClInclude Include="Src\Dock\Dock.h" />
+    <ClInclude Include="Src\Dock\Icon.h" />
+    <ClInclude Include="Src\Dock\Plugin.h" />
+    <ClInclude Include="Src\Dock\resource.h" />
+    <ClInclude Include="Src\Dock\Settings.h" />
+    <ClInclude Include="Src\Dock\SettingsDlg.h" />
+    <ClInclude Include="Src\Dock\Skin.h" />
+    <ClInclude Include="Src\Dock\stdafx.h" />
+    <ClInclude Include="Src\Dock\Storage.h" />
+    <ClInclude Include="Src\Dock\targetver.h" />
+    <ClInclude Include="Src\Dock\Timer.h" />
+    <ClInclude Include="Src\Dock\WinAPI.h" />
+    <ResourceCompile Include="Src\Dock\bdock.rc" />
+    <None Include="Src\Dock\bdock.ico" />
+    <None Include="Src\Dock\small.ico" />
+    <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Launcher.vcxproj">

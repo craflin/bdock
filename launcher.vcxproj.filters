@@ -15,6 +15,6 @@
     <ClInclude Include="Src\Plugins\Launcher\targetver.h" />
     <ClInclude Include="Src\Plugins\Launcher\wmi.h" />
     <ResourceCompile Include="Src\Plugins\Launcher\launcher.rc" />
-    <ClInclude Include="Src\bdock2.h" />
+    <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>

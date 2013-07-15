@@ -9,6 +9,6 @@
     <ClInclude Include="Src\Plugins\Clock\Clock.h" />
     <ClInclude Include="Src\Plugins\Clock\stdafx.h" />
     <ClInclude Include="Src\Plugins\Clock\targetver.h" />
-    <ClInclude Include="Src\bdock2.h" />
+    <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>
