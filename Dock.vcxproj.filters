@@ -29,9 +29,9 @@
     <ClInclude Include="Src\Dock\targetver.h" />
     <ClInclude Include="Src\Dock\Timer.h" />
     <ClInclude Include="Src\Dock\WinAPI.h" />
-    <ResourceCompile Include="Src\Dock\bdock.rc" />
-    <None Include="Src\Dock\bdock.ico" />
-    <None Include="Src\Dock\small.ico" />
+    <ResourceCompile Include="Src\Dock\Dock.rc" />
+    <None Include="Src\Dock\Dock.ico" />
+    <None Include="Src\Dock\Small.ico" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>

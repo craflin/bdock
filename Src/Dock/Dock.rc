@@ -31,8 +31,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_BDOCK               ICON                    "bdock.ico"
-IDI_SMALL               ICON                    "small.ico"
+IDI_BDOCK               ICON                    "Dock.ico"
+IDI_SMALL               ICON                    "Small.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
