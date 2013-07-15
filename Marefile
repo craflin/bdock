@@ -13,7 +13,7 @@ if platform == "x64" {
   defines += { "_WIN64" }
 }
 
-plugins = { "launcher", "clock", "hidetaskbar", "systemtray" }
+plugins = { "Launcher", "Clock", "HideTaskbar", "SystemTray" }
 
 targets = {
 
