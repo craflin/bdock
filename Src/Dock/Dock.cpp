@@ -571,7 +571,7 @@ bool Dock::showSettingsDlg()
 {
   TCHAR startupLinkFilePath[MAX_PATH];
   VERIFY(WinAPI::Shell::getFolderPath(CSIDL_STARTUP, startupLinkFilePath, MAX_PATH));
-  _tcscat_s(startupLinkFilePath, _T("\\bdock.lnk"));
+  _tcscat_s(startupLinkFilePath, _T("\\BDock.lnk"));
   
   bool startup = GetFileAttributes(startupLinkFilePath) != INVALID_FILE_ATTRIBUTES;
   globalStorage.setUInt("autostart", startup);
