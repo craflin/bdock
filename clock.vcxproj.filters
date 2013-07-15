@@ -3,12 +3,12 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Plugins\clock\clock.cpp" />
-    <ClCompile Include="Src\Plugins\clock\dllmain.cpp" />
-    <ClCompile Include="Src\Plugins\clock\stdafx.cpp" />
-    <ClInclude Include="Src\Plugins\clock\clock.h" />
-    <ClInclude Include="Src\Plugins\clock\stdafx.h" />
-    <ClInclude Include="Src\Plugins\clock\targetver.h" />
+    <ClCompile Include="Src\Plugins\Clock\Clock.cpp" />
+    <ClCompile Include="Src\Plugins\Clock\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\Clock\stdafx.cpp" />
+    <ClInclude Include="Src\Plugins\Clock\Clock.h" />
+    <ClInclude Include="Src\Plugins\Clock\stdafx.h" />
+    <ClInclude Include="Src\Plugins\Clock\targetver.h" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
 </Project>

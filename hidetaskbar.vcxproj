@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E7F69C07-8200-7B6D-85D0-3CA690369BEE}</ProjectGuid>
-    <RootNamespace>hidetaskbar</RootNamespace>
+    <ProjectGuid>{0D451763-0EB8-6EFF-F3D9-774E5B150204}</ProjectGuid>
+    <RootNamespace>HideTaskbar</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -61,22 +61,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\hidetaskbar\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\HideTaskbar\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\hidetaskbar\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\HideTaskbar\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\hidetaskbar\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\HideTaskbar\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\hidetaskbar\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hidetaskbar</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\HideTaskbar\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HideTaskbar</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">hidetaskbar</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HideTaskbar</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">hidetaskbar</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HideTaskbar</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">hidetaskbar</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HideTaskbar</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,17 +150,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Plugins\hidetaskbar\dllmain.cpp" />
-    <ClCompile Include="Src\Plugins\hidetaskbar\hidetaskbar.cpp" />
-    <ClCompile Include="Src\Plugins\hidetaskbar\stdafx.cpp">
+    <ClCompile Include="Src\Plugins\HideTaskbar\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\HideTaskbar\HideTaskbar.cpp" />
+    <ClCompile Include="Src\Plugins\HideTaskbar\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClInclude Include="Src\Plugins\hidetaskbar\hidetaskbar.h" />
-    <ClInclude Include="Src\Plugins\hidetaskbar\stdafx.h" />
-    <ClInclude Include="Src\Plugins\hidetaskbar\targetver.h" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\HideTaskbar.h" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\stdafx.h" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\targetver.h" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

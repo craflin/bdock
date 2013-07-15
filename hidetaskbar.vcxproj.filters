@@ -3,12 +3,12 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Plugins\hidetaskbar\dllmain.cpp" />
-    <ClCompile Include="Src\Plugins\hidetaskbar\hidetaskbar.cpp" />
-    <ClCompile Include="Src\Plugins\hidetaskbar\stdafx.cpp" />
-    <ClInclude Include="Src\Plugins\hidetaskbar\hidetaskbar.h" />
-    <ClInclude Include="Src\Plugins\hidetaskbar\stdafx.h" />
-    <ClInclude Include="Src\Plugins\hidetaskbar\targetver.h" />
+    <ClCompile Include="Src\Plugins\HideTaskbar\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\HideTaskbar\HideTaskbar.cpp" />
+    <ClCompile Include="Src\Plugins\HideTaskbar\stdafx.cpp" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\HideTaskbar.h" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\stdafx.h" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\targetver.h" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
 </Project>

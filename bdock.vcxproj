@@ -158,59 +158,60 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\bdock\aboutdlg.cpp" />
-    <ClCompile Include="Src\bdock\assert.cpp" />
-    <ClCompile Include="Src\bdock\dock.cpp" />
-    <ClCompile Include="Src\bdock\icon.cpp" />
+    <ClCompile Include="Src\bdock\AboutDlg.cpp" />
+    <ClCompile Include="Src\bdock\Assert.cpp" />
+    <ClCompile Include="Src\bdock\Dock.cpp" />
+    <ClCompile Include="Src\bdock\Icon.cpp" />
     <ClCompile Include="Src\bdock\main.cpp" />
-    <ClCompile Include="Src\bdock\plugin.cpp" />
-    <ClCompile Include="Src\bdock\settings.cpp" />
-    <ClCompile Include="Src\bdock\settingsdlg.cpp" />
-    <ClCompile Include="Src\bdock\skin.cpp" />
+    <ClCompile Include="Src\bdock\Plugin.cpp" />
+    <ClCompile Include="Src\bdock\Settings.cpp" />
+    <ClCompile Include="Src\bdock\SettingsDlg.cpp" />
+    <ClCompile Include="Src\bdock\Skin.cpp" />
     <ClCompile Include="Src\bdock\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Src\bdock\storage.cpp" />
+    <ClCompile Include="Src\bdock\Storage.cpp" />
+    <ClCompile Include="Src\bdock\WinAPI.cpp" />
     <ClCompile Include="Src\bdock\winapi.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClInclude Include="Src\bdock\aboutdlg.h" />
-    <ClInclude Include="Src\bdock\assert.h" />
-    <ClInclude Include="Src\bdock\dock.h" />
-    <ClInclude Include="Src\bdock\icon.h" />
-    <ClInclude Include="Src\bdock\plugin.h" />
+    <ClInclude Include="Src\bdock\AboutDlg.h" />
+    <ClInclude Include="Src\bdock\Assert.h" />
+    <ClInclude Include="Src\bdock\Dock.h" />
+    <ClInclude Include="Src\bdock\Icon.h" />
+    <ClInclude Include="Src\bdock\Plugin.h" />
     <ClInclude Include="Src\bdock\resource.h" />
-    <ClInclude Include="Src\bdock\settings.h" />
-    <ClInclude Include="Src\bdock\settingsdlg.h" />
-    <ClInclude Include="Src\bdock\skin.h" />
+    <ClInclude Include="Src\bdock\Settings.h" />
+    <ClInclude Include="Src\bdock\SettingsDlg.h" />
+    <ClInclude Include="Src\bdock\Skin.h" />
     <ClInclude Include="Src\bdock\stdafx.h" />
-    <ClInclude Include="Src\bdock\storage.h" />
+    <ClInclude Include="Src\bdock\Storage.h" />
     <ClInclude Include="Src\bdock\targetver.h" />
-    <ClInclude Include="Src\bdock\timer.h" />
-    <ClInclude Include="Src\bdock\winapi.h" />
+    <ClInclude Include="Src\bdock\Timer.h" />
+    <ClInclude Include="Src\bdock\WinAPI.h" />
     <ResourceCompile Include="Src\bdock\bdock.rc" />
     <None Include="Src\bdock\bdock.ico" />
     <None Include="Src\bdock\small.ico" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="launcher.vcxproj">
-      <Project>{F3E08B51-1935-8A8F-58F1-7A678759F60C}</Project>
+    <ProjectReference Include="Launcher.vcxproj">
+      <Project>{14F571FD-BFDE-D75C-B6D4-8E6645DA7934}</Project>
     </ProjectReference>
-    <ProjectReference Include="clock.vcxproj">
-      <Project>{05531B19-BB84-6B18-C09F-979EEB429AD3}</Project>
+    <ProjectReference Include="Clock.vcxproj">
+      <Project>{98A892AE-A335-9481-AE30-E7B66C44D7A8}</Project>
     </ProjectReference>
-    <ProjectReference Include="hidetaskbar.vcxproj">
-      <Project>{E7F69C07-8200-7B6D-85D0-3CA690369BEE}</Project>
+    <ProjectReference Include="HideTaskbar.vcxproj">
+      <Project>{0D451763-0EB8-6EFF-F3D9-774E5B150204}</Project>
     </ProjectReference>
-    <ProjectReference Include="systemtray.vcxproj">
-      <Project>{C14F0D79-CBC4-A247-97AD-413265C6BDAD}</Project>
+    <ProjectReference Include="SystemTray.vcxproj">
+      <Project>{B80E43E1-32E0-79C6-3453-053B7F5F0115}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

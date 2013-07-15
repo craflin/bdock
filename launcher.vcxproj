@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F3E08B51-1935-8A8F-58F1-7A678759F60C}</ProjectGuid>
-    <RootNamespace>launcher</RootNamespace>
+    <ProjectGuid>{14F571FD-BFDE-D75C-B6D4-8E6645DA7934}</ProjectGuid>
+    <RootNamespace>Launcher</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -61,22 +61,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\launcher\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\Launcher\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\launcher\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\Launcher\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\launcher\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\Launcher\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\launcher\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">launcher</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\Launcher\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Launcher</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">launcher</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Launcher</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">launcher</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Launcher</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">launcher</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Launcher</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,28 +150,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Plugins\launcher\dllmain.cpp" />
-    <ClCompile Include="Src\Plugins\launcher\launcher.cpp" />
-    <ClCompile Include="Src\Plugins\launcher\stdafx.cpp">
+    <ClCompile Include="Src\Plugins\Launcher\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher\Launcher.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Src\Plugins\launcher\systools.cpp" />
-    <ClCompile Include="Src\Plugins\launcher\wmi.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClInclude Include="Src\Plugins\launcher\launcher.h" />
-    <ClInclude Include="Src\Plugins\launcher\resource.h" />
-    <ClInclude Include="Src\Plugins\launcher\stdafx.h" />
-    <ClInclude Include="Src\Plugins\launcher\systools.h" />
-    <ClInclude Include="Src\Plugins\launcher\targetver.h" />
-    <ClInclude Include="Src\Plugins\launcher\wmi.h" />
-    <ResourceCompile Include="Src\Plugins\launcher\launcher.rc" />
+    <ClCompile Include="Src\Plugins\Launcher\SysTools.cpp" />
+    <ClCompile Include="Src\Plugins\Launcher\wmi.cpp" />
+    <ClInclude Include="Src\Plugins\Launcher\Launcher.h" />
+    <ClInclude Include="Src\Plugins\Launcher\resource.h" />
+    <ClInclude Include="Src\Plugins\Launcher\stdafx.h" />
+    <ClInclude Include="Src\Plugins\Launcher\SysTools.h" />
+    <ClInclude Include="Src\Plugins\Launcher\targetver.h" />
+    <ClInclude Include="Src\Plugins\Launcher\wmi.h" />
+    <ResourceCompile Include="Src\Plugins\Launcher\launcher.rc" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

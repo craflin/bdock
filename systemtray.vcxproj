@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C14F0D79-CBC4-A247-97AD-413265C6BDAD}</ProjectGuid>
-    <RootNamespace>systemtray</RootNamespace>
+    <ProjectGuid>{B80E43E1-32E0-79C6-3453-053B7F5F0115}</ProjectGuid>
+    <RootNamespace>SystemTray</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -61,22 +61,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\systemtray\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build\Debug_Win32\SystemTray\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\systemtray\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build\Release_Win32\SystemTray\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\systemtray\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build\Debug_x64\SystemTray\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\systemtray\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">systemtray</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build\Release_x64\SystemTray\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SystemTray</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">systemtray</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SystemTray</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">systemtray</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SystemTray</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">systemtray</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SystemTray</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,19 +150,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Plugins\systemtray\dllmain.cpp" />
-    <ClCompile Include="Src\Plugins\systemtray\stdafx.cpp">
+    <ClCompile Include="Src\Plugins\SystemTray\dllmain.cpp" />
+    <ClCompile Include="Src\Plugins\SystemTray\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Src\Plugins\systemtray\systemtray.cpp" />
-    <ClCompile Include="Src\Plugins\systemtray\systools.cpp" />
-    <ClInclude Include="Src\Plugins\systemtray\stdafx.h" />
-    <ClInclude Include="Src\Plugins\systemtray\systemtray.h" />
-    <ClInclude Include="Src\Plugins\systemtray\systools.h" />
-    <ClInclude Include="Src\Plugins\systemtray\targetver.h" />
+    <ClCompile Include="Src\Plugins\SystemTray\SystemTray.cpp" />
+    <ClCompile Include="Src\Plugins\SystemTray\SysTools.cpp" />
+    <ClInclude Include="Src\Plugins\SystemTray\stdafx.h" />
+    <ClInclude Include="Src\Plugins\SystemTray\SystemTray.h" />
+    <ClInclude Include="Src\Plugins\SystemTray\SysTools.h" />
+    <ClInclude Include="Src\Plugins\SystemTray\targetver.h" />
     <ClInclude Include="Src\bdock2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
