@@ -564,7 +564,14 @@ bool Dock::isFullscreen(HWND hwnd)
   clientRect.top += pt.y;
   clientRect.bottom += pt.y;
   
-  return clientRect.left <= mi.rcWork.left && clientRect.top <= mi.rcWork.top && clientRect.right >= mi.rcWork.right && clientRect.bottom >= mi.rcWork.bottom;
+  if(!(clientRect.left <= mi.rcWork.left && clientRect.top <= mi.rcWork.top && clientRect.right >= mi.rcWork.right && clientRect.bottom >= mi.rcWork.bottom))
+    return false;
+
+  DWORD exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+  HANDLE owner = GetWindow(hwnd, GW_OWNER);
+  if((!(exstyle & WS_EX_TOOLWINDOW) && owner == 0) || (exstyle & WS_EX_APPWINDOW && owner != 0))
+    return true;
+  return false;
 }
 
 bool Dock::showSettingsDlg()
