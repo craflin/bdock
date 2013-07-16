@@ -129,7 +129,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
   {
     Dock* dock = new Dock(storage, storage.getNumSection(i));
-    if(!dock->init(hInstance))
+    if(!dock->create())
       delete dock;
     else
       docks.push_back(dock);

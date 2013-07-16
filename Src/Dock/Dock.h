@@ -4,11 +4,9 @@
 class Icon;
 class Plugin;
 
-class Dock
+class Dock : public WinAPI::Window
 {
 public:
-  static HINSTANCE hinstance;
-
   Icon* lastIcon;
   Icon* firstIcon;
   Settings settings;
@@ -17,7 +15,7 @@ public:
   Dock(Storage& globalStorage, Storage* dockStorage);
   ~Dock();
 
-  bool init(HINSTANCE hinstance);
+  bool create();
 
   void addIcon(Icon* icon);
   void removeIcon(Icon* icon);
@@ -34,11 +32,8 @@ public:
   DWORD showMenu(HMENU hmenu, int x, int y);
 
 private:
-  static ATOM wndClass;
-
   Storage& globalStorage;
   Storage* storage;
-  HWND hwnd;
   Skin* skin;
   HBITMAP bmp;
   SIZE size;
@@ -65,7 +60,7 @@ private:
   void handleContextMenu(int x, int y);
   bool handleMouseEvent(UINT message, int x, int y);
 
-  static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+  virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
   static bool isFullscreen(HWND hwnd);
 };

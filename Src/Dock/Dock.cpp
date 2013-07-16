@@ -2,20 +2,13 @@
 
 #include "stdafx.h"
 
-ATOM Dock::wndClass = 0;
-HINSTANCE Dock::hinstance = 0;
-
-Dock::Dock(Storage& globalStorage, Storage* dockStorage) : globalStorage(globalStorage), storage(dockStorage), settings(dockStorage), hwnd(0), skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0),
-activeHwnd(0), activeHwndRudeFullscreen(false) {}
+Dock::Dock(Storage& globalStorage, Storage* dockStorage) : globalStorage(globalStorage), storage(dockStorage), settings(dockStorage), 
+  skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0), activeHwnd(0), activeHwndRudeFullscreen(false) {}
 
 Dock::~Dock()
 {
   if(hwnd)
-  {
     DeregisterShellHookWindow(hwnd);
-    DestroyWindow(hwnd);
-    hwnd = 0;
-  }
   if(skin)
     delete skin;
   while(plugins.begin() != plugins.end())
@@ -23,35 +16,9 @@ Dock::~Dock()
   ASSERT(iconCount == 0);
 }
 
-bool Dock::init(HINSTANCE hinstance)
+bool Dock::create()
 {
   ASSERT(!hwnd);
-  ASSERT(!Dock::hinstance || Dock::hinstance == hinstance);
-  Dock::hinstance = hinstance;
-
-  // register window class
-  if(!wndClass)
-  {
-    WNDCLASSEX wcex;
-
-    wcex.cbSize = sizeof(WNDCLASSEX);
-
-    wcex.style      = CS_DBLCLKS; //CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc  = wndProc;
-    wcex.cbClsExtra    = 0;
-    wcex.cbWndExtra    = 0;
-    wcex.hInstance    = hinstance;
-    wcex.hIcon      = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_BDOCK));
-    wcex.hCursor    = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground  = 0; //(HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName  = 0; //MAKEINTRESOURCE(IDC_BDOCK);
-    wcex.lpszClassName  = _T("BDOCK");
-    wcex.hIconSm    = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_SMALL));
-
-    wndClass = RegisterClassEx(&wcex);
-    if(!wndClass)
-      return false;
-  }
 
   // load skin
   if(!loadSkin(L"Default"))
@@ -74,9 +41,8 @@ bool Dock::init(HINSTANCE hinstance)
   }
 
   // create window
-  hwnd = CreateWindowEx(WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOPMOST, _T("BDOCK"), _T(""), WS_POPUP,
-    0, 0, 0, 0, NULL, NULL, hinstance, this);
-  if (!hwnd)
+  if(!WinAPI::Window::create(_T("BDOCK"), CS_DBLCLKS, 0, WinAPI::Icon(IDI_BDOCK), WinAPI::Icon(IDI_SMALL), 
+    WinAPI::Cursor(IDC_ARROW), _T("BDOCK"), WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOPMOST, WS_POPUP))
     return false;
   for(std::unordered_set<Timer*>::iterator i = timers.begin(), end = timers.end(); i != end; ++i)
     SetTimer(hwnd,(UINT_PTR)*i, (*i)->interval, 0);
@@ -88,7 +54,6 @@ bool Dock::init(HINSTANCE hinstance)
   calcIconRects(0, firstIcon);
   ShowWindow(hwnd, SW_SHOW);
   update();
-  //UpdateWindow(hwnd);
 
    return true;
 }
@@ -322,16 +287,10 @@ bool Dock::handleMouseEvent(UINT message, int x, int y)
   return false;
 }
 
-LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
   switch (message)
   {
-  case WM_CREATE:
-    {
-      LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
-      SetWindowLong(hwnd, GWLP_USERDATA, (LONG)cs->lpCreateParams);
-    }
-    break;
   case WM_TIMER:
     if(wParam == 0) // check full screen app timer
     {
@@ -340,10 +299,9 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         {
           if(!hideWindow)
           {
-            Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
             LONG windowStyle = GetWindowLong(hwnd, GWL_STYLE);
             SetWindowLong(hwnd, GWL_STYLE, windowStyle | WS_VISIBLE);
-            dock->update(0);
+            this->update(0);
             SetWindowLong(hwnd, GWL_STYLE, windowStyle);
             ShowWindow(hwnd, SW_SHOW);
           }
@@ -351,7 +309,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
             ShowWindow(hwnd, SW_HIDE);
         }
     }
-    if(wParam != 0)
+    if(wParam != 0) // plugin timer
     {
       Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
       if(dock->timers.find((Timer*)wParam) != dock->timers.end())
@@ -370,15 +328,14 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         break;
       case IDM_SETTINGS:
         {
-          Dock* dock = (Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-          dock->showSettingsDlg();
+          this->showSettingsDlg();
         }
         break;
       case IDM_EXIT:
         PostQuitMessage(0);
         break;
       default:
-        return DefWindowProc(hwnd, message, wParam, lParam);
+        return WinAPI::Window::onMessage(message, wParam, lParam);
       }
     }
     break;
@@ -392,11 +349,11 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
   case WM_RBUTTONUP:
   case WM_RBUTTONDBLCLK:
   case WM_MOUSEMOVE:
-    if(!((Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->handleMouseEvent(message, LOWORD(lParam), HIWORD(lParam)))
-      return DefWindowProc(hwnd, message, wParam, lParam);
+    if(!handleMouseEvent(message, LOWORD(lParam), HIWORD(lParam)))
+      return WinAPI::Window::onMessage(message, wParam, lParam);
     break;
   case WM_CONTEXTMENU:
-    ((Dock*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->handleContextMenu(LOWORD(lParam), HIWORD(lParam));
+    handleContextMenu(LOWORD(lParam), HIWORD(lParam));
     break;
   case WM_DESTROY:
     PostQuitMessage(0);
@@ -433,7 +390,7 @@ LRESULT CALLBACK Dock::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         break;
       }
     }
-    return DefWindowProc(hwnd, message, wParam, lParam);
+    return WinAPI::Window::onMessage(message, wParam, lParam);
   }
   return 0;
 }
@@ -449,7 +406,7 @@ DWORD Dock::showMenu(HMENU hmenu, int x, int y)
 
   SetForegroundWindow(hwnd);
 
-  HMENU menu = LoadMenu(hinstance, MAKEINTRESOURCE(IDC_BDOCK));
+  HMENU menu = LoadMenu(WinAPI::Application::getInstance(), MAKEINTRESOURCE(IDC_BDOCK));
   if(!deleteHMenu)
     InsertMenu(hmenu, 0, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL);
   wchar name[64];
@@ -600,7 +557,6 @@ bool Dock::showSettingsDlg()
     if(GetFileAttributes(startupLinkFilePath) != INVALID_FILE_ATTRIBUTES)
       DeleteFile(startupLinkFilePath);
   }
-
 
   return true;
 }
