@@ -1,7 +1,7 @@
 
 #pragma once
 
-class AboutDlg : public WinAPI::Dialog
+class AboutDlg : private WinAPI::Dialog
 {
 public:
   AboutDlg() {}

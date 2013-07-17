@@ -46,6 +46,8 @@ namespace WinAPI
     return (UINT) msg.wParam;
   }
 
+  void Application::quit(UINT exitCode) {PostQuitMessage(exitCode);}
+
   bool Shell::getFolderPath(INT folder, LPTSTR path, UINT size)
   {
     if(size < MAX_PATH)
@@ -150,6 +152,13 @@ namespace WinAPI
   Cursor::Cursor(UINT cursorId) : hcursor(LoadCursor(Application::getInstance(), MAKEINTRESOURCE(cursorId))) {}
   Cursor::Cursor(HINSTANCE hinst, UINT cursorId) : hcursor(LoadCursor(hinst, MAKEINTRESOURCE(cursorId))) {}
 
+  Menu::Menu(UINT menuId) : hmenu(LoadMenu(WinAPI::Application::getInstance(), MAKEINTRESOURCE(menuId))) {}
+  Menu::~Menu()
+  {
+    if(hmenu)
+      DestroyMenu(hmenu);
+  }
+
   Window::~Window()
   {
     if(hwnd)
@@ -214,13 +223,28 @@ namespace WinAPI
 
   LRESULT Window::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
   {
+    switch(message)
+    {
+    case WM_CONTEXTMENU:
+      if(onContextMenu(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)))
+        return 0;
+      break;
+    case WM_COMMAND:
+      if(onCommand(LOWORD(wParam), (HWND) lParam))
+        return 0;
+    }
     return DefWindowProc(hwnd, message, wParam, lParam);
   }
 
-  bool Window::setWindowTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList)
-  {
-    return SetWindowTheme(hwnd, pszSubAppName, pszSubIdList) == S_OK;
-  }
+  bool Window::setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList) {return SetWindowTheme(hwnd, pszSubAppName, pszSubIdList) == S_OK;}
+  bool Window::isVisible() {return IsWindowVisible(hwnd) == TRUE;}
+  bool Window::showWindow(INT nCmdShow) {return ShowWindow(hwnd, nCmdShow) == TRUE;}
+  bool Window::registerShellHookWindow() {return RegisterShellHookWindow(hwnd) == TRUE;}
+  bool Window::deregisterShellHookWindow() {return DeregisterShellHookWindow(hwnd) == TRUE;}
+  bool Window::setTimer(UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc) {return SetTimer(hwnd, nIDEvent, uElapse, lpTimerFunc) == TRUE;}
+  bool Window::killTimer(UINT_PTR nIDEvent) {return KillTimer(hwnd, nIDEvent) == TRUE;}
+  LRESULT Window::sendMessage(UINT msg, WPARAM wParam, LPARAM lParam) {return SendMessage(hwnd, msg, wParam, lParam);}
+  bool Window::postMessage(UINT msg, WPARAM wParam, LPARAM lParam) {return PostMessage(hwnd, msg, wParam, lParam) == TRUE;}
 
   Dialog::~Dialog()
   {

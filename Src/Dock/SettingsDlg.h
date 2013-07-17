@@ -3,7 +3,7 @@
 
 class Storage;
 
-class SettingsDlg : public WinAPI::Dialog
+class SettingsDlg : private WinAPI::Dialog
 {
 public:
   SettingsDlg(Storage& globalStorage) : globalStorage(globalStorage) {}

@@ -14,6 +14,7 @@ namespace WinAPI
     Application(HINSTANCE hinstance, DWORD dwICC =  ICC_WIN95_CLASSES);
 
     static HINSTANCE getInstance() {return hinstance;}
+    static void quit(UINT exitCode);
 
     UINT run();
 
@@ -74,6 +75,17 @@ namespace WinAPI
     HCURSOR hcursor;
   };
 
+  class Menu
+  {
+  public:
+    Menu() : hmenu(0) {}
+    Menu(UINT menuId);
+    ~Menu();
+
+  private:
+    HMENU hmenu;
+  };
+
   class Window
   {
   public:
@@ -85,7 +97,18 @@ namespace WinAPI
       Cursor& cursor = Cursor(IDC_ARROW), LPCTSTR windowName = _T(""), 
       UINT exStyle = 0, UINT style = WS_POPUP);
 
-    bool setWindowTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList);
+    bool setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList);
+    bool isVisible();
+    bool showWindow(INT nCmdShow);
+
+    bool registerShellHookWindow();
+    bool deregisterShellHookWindow();
+
+    bool setTimer(UINT_PTR nIDEvent, UINT uElaspe, TIMERPROC lpTimerFunc);
+    bool killTimer(UINT_PTR nIDEvent);
+
+    LRESULT sendMessage(UINT msg, WPARAM wParam, LPARAM lParam);
+    bool postMessage(UINT msg, WPARAM wParam, LPARAM lParam);
 
     operator HWND() {return hwnd;}
 
@@ -93,6 +116,9 @@ namespace WinAPI
     HWND hwnd;
 
     virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
+
+    virtual bool onCommand(UINT command, HWND source) {return false;}
+    virtual bool onContextMenu(INT x, INT y) {return false;}
   };
 
   class Dialog : public Window

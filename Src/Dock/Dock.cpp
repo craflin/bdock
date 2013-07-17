@@ -8,7 +8,7 @@ Dock::Dock(Storage& globalStorage, Storage* dockStorage) : globalStorage(globalS
 Dock::~Dock()
 {
   if(hwnd)
-    DeregisterShellHookWindow(hwnd);
+    deregisterShellHookWindow();
   if(skin)
     delete skin;
   while(plugins.begin() != plugins.end())
@@ -45,14 +45,14 @@ bool Dock::create()
     WinAPI::Cursor(IDC_ARROW), _T("BDOCK"), WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOPMOST, WS_POPUP))
     return false;
   for(std::unordered_set<Timer*>::iterator i = timers.begin(), end = timers.end(); i != end; ++i)
-    SetTimer(hwnd,(UINT_PTR)*i, (*i)->interval, 0);
+    setTimer((UINT_PTR)*i, (*i)->interval, 0);
 
-  if(!RegisterShellHookWindow(hwnd))
+  if(!registerShellHookWindow())
     return false;
 
   // show window
   calcIconRects(0, firstIcon);
-  ShowWindow(hwnd, SW_SHOW);
+  showWindow(SW_SHOW);
   update();
 
    return true;
@@ -139,7 +139,7 @@ void Dock::draw(HDC dest, const RECT& update)
 
 void Dock::update(RECT* update)
 {
-  if(!hwnd || !IsWindowVisible(hwnd))
+  if(!hwnd || !isVisible())
     return;
 
   bool updateAll = false;
@@ -327,9 +327,7 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
         AboutDlg().show(hwnd);
         break;
       case IDM_SETTINGS:
-        {
-          this->showSettingsDlg();
-        }
+        showSettingsDlg();
         break;
       case IDM_EXIT:
         PostQuitMessage(0);
@@ -367,8 +365,8 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
         {
-          KillTimer(hwnd, 0);
-          SetTimer(hwnd, 0, 300, 0);
+          killTimer(0);
+          setTimer(0, 300, 0);
           /*
           bool hideWindow = isFullscreen((HWND)lParam) && wParam == HSHELL_RUDEAPPACTIVATED;
           if(!!IsWindowVisible(hwnd) == hideWindow)
@@ -426,7 +424,7 @@ DWORD Dock::showMenu(HMENU hmenu, int x, int y)
     mii.fMask = MIIM_FTYPE;
     if(GetMenuItemInfo(menu, cmd, FALSE, &mii))
     {      
-      SendMessage(hwnd, WM_COMMAND, cmd, NULL);
+      sendMessage(WM_COMMAND, cmd, NULL);
       cmd = 0;
     }
   }
@@ -480,14 +478,14 @@ void Dock::addTimer(Timer* timer)
 {
   timers.insert(timer);
   if(hwnd)
-    SetTimer(hwnd, (UINT_PTR)timer, timer->interval, 0);
+    setTimer((UINT_PTR)timer, timer->interval, 0);
 }
 
 void Dock::removeTimer(Timer* timer)
 {
   timers.erase(timer);
   if(hwnd)
-    KillTimer(hwnd, (UINT_PTR)timer);
+    killTimer((UINT_PTR)timer);
 }
 
 
@@ -495,8 +493,8 @@ void Dock::updateTimer(Timer* timer)
 {
   if(hwnd)
   {
-    KillTimer(hwnd, (UINT_PTR)timer);
-    SetTimer(hwnd, (UINT_PTR)timer, timer->interval, 0);
+    killTimer((UINT_PTR)timer);
+    setTimer((UINT_PTR)timer, timer->interval, 0);
   }
 }
 

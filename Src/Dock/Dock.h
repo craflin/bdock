@@ -4,7 +4,7 @@
 class Icon;
 class Plugin;
 
-class Dock : public WinAPI::Window
+class Dock : private WinAPI::Window
 {
 public:
   Icon* lastIcon;

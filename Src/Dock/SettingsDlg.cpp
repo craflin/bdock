@@ -12,7 +12,7 @@ bool SettingsDlg::onInitDialog()
   VERIFY(pageImageList.add(WinAPI::Icon(IDI_BDOCK)) == 0);
 
   VERIFY(pageTreeView.initialize(*this, IDC_PAGE_TREE));
-  VERIFY(pageTreeView.setWindowTheme(_T("Explorer"), NULL));
+  VERIFY(pageTreeView.setTheme(_T("Explorer"), NULL));
   VERIFY(pageTreeView.setImageList(pageImageList, TVSIL_NORMAL));
 
   VERIFY(autostartButton.initialize(*this, IDC_AUTOSTART));
