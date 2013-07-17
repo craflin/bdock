@@ -24,5 +24,5 @@ public:
   Alignment alignment;
   Alignment edge;
 
-  Settings(Storage* storage);
+  Settings(Storage& storage);
 };

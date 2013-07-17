@@ -128,7 +128,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   std::vector<Dock*> docks(storage.getNumSectionCount());
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
   {
-    Dock* dock = new Dock(storage, storage.getNumSection(i));
+    Dock* dock = new Dock(storage, *storage.getNumSection(i));
     if(!dock->create())
       delete dock;
     else

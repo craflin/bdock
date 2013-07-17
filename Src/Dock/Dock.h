@@ -12,7 +12,7 @@ public:
   Settings settings;
   POINT pos;
 
-  Dock(Storage& globalStorage, Storage* dockStorage);
+  Dock(Storage& globalStorage, Storage& dockStorage);
   ~Dock();
 
   bool create();
@@ -33,7 +33,7 @@ public:
 
 private:
   Storage& globalStorage;
-  Storage* storage;
+  Storage& dockStorage;
   Skin* skin;
   HBITMAP bmp;
   SIZE size;

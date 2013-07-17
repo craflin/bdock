@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-Dock::Dock(Storage& globalStorage, Storage* dockStorage) : globalStorage(globalStorage), storage(dockStorage), settings(dockStorage), 
+Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalStorage), dockStorage(dockStorage), settings(dockStorage), 
   skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0), activeHwnd(0), activeHwndRudeFullscreen(false) {}
 
 Dock::~Dock()
@@ -28,16 +28,16 @@ bool Dock::create()
   }
 
   // load plugins
-  for(int i = 0, count = storage->getNumSectionCount(); i < count; ++i)
+  for(int i = 0, count = dockStorage.getNumSectionCount(); i < count; ++i)
   {
-    storage->enterNumSection(i);
-    const wchar* name = storage->getStr("name");
+    dockStorage.enterNumSection(i);
+    const wchar* name = dockStorage.getStr("name");
     if(name)
-      if(!loadPlugin(name, storage->getSection("config")))
+      if(!loadPlugin(name, dockStorage.getSection("config")))
       {
         // TODO: error message
       }
-    storage->leave();
+    dockStorage.leave();
   }
 
   // create window
