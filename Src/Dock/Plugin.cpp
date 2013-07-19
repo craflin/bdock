@@ -50,7 +50,7 @@ bool Plugin::init(const wchar* name)
 {
   ASSERT(!hmodule && !plugin);
 
-  std::wstring path(L"plugins/");
+  std::wstring path(L"Plugins/");
   path += name;
   path += L'/';
   path += name;
