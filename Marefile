@@ -8,6 +8,7 @@ if configuration == "Debug" {
 }
 if configuration == "Release" {
   defines += { "NDEBUG" }
+  cppFlags += { "/MT" }
 }
 if platform == "x64" {
   defines += { "_WIN64" }
