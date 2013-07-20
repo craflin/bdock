@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by bdock.rc
+// Used by Dock.rc
 //
 #define IDC_MYICON                      2
 #define IDD_BDOCK_DIALOG                102
