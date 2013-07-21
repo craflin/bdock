@@ -99,7 +99,10 @@ namespace WinAPI
 
     bool setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList);
     bool isVisible();
-    bool showWindow(INT nCmdShow);
+    bool show(INT nCmdShow);
+    bool move(INT X, INT Y, INT nWidth, INT nHeight, bool bRepaint);
+    void setStyle(UINT style) {SetWindowLong(hwnd, GWL_STYLE, style);}
+    UINT getStyle() const {return GetWindowLong(hwnd, GWL_STYLE);}
 
     bool registerShellHookWindow();
     bool deregisterShellHookWindow();
@@ -127,6 +130,7 @@ namespace WinAPI
     Dialog() {}
     ~Dialog();
 
+    bool create(UINT ressourceId, HWND hwndParent);
     UINT show(UINT ressourceId, HWND hwndParent = NULL);
 
     bool end(UINT result);

@@ -52,7 +52,7 @@ bool Dock::create()
 
   // show window
   calcIconRects(0, firstIcon);
-  showWindow(SW_SHOW);
+  show(SW_SHOW);
   update();
 
    return true;

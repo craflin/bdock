@@ -8,18 +8,26 @@ UINT SettingsDlg::show(HWND hwndParent)
 
 bool SettingsDlg::onInitDialog()
 {
-  /*
   VERIFY(pageImageList.create(16, 16, ILC_COLOR32, 3, 3));
   VERIFY(pageImageList.add(WinAPI::Icon(IDI_BDOCK)) == 0);
 
   VERIFY(pageTreeView.initialize(*this, IDC_PAGE_TREE));
   VERIFY(pageTreeView.setTheme(_T("Explorer"), NULL));
   VERIFY(pageTreeView.setImageList(pageImageList, TVSIL_NORMAL));
-  */
-  VERIFY(autostartButton.initialize(*this, IDC_AUTOSTART));
-  
-  VERIFY(autostartButton.setCheck(globalStorage.getUInt("autostart", 0) ? BST_CHECKED : BST_UNCHECKED));
+
   /*
+  generalPage.create(IDD_SETTINGS_GENERAL, *this);
+  generalPage.move(122, 0, 334, 240, false);
+  //generalPage.show(SW_SHOW);
+  generalPage.setStyle(generalPage.getStyle() | WS_VISIBLE);
+  */
+
+
+  VERIFY(autostartButton.initialize(*this, IDC_AUTOSTART));
+
+  VERIFY(autostartButton.setCheck(globalStorage.getUInt("autostart", 0) ? BST_CHECKED : BST_UNCHECKED));
+
+
   WinAPI::String text(IDS_SETTINGS_PAGE_GENERAL);
 
   TVINSERTSTRUCT item;
@@ -29,7 +37,7 @@ bool SettingsDlg::onInitDialog()
   item.itemex.pszText = (LPTSTR) (LPCTSTR) text;
   item.itemex.iImage = 0;
   pageTreeView.insertItem(item);
-  */
+
   return WinAPI::Dialog::onInitDialog();
 }
 

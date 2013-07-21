@@ -238,7 +238,8 @@ namespace WinAPI
 
   bool Window::setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList) {return SetWindowTheme(hwnd, pszSubAppName, pszSubIdList) == S_OK;}
   bool Window::isVisible() {return IsWindowVisible(hwnd) == TRUE;}
-  bool Window::showWindow(INT nCmdShow) {return ShowWindow(hwnd, nCmdShow) == TRUE;}
+  bool Window::show(INT nCmdShow) {return ShowWindow(hwnd, nCmdShow) == TRUE;}
+  bool Window::move(INT X, INT Y, INT nWidth, INT nHeight, bool bRepaint) {return MoveWindow(hwnd, X, Y, nWidth, nHeight, bRepaint) == TRUE;}
   bool Window::registerShellHookWindow() {return RegisterShellHookWindow(hwnd) == TRUE;}
   bool Window::deregisterShellHookWindow() {return DeregisterShellHookWindow(hwnd) == TRUE;}
   bool Window::setTimer(UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc) {return SetTimer(hwnd, nIDEvent, uElapse, lpTimerFunc) == TRUE;}
@@ -253,6 +254,39 @@ namespace WinAPI
       end(IDCANCEL);
       hwnd = 0;
     }
+  }
+
+  bool Dialog::create(UINT ressourceId, HWND hwndParent)
+  {
+    if(hwnd)
+      return 0; // already created
+
+    struct DlgProc
+    {
+      static INT_PTR CALLBACK dlgProcInit(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+      {
+        if(message == WM_INITDIALOG)
+        {
+          Dialog* dlg = (Dialog*) lParam;
+          dlg->hwnd = hDlg;
+          SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) dlg);
+          SetWindowLongPtr(hDlg, DWLP_DLGPROC, (LONG_PTR) dlgProc);
+          if(dlg->onDlgMessage(message, wParam, lParam))
+            return (INT_PTR)TRUE;
+        }
+        return (INT_PTR)FALSE;
+      }
+      static INT_PTR CALLBACK dlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+      {
+        Dialog* dlg = (Dialog*) GetWindowLongPtr(hDlg, DWLP_USER);
+        if(dlg->onDlgMessage(message, wParam, lParam))
+          return (INT_PTR)TRUE;
+        return (INT_PTR)FALSE;
+      }
+    };
+
+    HWND hwnd = CreateDialogParam(Application::getInstance(), MAKEINTRESOURCE(ressourceId), hwndParent, DlgProc::dlgProcInit, (LPARAM)this);
+    return hwnd != NULL;
   }
 
   UINT Dialog::show(UINT ressourceId, HWND hwndParent)
