@@ -16,7 +16,8 @@
 !else
   Name "BDock ${VERSION}"
 !endif
-  OutFile "BDock_${VERSION}_${ARCHITECTURE}.exe"
+  OutFile "BDock_v${VERSION}_Installer_${ARCHITECTURE}.exe"
+  SetCompressor /SOLID lzma
   
   ; Request admin rights
   RequestExecutionLevel admin
