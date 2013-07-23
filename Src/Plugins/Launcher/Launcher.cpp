@@ -33,10 +33,6 @@ Launcher::~Launcher()
   for(std::unordered_map<HWND, Icon*>::iterator i = icons.begin(), end = icons.end(); i != end; ++i)
     delete (IconData*)i->second->userData;
 
-
-  if(defaultIcon)
-    DestroyIcon(defaultIcon);
-
   --instances;
   if(instances == 0)
   {
@@ -335,26 +331,18 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
         {
         case HSHELL_WINDOWACTIVATED:
         case HSHELL_RUDEAPPACTIVATED:
-          //if(wParam == HSHELL_WINDOWACTIVATED)
-          //  printf("HSHELL_WINDOWACTIVATED\n");
-          //else
-          //  printf("HSHELL_RUDEAPPACTIVATED\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->activateIcon((HWND)lParam);
           break;
         case HSHELL_WINDOWCREATED:
-          //printf("HSHELL_WINDOWCREATED\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->addIcon((HWND)lParam);
           break;
         case HSHELL_WINDOWDESTROYED:
-          //printf("HSHELL_WINDOWDESTROYED\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->removeIcon((HWND)lParam);
           break;
         case HSHELL_REDRAW:
-          //printf("HSHELL_REDRAW\n");
           ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->updateIcon((HWND)lParam, false);
           break;
         case HSHELL_GETMINRECT:
-          //printf("HSHELL_GETMINRECT\n");
           {
             LPSHELLHOOKINFO2 shi = (LPSHELLHOOKINFO2)lParam;
             Launcher* launcher = (Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
@@ -413,25 +401,6 @@ bool Launcher::getCommandLine(HWND hwnd, std::wstring& path, std::wstring& param
       ++parameters;
     param = parameters;
   }
-/*
-  if(IsWow64())
-  {
-    LPCWSTR cpath = path.c_str();
-    LPCWSTR str = cpath;
-    for(;;)
-    {
-      str = wcschr(str, L'\\');
-      if(!str)
-        break;
-      ++str;
-      if(!_wcsnicmp(str, L"system32\\", 9))
-      {
-        path.replace(str - cpath, 9, L"Sysnative\\");
-        break;
-      }
-    }
-  }
-*/
   return true;
 }
 
@@ -568,8 +537,6 @@ int Launcher::handleMouseEvent(Icon* icon, unsigned int message, int x, int y)
             PostMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, MAKELONG(x, y));
           else
             PostMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, MAKELONG(x, y));
-          //AnimateWindow(hwnd, 200, AW_HIDE);
-          // DrawAnimatedRects ?
         }
         else 
         {

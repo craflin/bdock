@@ -1,32 +1,6 @@
 
 #include "stdafx.h"
-/*
-typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 
-LPFN_ISWOW64PROCESS fnIsWow64Process;
-
-BOOL IsWow64()
-{
-    static BOOL bDetermined = FALSE;
-    static BOOL bIsWow64 = FALSE;
-
-    if(!bDetermined)
-    {
-      fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
-          GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
-    
-      if (NULL != fnIsWow64Process)
-      {
-          if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
-          {
-              // handle error
-          }
-      }
-      bDetermined = TRUE;
-    }
-    return bIsWow64;
-}
-*/
 HMENU CopyMenu(HMENU hmenu)
 {
   MENUITEMINFO mii;
