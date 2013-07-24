@@ -2,27 +2,19 @@
 //
 
 #include "stdafx.h"
-#include "resource.h"
 
-extern HMODULE hmodule;
-
-ATOM Launcher::wndClass = 0;
 int Launcher::instances = 0;
 
-Launcher::Launcher(Dock& dock) : dock(dock), defaultIcon(LoadIcon(NULL, IDI_APPLICATION)), hwnd(0), activeHwnd(0)
+Launcher::Launcher(Dock& dock) : dock(dock), defaultIcon(IDI_APPLICATION), activeHwnd(0)
 {
-  if(instances == 0)
+  if(instances++ == 0)
     wmiInit();
-  ++instances;
 } 
 
 Launcher::~Launcher()
 {
   if(hwnd)
-  {
-    DeregisterShellHookWindow(hwnd);
-    DestroyWindow(hwnd);
-  }
+    deregisterShellHookWindow();
 
   for(std::vector<Icon*>::iterator i = launchers.begin(), end = launchers.end(); i != end; ++i)
   {
@@ -33,19 +25,11 @@ Launcher::~Launcher()
   for(std::unordered_map<HWND, Icon*>::iterator i = icons.begin(), end = icons.end(); i != end; ++i)
     delete (IconData*)i->second->userData;
 
-  --instances;
-  if(instances == 0)
-  {
-    if(wndClass)
-    {
-      UnregisterClass(L"BDOCKLauncher", hmodule);
-      wndClass = 0;
-    }
+  if(--instances == 0)
     wmiCleanup();
-  }
 }
 
-bool Launcher::init()
+bool Launcher::create()
 {
   // load launcher
   for(int i = 0, count = dock.getStorageNumSectionCount(); i < count; ++i)
@@ -75,35 +59,21 @@ bool Launcher::init()
     }
   }
 
-  // register window class
-  if(!wndClass)
-  {
-    WNDCLASSEX wcex;
-    wcex.cbSize = sizeof(WNDCLASSEX);
-    wcex.style      = 0; 
-    wcex.lpfnWndProc  = wndProc;
-    wcex.cbClsExtra    = 0;
-    wcex.cbWndExtra    = 0;
-    wcex.hInstance    = hmodule;
-    wcex.hIcon      = 0;
-    wcex.hCursor    = 0;
-    wcex.hbrBackground  = 0; //(HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName  = 0; //MAKEINTRESOURCE(IDC_BDOCK);
-    wcex.lpszClassName  = L"BDOCKLauncher";
-    wcex.hIconSm    = 0;
-    wndClass = RegisterClassEx(&wcex);
-    if(!wndClass)
-      return false;
-  }
-
-  hwnd = CreateWindowEx(NULL, L"BDOCKLauncher", NULL, NULL, NULL, NULL, NULL, NULL, HWND_MESSAGE, NULL, hmodule, this);
-  if(!hwnd)
+  if(!WinAPI::Window::create(_T("BDOCKLauncher"), 0, HWND_MESSAGE, NULL, NULL, NULL, _T("BDOCKLauncher"), 0, 0))
     return false;
-  if(!RegisterShellHookWindow(hwnd))
+  if(!registerShellHookWindow())
     return false;
 
   activeHwnd = GetForegroundWindow();
-  if(!EnumWindows(EnumWindowsProc, (LPARAM)this))
+  struct EnumProc
+  {
+    static BOOL CALLBACK enumWindowsProc(HWND hwnd, LPARAM lParam)
+    {  
+      ((Launcher*)lParam)->addIcon(hwnd);
+      return TRUE;
+    }
+  };
+  if(!EnumWindows(EnumProc::enumWindowsProc, (LPARAM)this))
     return false;
   return true;
 }
@@ -116,9 +86,9 @@ bool Launcher::hasTaskBarIcon(HWND hwnd)
     HANDLE owner = GetWindow(hwnd, GW_OWNER);
     if((!(exstyle & WS_EX_TOOLWINDOW) && owner == 0) || (exstyle & WS_EX_APPWINDOW && owner != 0))
     {
-      wchar name[32];
+      TCHAR name[32];
       GetClassName(hwnd, name, 31);
-      if(!wcscmp(name, L"Shell_TrayWnd"))
+      if(!_tcscmp(name, _T("Shell_TrayWnd")))
         return false;
       return true;
     }
@@ -289,18 +259,12 @@ bool Launcher::launch(Icon& icon)
     dir.resize(pos);
   else
     dir.empty();
-  HINSTANCE inst = ShellExecuteW(NULL, NULL, iconData->path.c_str(), iconData->parameters.c_str(),
+  HINSTANCE inst = WinAPI::Shell::execute(NULL, NULL, iconData->path.c_str(), iconData->parameters.c_str(),
     dir.empty() ? NULL : dir.c_str(), SW_SHOWNORMAL);
   if((DWORD)inst <= 32)
     return false;
   CloseHandle(inst);
   return true;
-}
-
-BOOL CALLBACK Launcher::EnumWindowsProc(HWND hwnd, LPARAM lParam)
-{  
-  ((Launcher*)lParam)->addIcon(hwnd);
-  return TRUE;
 }
 
 typedef struct
@@ -312,35 +276,30 @@ typedef struct
   short bottom;
 } SHELLHOOKINFO2, *LPSHELLHOOKINFO2;
 
-LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
   switch (message)
   {
-  case WM_CREATE:
-    {
-      LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
-      SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
-    }
-    break;
+  case WM_COMMAND:
   default:
     {
-      static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
+      static unsigned int wm_shellhook = RegisterWindowMessage(_T("SHELLHOOK"));
       if(message == wm_shellhook)
       {
         switch(wParam)
         {
         case HSHELL_WINDOWACTIVATED:
         case HSHELL_RUDEAPPACTIVATED:
-          ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->activateIcon((HWND)lParam);
+          activateIcon((HWND)lParam);
           break;
         case HSHELL_WINDOWCREATED:
-          ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->addIcon((HWND)lParam);
+          addIcon((HWND)lParam);
           break;
         case HSHELL_WINDOWDESTROYED:
-          ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->removeIcon((HWND)lParam);
+          removeIcon((HWND)lParam);
           break;
         case HSHELL_REDRAW:
-          ((Launcher*)GetWindowLongPtr(hwnd, GWLP_USERDATA))->updateIcon((HWND)lParam, false);
+          updateIcon((HWND)lParam, false);
           break;
         case HSHELL_GETMINRECT:
           {
@@ -362,7 +321,7 @@ LRESULT CALLBACK Launcher::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
         }
         break;
       }
-      return DefWindowProc(hwnd, message, wParam, lParam);
+      return WinAPI::Window::onMessage(message, wParam, lParam);
     }
   }
   return 0;
@@ -426,9 +385,9 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
     hmenu = CreatePopupMenu();
 
   wchar str[32];
-  LoadString(hmodule, IDS_LAUNCH, str, sizeof(str));
+  LoadString(WinAPI::Application::getInstance(), IDS_LAUNCH, str, sizeof(str));
   InsertMenu(hmenu, 0, MF_BYPOSITION |  MF_STRING, 2, str);
-  LoadString(hmodule, iconData->pinned ? IDS_UNPIN : IDS_PIN, str, sizeof(str));
+  LoadString(WinAPI::Application::getInstance(), iconData->pinned ? IDS_UNPIN : IDS_PIN, str, sizeof(str));
   InsertMenu(hmenu, 1, MF_BYPOSITION | MF_STRING, 1, str);
   
   if(!iconData->hwnd)

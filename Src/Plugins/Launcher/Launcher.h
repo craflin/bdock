@@ -18,38 +18,36 @@ public:
   ~IconData();
 };
 
-class Launcher
+class Launcher : public WinAPI::Window
 {
 public:
   Launcher(Dock& dock);
   ~Launcher();
 
-  bool init();
+  bool create();
 
 private:
-  static ATOM wndClass;
+
   static int instances;
 
   Dock& dock;
-  HICON defaultIcon;
-  HWND hwnd;
+  WinAPI::Icon defaultIcon;
   HWND activeHwnd;
   std::unordered_map<HWND, Icon*> icons;
   std::vector<Icon*> launchers;
 
   static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
 
-  static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-  static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
+  virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
   void addIcon(HWND hwnd);
   void activateIcon(HWND hwnd);
   void removeIcon(HWND hwnd);
   void updateIcon(HWND hwnd, bool forceUpdate);
 
-  bool hasTaskBarIcon(HWND hwnd);
+  static bool hasTaskBarIcon(HWND hwnd);
 
   void showContextMenu(Icon* icon, int x, int y);
   bool launch(Icon& icon);
-  bool getCommandLine(HWND hwnd, std::wstring& path, std::wstring& parameters);
+  static bool getCommandLine(HWND hwnd, std::wstring& path, std::wstring& parameters);
 };

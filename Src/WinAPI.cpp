@@ -171,8 +171,8 @@ namespace WinAPI
   }
 
   bool Window::create(LPCTSTR className, UINT windowClassStyle, 
-      HWND hwndParent, Icon& icon, Icon& smallIcon, 
-      Cursor& cursor, LPCTSTR windowName, UINT exStyle, UINT style)
+      HWND hwndParent, HICON icon, HICON smallIcon, 
+      HCURSOR cursor, LPCTSTR windowName, UINT exStyle, UINT style)
   {
     if(hwnd)
       return false; // already created
@@ -391,12 +391,12 @@ namespace WinAPI
     return himagelist != NULL;
   }
 
-  INT ImageList::add(Icon& icon)
+  INT ImageList::add(HICON icon)
   {
     return ImageList_AddIcon(himagelist, icon);
   }
 
-  bool ListView::setImageList(ImageList& imageList, INT iImageList)
+  bool ListView::setImageList(HIMAGELIST imageList, INT iImageList)
   {
     ListView_SetImageList(hwnd, imageList, iImageList);
     return true;
@@ -408,7 +408,7 @@ namespace WinAPI
     return ListView_InsertItem(hwnd, &item);
   }
 
-  bool TreeView::setImageList(ImageList& imageList, INT iImageList)
+  bool TreeView::setImageList(HIMAGELIST imageList, INT iImageList)
   {
     TreeView_SetImageList(hwnd, imageList, iImageList);
     return true;

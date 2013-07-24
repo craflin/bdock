@@ -94,8 +94,8 @@ namespace WinAPI
     ~Window();
 
     bool create(LPCTSTR className, UINT windowClassStyle = CS_DBLCLKS, 
-      HWND hwndParent = NULL, Icon& icon = Icon(), Icon& smallIcon = Icon(), 
-      Cursor& cursor = Cursor(IDC_ARROW), LPCTSTR windowName = _T(""), 
+      HWND hwndParent = NULL, HICON icon = NULL, HICON smallIcon = NULL, 
+      HCURSOR cursor = Cursor(IDC_ARROW), LPCTSTR windowName = _T(""), 
       UINT exStyle = 0, UINT style = WS_POPUP);
 
     bool setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList);
@@ -166,7 +166,7 @@ namespace WinAPI
 
     bool create(INT cx, INT cy, UINT flags, INT cInitial, INT cGrow);
 
-    INT add(Icon& icon);
+    INT add(HICON icon);
 
     operator HIMAGELIST() {return himagelist;}
 
@@ -177,14 +177,14 @@ namespace WinAPI
   class ListView : public Control
   {
   public:
-    bool setImageList(ImageList& imageList, INT iImageList);
+    bool setImageList(HIMAGELIST imageList, INT iImageList);
     INT addItem(LVITEM& item);
   };
 
   class TreeView : public Control
   {
   public:
-    bool setImageList(ImageList& imageList, INT iImageList);
+    bool setImageList(HIMAGELIST imageList, INT iImageList);
     HTREEITEM insertItem(TVINSERTSTRUCT& item);
   };
 
