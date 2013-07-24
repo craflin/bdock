@@ -1,6 +1,5 @@
 Tasks:
-  - autostart
-  - Installer
-  - System-Tray Icons (Volume control, network interfaces, battery)
-  - Besseres Uhrzeitdings
-  - Mehr Konfigurationsmöglichkeiten
+  - Avoid multiple instances (via mutex)
+  - Settings dialog
+  - System-Tray icons (volume control, network interfaces, battery)
+  - Clock plugin
