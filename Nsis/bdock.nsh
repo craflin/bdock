@@ -6,6 +6,7 @@
 
   !include "MUI2.nsh"
   !include "WinMessages.nsh"
+  !include "FileFunc.nsh"
 
 ;--------------------------------
 ;Configuration
@@ -145,7 +146,10 @@ Section "!BDock ${VERSION}" MainSection
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BDock" "Publisher" "${PUBLISHER}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BDock" "NoModify" 0x01
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BDock" "NoRepair" 0x01
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BDock" "EstimatedSize" ${ESTIMATEDSIZE}
+  
+  ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+  IntFmt $0 "0x%08X" $0
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BDock" "EstimatedSize" $0
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BDock" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
   ; Install start menu entries
