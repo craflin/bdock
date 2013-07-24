@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "winapi.h"
+#include "../WinAPI.h"
 
 #include <shlobj.h> // TODO: get rid of this
 

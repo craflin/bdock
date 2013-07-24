@@ -32,6 +32,11 @@ namespace WinAPI
     VERIFY(InitCommonControlsEx(&iccex));
   }
 
+  void Application::setModule(HMODULE hmodule)
+  {
+    Application::hinstance = hmodule;
+  }
+
   UINT Application::run()
   {
     MSG msg;

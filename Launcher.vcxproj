@@ -167,6 +167,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Src\WinAPI.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClInclude Include="Src\WinAPI.h" />
     <ClInclude Include="Src\Plugins\Launcher\Launcher.h" />
     <ClInclude Include="Src\Plugins\Launcher\resource.h" />
     <ClInclude Include="Src\Plugins\Launcher\stdafx.h" />

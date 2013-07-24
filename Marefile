@@ -31,13 +31,14 @@ targets = {
       "Src/Dock/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
       }
-      "Src/Dock/WinAPI.cpp" = cppSource + {
-        cppFlags += { -"/Yu" }
-      }
       "Src/Dock/**.h"
       "Src/Dock/**.rc" = rcSource
       "Src/Dock/*.ico"
       "Src/Dock2.h"
+      "Src/WinAPI.cpp" = cppSource + {
+        cppFlags += { -"/Yu" }
+      }
+      "Src/WinAPI.h"
     }
   }
 
@@ -56,6 +57,10 @@ targets = {
         "Src/Plugins/$(target)/wmi.cpp" = cppSource + {
           cppFlags -= { "/Yu" }
         }
+        "Src/WinAPI.cpp" = cppSource + {
+          cppFlags += { -"/Yu" }
+        }
+        "Src/WinAPI.h"
       }
       "Src/Plugins/$(target)/**.h"
       "Src/Plugins/$(target)/**.rc" = rcSource

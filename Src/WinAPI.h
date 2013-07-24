@@ -13,6 +13,7 @@ namespace WinAPI
   public:
     Application(HINSTANCE hinstance, DWORD dwICC =  ICC_WIN95_CLASSES);
 
+    static void setModule(HMODULE hmodule);
     static HINSTANCE getInstance() {return hinstance;}
     static void quit(UINT exitCode);
 
