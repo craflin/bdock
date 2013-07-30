@@ -122,30 +122,50 @@ bool HideTaskBar::showTaskBar(bool show, LPARAM& state)
 
 LRESULT CALLBACK HideTaskBar::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
-  if(message == wm_shellhook)
-    switch(wParam)
-    {
-    case HSHELL_RUDEAPPACTIVATED:
-    case HSHELL_WINDOWACTIVATED:
+  if(message == WM_TIMER)
+  {
+    bool hideTaskBar = true;
+    if(!showTaskBar(!hideTaskBar, HideTaskBar::originalState))
+      return 0;
+    hidden = hideTaskBar;
+    return 0;
+  }
+  else
+  {
+    static unsigned int wm_shellhook = RegisterWindowMessage(L"SHELLHOOK");
+    if(message == wm_shellhook)
+      switch(wParam)
       {
-        HWND activeWnd = (HWND) lParam;
-        bool hideTaskBar = activeWnd != 0;
-        if(!hideTaskBar)
+      case HSHELL_RUDEAPPACTIVATED:
+      case HSHELL_WINDOWACTIVATED:
         {
-          HWND startMenu = FindWindowExA(GetDesktopWindow(), 0, 0, "Start menu");
-          if(!startMenu || !IsWindowVisible(startMenu))
-            hideTaskBar = true;
+          HWND activeWnd = (HWND) lParam;
+          bool hideTaskBar = activeWnd != 0;
+          if(!hideTaskBar)
+          {
+            HWND startMenu = FindWindowExA(GetDesktopWindow(), 0, 0, "Start menu");
+            if(!startMenu || !IsWindowVisible(startMenu))
+              hideTaskBar = true;
+          }
+          if(!hideTaskBar)
+            KillTimer(hwnd, 0);
+          if(hideTaskBar != hidden)
+          {
+            if(hideTaskBar)
+            {
+              SetTimer(hwnd, 0, 600, 0);
+            }
+            else
+            {
+              if(!showTaskBar(!hideTaskBar, HideTaskBar::originalState))
+                return false;
+              hidden = hideTaskBar;
+            }
+          }
         }
-        if(hideTaskBar != hidden)
-        {
-          if(!showTaskBar(!hideTaskBar, HideTaskBar::originalState))
-            return false;
-          hidden = hideTaskBar;
-        }
+        break;
       }
-      break;
-    }
+  }
   return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
