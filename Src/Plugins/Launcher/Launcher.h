@@ -12,9 +12,10 @@ public:
   HWND hwnd;
   std::wstring path;
   std::wstring parameters;
-  bool pinned;
+  bool pinned; // TODO: remove this and use launcherIndex >= 0 ?
+  int launcherIndex;
 
-  IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters);
+  IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters, int launcherIndex);
   ~IconData();
 };
 
@@ -33,8 +34,8 @@ private:
   Dock& dock;
   WinAPI::Icon defaultIcon;
   HWND activeHwnd;
-  std::unordered_map<HWND, Icon*> icons;
-  std::vector<Icon*> launchers;
+  std::list<IconData*> icons;
+  std::unordered_map<HWND, IconData*> iconsByHWND;
 
   static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
 
