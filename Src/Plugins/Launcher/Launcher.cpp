@@ -219,10 +219,45 @@ void Launcher::removeIcon(HWND hwnd)
     return;
 
   IconData* iconData = i->second;
-  Icon* icon = iconData->icon;
+  iconsByHWND.erase(i);
+
   if(iconData->pinned)
   {
-    // maybe TODO: try to find a not-pinned icon compatible with this launcher. adopt the hwnd and remove that icon.
+    // try to find a icon compatible with this launcher. adopt the hwnd and remove that icon.
+    for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+    {
+      IconData* itIconData = *i;
+      if(itIconData != iconData && itIconData->hwnd && 
+        (!itIconData->pinned || itIconData->launcherIndex > iconData->launcherIndex) &&
+        !itIconData->path.compare(iconData->path))
+      {
+        if(!itIconData->pinned)
+        {
+          iconData->hwnd = itIconData->hwnd;
+          iconData->icon->flags = itIconData->icon->flags;
+          iconsByHWND.erase(itIconData->hwnd);
+          iconsByHWND[iconData->hwnd] = iconData;
+          
+          dock.destroyIcon(itIconData->icon);
+          icons.remove(itIconData);
+          delete itIconData;
+          updateIcon(iconData->hwnd, true);
+          return;
+        }
+        else
+        {
+          iconData->hwnd = itIconData->hwnd;
+          iconData->icon->flags = itIconData->icon->flags;
+          iconsByHWND.erase(itIconData->hwnd);
+          iconsByHWND[iconData->hwnd] = iconData;
+
+          updateIcon(iconData->hwnd, true);
+
+          iconData = itIconData;
+          break;
+        }
+      }
+    }
 
     // restore the icon from storage
     if(dock.enterStorageNumSection(iconData->launcherIndex) == 0)
@@ -237,24 +272,22 @@ void Launcher::removeIcon(HWND hwnd)
       dock.leaveStorageSection();
       if(bitmap)
       {
-        if(icon->icon)
-          DeleteObject(icon->icon);
-        icon->icon = bitmap;
+        if(iconData->icon->icon)
+          DeleteObject(iconData->icon->icon);
+        iconData->icon->icon = bitmap;
       }
     }
 
     iconData->hwnd = 0;
-    icon->flags |= IF_GHOST;
-    icon->flags &= ~IF_ACTIVE;
-    dock.updateIcon(icon);
-    iconsByHWND.erase(i);
+    iconData->icon->flags |= IF_GHOST;
+    iconData->icon->flags &= ~IF_ACTIVE;
+    dock.updateIcon(iconData->icon);
   }
   else
   {
-    delete iconData;
-    dock.destroyIcon(icon);
+    dock.destroyIcon(iconData->icon);
     icons.remove(iconData);
-    iconsByHWND.erase(i);
+    delete iconData;
   }
 }
 
