@@ -52,7 +52,7 @@ Skin::~Skin()
 
 bool Skin::init(const wchar* name)
 {
-  std::wstring file(L"skins/");
+  std::wstring file(L"Skins/");
   file += name;
   file += L'/';
   size_t flen = file.length();
@@ -76,6 +76,10 @@ bool Skin::init(const wchar* name)
   file.resize(flen);
   file += L"defaultBg.bmp";
   defaultBg.load(file.c_str());
+
+  file.resize(flen);
+  file += L"hotBg.bmp";
+  hotBg.load(file.c_str());
 
   file.resize(flen);
   file += L"fullBg.bmp";

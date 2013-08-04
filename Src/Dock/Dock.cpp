@@ -116,10 +116,15 @@ void Dock::draw(HDC dest, const RECT& update)
       }
       else
       {
-        if(!(icon->flags & (IF_HALFBG | IF_FULLBG)) && skin->defaultBg.bmp)
+        if(!(icon->flags & (IF_HALFBG | IF_FULLBG | IF_HOT)) && skin->defaultBg.bmp)
         {
-          const SIZE& size(skin->activeBg.size);
+          const SIZE& size(skin->defaultBg.size);
           skin->defaultBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
+        }
+        if(icon->flags & IF_HOT && skin->hotBg.bmp)
+        {
+          const SIZE& size(skin->hotBg.size);
+          skin->hotBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
         }
         if(icon->flags & IF_HALFBG && skin->halfBg.bmp)
         {
@@ -282,6 +287,27 @@ Icon* Dock::hitTest(int x, int y)
 bool Dock::handleMouseEvent(UINT message, int x, int y)
 {
   Icon* icon = hitTest(x, y);
+  if (message == WM_MOUSEMOVE)
+  {
+    for(Icon* i = firstIcon; i; i = i->next)
+      if(i->flags & IF_HOT && i != icon)
+      {
+        i->flags &= ~IF_HOT;
+        updateIcon(i);
+      }
+    if(icon && !(icon->flags & IF_HOT))
+    {
+      icon->flags |= IF_HOT;
+      updateIcon(icon);
+      
+      TRACKMOUSEEVENT tme;
+      tme.cbSize = sizeof(TRACKMOUSEEVENT);
+      tme.dwFlags = TME_LEAVE;
+      tme.hwndTrack = hwnd;
+      tme.dwHoverTime = HOVER_DEFAULT;
+      TrackMouseEvent(&tme);
+    }
+  }
   if(icon && icon->handleMouseEvent && icon->handleMouseEvent(icon, message, x + pos.x, y + pos.y) == 0)
     return true;
   return false;
@@ -335,6 +361,22 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       default:
         return WinAPI::Window::onMessage(message, wParam, lParam);
       }
+    }
+    break;
+  case WM_MOUSELEAVE:
+    {
+      for(Icon* i = firstIcon; i; i = i->next)
+      if(i->flags & IF_HOT)
+        {
+          i->flags &= ~IF_HOT;
+          updateIcon(i);
+        }
+      TRACKMOUSEEVENT tme;
+      tme.cbSize = sizeof(TRACKMOUSEEVENT);
+      tme.dwFlags = 0;
+      tme.hwndTrack = hwnd;
+      tme.dwHoverTime = HOVER_DEFAULT;
+      TrackMouseEvent(&tme);
     }
     break;
   case WM_LBUTTONDOWN:

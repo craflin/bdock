@@ -30,6 +30,7 @@ public:
   // icon background
   Bitmap activeBg;
   Bitmap defaultBg;
+  Bitmap hotBg;
   Bitmap fullBg;
   Bitmap halfBg;
 

@@ -25,8 +25,9 @@ struct Icon
 #define IF_GHOST 0x01
 #define IF_ACTIVE 0x02
 #define IF_SMALL 0x04
-#define IF_HALFBG 0x08
-#define IF_FULLBG 0x10
+#define IF_HALFBG 0x08 // TODO: remove this?
+#define IF_FULLBG 0x10 // TODO: remove this?
+#define IF_HOT 0x20
 
 struct Timer
 {
