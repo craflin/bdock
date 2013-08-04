@@ -34,6 +34,7 @@ private:
   Dock& dock;
   WinAPI::Icon defaultIcon;
   HWND activeHwnd;
+  IconData* hotIcon;
   std::list<IconData*> icons;
   std::unordered_map<HWND, IconData*> iconsByHWND;
 

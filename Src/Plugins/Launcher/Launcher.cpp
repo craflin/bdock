@@ -5,7 +5,7 @@
 
 int Launcher::instances = 0;
 
-Launcher::Launcher(Dock& dock) : dock(dock), defaultIcon(IDI_APPLICATION), activeHwnd(0)
+Launcher::Launcher(Dock& dock) : dock(dock), defaultIcon(IDI_APPLICATION), activeHwnd(0), hotIcon(0)
 {
   if(instances++ == 0)
     wmiInit();
@@ -58,6 +58,9 @@ bool Launcher::create()
     return false;
   if(!registerShellHookWindow())
     return false;
+
+  RegisterHotKey(hwnd, 123, MOD_ALT|MOD_WIN, VK_LEFT);
+  RegisterHotKey(hwnd, 124, MOD_ALT|MOD_WIN, VK_RIGHT);
 
   // add icon for each opened window
   activeHwnd = GetForegroundWindow();
@@ -338,6 +341,78 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
   switch (message)
   {
+  case WM_KEYUP:
+    if(wParam == VK_MENU)
+    {
+      if(hotIcon)
+      {
+        for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+          if(*i == hotIcon)
+            goto hotIconValid;
+        hotIcon = 0;
+        break;
+      hotIconValid:
+        if(hotIcon)
+        {
+          hotIcon->icon->flags &= ~IF_HOT;
+          handleMouseEvent(hotIcon->icon, WM_LBUTTONUP, 0, 0);
+          hotIcon = 0;
+        }
+      }
+    }
+    break;
+  case WM_HOTKEY:
+    {
+      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+        if(*i == hotIcon)
+          goto hotIconValid2;
+      hotIcon = 0;
+    hotIconValid2:
+      if(hotIcon && hotIcon->icon->flags & IF_HOT)
+      {
+        hotIcon->icon->flags &= ~IF_HOT;
+        dock.updateIcon(hotIcon->icon);
+      }
+      if(!hotIcon)
+      {
+        auto i = iconsByHWND.find(activeHwnd);
+        if(i != iconsByHWND.end())
+          hotIcon = i->second;
+      }
+
+      IconData* iconToHighlight = 0;
+      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+        if(*i == hotIcon)
+        {
+          if(HIWORD(lParam) == VK_RIGHT)
+          {
+            if(++i != end)
+              iconToHighlight = *i;
+            else
+              iconToHighlight = icons.front();
+            
+          }
+          else if(HIWORD(lParam) == VK_LEFT)
+          {
+            if(i != icons.begin())
+              iconToHighlight = *(--i);
+            else
+              iconToHighlight = icons.back();
+          }
+          break;
+        }
+      if(iconToHighlight)
+      {
+        if(!(iconToHighlight->icon->flags & IF_HOT))
+        {
+          iconToHighlight->icon->flags |= IF_HOT;
+          dock.updateIcon(iconToHighlight->icon);
+        }
+        hotIcon = iconToHighlight;
+        SetForegroundWindow(hwnd);
+      }
+    }
+    break;
   case WM_COMMAND:
   default:
     {
