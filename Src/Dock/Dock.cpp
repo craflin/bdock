@@ -325,11 +325,15 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
         {
           if(!hideWindow)
           {
+            // update window before showing it again
             LONG windowStyle = GetWindowLong(hwnd, GWL_STYLE);
             SetWindowLong(hwnd, GWL_STYLE, windowStyle | WS_VISIBLE);
             this->update(0);
             SetWindowLong(hwnd, GWL_STYLE, windowStyle);
-            ShowWindow(hwnd, SW_SHOW);
+
+            // show window
+            //ShowWindow(hwnd, SW_SHOW);
+            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE | SWP_SHOWWINDOW);
           }
           else
             ShowWindow(hwnd, SW_HIDE);
