@@ -361,6 +361,19 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       }
     }
     break;
+  case WM_KILLFOCUS:
+    if(hotIcon)
+    {
+      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+        if(*i == hotIcon)
+        {
+          hotIcon->icon->flags &= ~IF_HOT;
+          dock.updateIcon(hotIcon->icon);
+          break;
+        }
+      hotIcon = 0;
+    }
+    break;
   case WM_HOTKEY:
     {
       for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
