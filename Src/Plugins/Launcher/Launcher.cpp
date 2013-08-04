@@ -392,28 +392,31 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
         if(i != iconsByHWND.end())
           hotIcon = i->second;
       }
-
       IconData* iconToHighlight = 0;
-      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-        if(*i == hotIcon)
-        {
-          if(HIWORD(lParam) == VK_RIGHT)
+
+      if(!hotIcon && !icons.empty())
+        iconToHighlight = icons.front();
+      else
+        for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+          if(*i == hotIcon)
           {
-            if(++i != end)
-              iconToHighlight = *i;
-            else
-              iconToHighlight = icons.front();
+            if(HIWORD(lParam) == VK_RIGHT)
+            {
+              if(++i != end)
+                iconToHighlight = *i;
+              else
+                iconToHighlight = icons.front();
             
+            }
+            else if(HIWORD(lParam) == VK_LEFT)
+            {
+              if(i != icons.begin())
+                iconToHighlight = *(--i);
+              else
+                iconToHighlight = icons.back();
+            }
+            break;
           }
-          else if(HIWORD(lParam) == VK_LEFT)
-          {
-            if(i != icons.begin())
-              iconToHighlight = *(--i);
-            else
-              iconToHighlight = icons.back();
-          }
-          break;
-        }
       if(iconToHighlight)
       {
         if(!(iconToHighlight->icon->flags & IF_HOT))
