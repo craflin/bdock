@@ -148,21 +148,30 @@ void Launcher::addIcon(HWND hwnd)
 void Launcher::activateIcon(HWND hwnd)
 {
   if(hwnd == activeHwnd)
+  {
+    if(activeHwnd && !IsWindow(activeHwnd))
+      removeIcon(activeHwnd);
     return;
+  }
 
   Icon* updateIcons[2];
   uint updateIconsCount = 0;
 
   if(activeHwnd)
   {
-    auto i = iconsByHWND.find(activeHwnd);
-    if(i != iconsByHWND.end())
+    if(!IsWindow(activeHwnd))
+      removeIcon(activeHwnd);
+    else
     {
-      Icon* icon = i->second->icon;
-      if(icon->flags & IF_ACTIVE)
+      auto i = iconsByHWND.find(activeHwnd);
+      if(i != iconsByHWND.end())
       {
-        icon->flags &= ~IF_ACTIVE;
-        updateIcons[updateIconsCount++] = icon;
+        Icon* icon = i->second->icon;
+        if(icon->flags & IF_ACTIVE)
+        {
+          icon->flags &= ~IF_ACTIVE;
+          updateIcons[updateIconsCount++] = icon;
+        }
       }
     }
   }
