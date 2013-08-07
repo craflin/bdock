@@ -333,7 +333,6 @@ bool Launcher::launch(Icon& icon)
     dir.empty() ? NULL : dir.c_str(), SW_SHOWNORMAL);
   if((DWORD)inst <= 32)
     return false;
-  CloseHandle(inst);
   return true;
 }
 
