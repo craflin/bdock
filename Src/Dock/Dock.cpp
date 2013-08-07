@@ -320,24 +320,25 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
   case WM_TIMER:
     if(wParam == 0) // check full screen app timer
     {
-        bool hideWindow = isFullscreen(GetForegroundWindow());
-        if(!!IsWindowVisible(hwnd) == hideWindow)
+      //killTimer(0);
+      bool hideWindow = isFullscreen(GetForegroundWindow());
+      if(!!IsWindowVisible(hwnd) == hideWindow)
+      {
+        if(!hideWindow)
         {
-          if(!hideWindow)
-          {
-            // update window before showing it again
-            LONG windowStyle = GetWindowLong(hwnd, GWL_STYLE);
-            SetWindowLong(hwnd, GWL_STYLE, windowStyle | WS_VISIBLE);
-            this->update(0);
-            SetWindowLong(hwnd, GWL_STYLE, windowStyle);
+          // update window before showing it again
+          LONG windowStyle = GetWindowLong(hwnd, GWL_STYLE);
+          SetWindowLong(hwnd, GWL_STYLE, windowStyle | WS_VISIBLE);
+          this->update(0);
+          SetWindowLong(hwnd, GWL_STYLE, windowStyle);
 
-            // show window
-            //ShowWindow(hwnd, SW_SHOW);
-            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE | SWP_SHOWWINDOW);
-          }
-          else
-            ShowWindow(hwnd, SW_HIDE);
+          // show window
+          //ShowWindow(hwnd, SW_SHOW);
+          SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE | SWP_SHOWWINDOW);
         }
+        else
+          ShowWindow(hwnd, SW_HIDE);
+      }
     }
     if(wParam != 0) // plugin timer
     {
@@ -411,8 +412,9 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
         {
+          SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE);
           killTimer(0);
-          setTimer(0, 300, 0);
+          setTimer(0, 2000, 0);
           /*
           bool hideWindow = isFullscreen((HWND)lParam) && wParam == HSHELL_RUDEAPPACTIVATED;
           if(!!IsWindowVisible(hwnd) == hideWindow)
@@ -565,7 +567,9 @@ bool Dock::isFullscreen(HWND hwnd)
   clientRect.top += pt.y;
   clientRect.bottom += pt.y;
   
-  if(!(clientRect.left <= mi.rcWork.left && clientRect.top <= mi.rcWork.top && clientRect.right >= mi.rcWork.right && clientRect.bottom >= mi.rcWork.bottom))
+  //if(!(clientRect.left <= mi.rcWork.left && clientRect.top <= mi.rcWork.top && clientRect.right >= mi.rcWork.right && clientRect.bottom >= mi.rcWork.bottom))
+    //return false;
+  if(clientRect.left != mi.rcWork.left || clientRect.top != mi.rcWork.top || clientRect.right != mi.rcWork.right || clientRect.bottom != mi.rcWork.bottom)
     return false;
 
   DWORD exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
