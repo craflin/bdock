@@ -79,7 +79,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   Storage storage;
   {
     WCHAR path[MAX_PATH];
-    if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path))) 
+    if(WinAPI::Shell::getFolderPath(CSIDL_APPDATA | CSIDL_FLAG_CREATE, path, MAX_PATH)) 
     {
       storageFile = path;
       storageFile += L"/BDock";

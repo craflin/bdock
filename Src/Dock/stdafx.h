@@ -9,8 +9,6 @@
 
 #include "../WinAPI.h"
 
-#include <shlobj.h> // TODO: get rid of this
-
 // C RunTime Header Files
 #include <cstdlib>
 #include <malloc.h>

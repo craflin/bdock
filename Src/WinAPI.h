@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <CommCtrl.h>
+#include <shlobj.h>
 
 namespace WinAPI 
 {
