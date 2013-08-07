@@ -68,7 +68,7 @@ namespace WinAPI
     return true;
   }
 
-  bool Shell::createLink(LPCTSTR file, LPCTSTR link, LPCTSTR description)
+  bool Shell::createLink(LPCTSTR file, LPCTSTR link, LPCTSTR description, LPCTSTR workingDir)
   { 
       bool success = false;
 
@@ -76,13 +76,16 @@ namespace WinAPI
       LPCTSTR wsFile = file;
       LPCTSTR wsLink = link;
       LPCTSTR wsDescription = description;
+      LPCTSTR wsWorkingDir = workingDir;
 #else
       WCHAR wsFile[MAX_PATH]; 
       WCHAR wsLink[MAX_PATH]; 
       WCHAR wsDescription[MAX_PATH]; 
+      WCHAR wsWorkingDir[MAX_PATH]; 
       MultiByteToWideChar(CP_ACP, 0, file, -1, wsFile, MAX_PATH); 
       MultiByteToWideChar(CP_ACP, 0, link, -1, wsLink, MAX_PATH); 
       MultiByteToWideChar(CP_ACP, 0, description, -1, wsDescription, MAX_PATH); 
+      MultiByteToWideChar(CP_ACP, 0, workingDir, -1, wsWorkingDir, MAX_PATH); 
 #endif
  
       // Get a pointer to the IShellLink interface. It is assumed that CoInitialize
@@ -94,6 +97,7 @@ namespace WinAPI
           // Set the path to the shortcut target and add the description. 
           psl->SetPath(wsFile); 
           psl->SetDescription(wsDescription); 
+          psl->SetWorkingDirectory(wsWorkingDir);
 
           // Query IShellLink for the IPersistFile interface, used for saving the 
           // shortcut in persistent storage. 

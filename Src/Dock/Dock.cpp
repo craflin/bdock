@@ -593,7 +593,9 @@ bool Dock::showSettingsDlg()
     {
       TCHAR moduleFileName[MAX_PATH];
       GetModuleFileName(WinAPI::Application::getInstance(), moduleFileName, MAX_PATH);
-      WinAPI::Shell::createLink(moduleFileName, startupLinkFilePath, _T(""));
+      TCHAR workingDirectory[MAX_PATH];
+      GetCurrentDirectory(MAX_PATH, workingDirectory);
+      WinAPI::Shell::createLink(moduleFileName, startupLinkFilePath, _T(""), workingDirectory);
     }
   }
   else

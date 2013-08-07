@@ -27,7 +27,7 @@ namespace WinAPI
   {
   public:
     static bool getFolderPath(INT folder, LPTSTR path, UINT size);
-    static bool createLink(LPCTSTR file, LPCTSTR link, LPCTSTR description);
+    static bool createLink(LPCTSTR file, LPCTSTR link, LPCTSTR description, LPCTSTR workingDir);
 
     static HINSTANCE execute(HWND hwnd, LPCTSTR lpOperation, LPCTSTR lpFile, LPCTSTR lpParameters, 
       LPCTSTR lpDirectory, INT nShowCmd);
