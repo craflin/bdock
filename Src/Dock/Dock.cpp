@@ -400,6 +400,7 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
   case WM_CONTEXTMENU:
     handleContextMenu(LOWORD(lParam), HIWORD(lParam));
     break;
+  case WM_CLOSE:
   case WM_DESTROY:
     PostQuitMessage(0);
     break;
