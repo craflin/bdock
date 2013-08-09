@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalStorage), dockStorage(dockStorage), settings(dockStorage), 
-  skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0), activeHwnd(0), activeHwndRudeFullscreen(false) {}
+  skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0) {}
 
 Dock::~Dock()
 {
@@ -412,7 +412,8 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       case HSHELL_RUDEAPPACTIVATED:
       case HSHELL_WINDOWACTIVATED:
         {
-          SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE);
+          if((HWND)lParam)
+            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE);
           killTimer(0);
           setTimer(0, 2000, 0);
           /*

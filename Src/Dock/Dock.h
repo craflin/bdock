@@ -41,8 +41,6 @@ private:
   std::unordered_set<Plugin*> plugins;
   Icon* lastHitIcon;
   std::unordered_set<Timer*> timers;
-  HWND activeHwnd;
-  bool activeHwndRudeFullscreen;
 
   bool loadSkin(const wchar* name);
   bool loadPlugin(const wchar* name, Storage* storage);
