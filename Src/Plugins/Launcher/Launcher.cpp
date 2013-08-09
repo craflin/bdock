@@ -33,7 +33,7 @@ bool Launcher::create()
     char* data;
     unsigned int len;
     HBITMAP bitmap = 0;
-    if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len == sizeof(BITMAP))
+    if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
       if(!dock.getStorageData("iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
         bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
     const wchar* path = dock.getStorageString("path", 0, L"", 0);
@@ -292,7 +292,7 @@ void Launcher::removeIcon(HWND hwnd)
       char* data;
       unsigned int len;
       HBITMAP bitmap = 0;
-      if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len == sizeof(BITMAP))
+      if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
         if(!dock.getStorageData("iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
           bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
       dock.leaveStorageSection();
@@ -602,7 +602,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
         BITMAP bm;
         if(GetObject(icon->icon, sizeof(BITMAP), &bm))
         {
-          dock.setStorageData("iconHeader", (char*)&bm, sizeof(bm));
+          dock.setStorageData("iconHeader", (char*)&bm, sizeof(bm) - sizeof(LPVOID));
           uint size = bm.bmWidthBytes * bm.bmHeight;
           char* buffer = (char*)malloc(size);
           if(buffer)
