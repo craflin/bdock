@@ -72,6 +72,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
+  HANDLE hMutex = CreateMutex(NULL, TRUE, _T("BDock"));
+  if(!hMutex)
+    return -1;
+  if(GetLastError() == ERROR_ALREADY_EXISTS)
+  {
+    CloseHandle(hMutex);
+    return -1;
+  }
+
   WinAPI::Application application(hInstance, ICC_LINK_CLASS);
 
   // load storage
@@ -147,5 +156,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   if(!storageFile.empty())
     storage.save(storageFile.c_str());
 
+  CloseHandle(hMutex);
   return (int) exitCode;
 }

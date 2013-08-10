@@ -1,5 +1,4 @@
 Tasks:
-  - Avoid multiple instances (via mutex)
   - Settings dialog
   - System-Tray icons (volume control, network interfaces, battery)
   - Clock plugin
