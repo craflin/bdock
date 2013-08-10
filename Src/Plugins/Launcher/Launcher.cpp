@@ -257,9 +257,10 @@ void Launcher::removeIcon(HWND hwnd)
           iconsByHWND.erase(itIconData->hwnd);
           iconsByHWND[iconData->hwnd] = iconData;
           
-          dock.destroyIcon(itIconData->icon);
+          Icon* itIcon = itIconData->icon;
           icons.remove(itIconData);
-          delete itIconData;
+          delete itIconData; // delete iconData before destroying the icon to free icon->icon bitmap
+          dock.destroyIcon(itIcon);
           updateIcon(iconData->hwnd, true);
           return;
         }
@@ -304,9 +305,10 @@ void Launcher::removeIcon(HWND hwnd)
   }
   else
   {
-    dock.destroyIcon(iconData->icon);
+    Icon* icon = iconData->icon;
     icons.remove(iconData);
-    delete iconData;
+    delete iconData; // delete iconData before destroying the icon to free icon->icon bitmap
+    dock.destroyIcon(icon);
   }
 }
 
@@ -572,7 +574,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
         if(!iconData->hwnd)
         {
           icons.remove(iconData);
-          delete iconData;
+          delete iconData; // delete iconData before destroying the icon to free icon->icon bitmap
           dock.destroyIcon(icon);
         }
       }
