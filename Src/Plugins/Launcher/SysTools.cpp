@@ -222,3 +222,101 @@ abruption:
 }
 #endif 
 
+
+
+#include <Winternl.h>
+
+struct NtDll
+{
+  typedef NTSTATUS (NTAPI *pfnNtQueryInformationProcess)(
+      IN  HANDLE ProcessHandle,
+      IN  PROCESSINFOCLASS ProcessInformationClass,
+      OUT PVOID ProcessInformation,
+      IN  ULONG ProcessInformationLength,
+      OUT PULONG ReturnLength    OPTIONAL
+      );
+
+  pfnNtQueryInformationProcess NtQueryInformationProcess;
+
+  NtDll() : NtQueryInformationProcess(NULL), hNtDll(NULL) {}
+
+  ~NtDll()
+  {
+    if(hNtDll)
+      FreeLibrary(hNtDll);
+  }
+
+  bool load()
+  {
+    if(!hNtDll)
+    {
+      hNtDll = LoadLibrary(_T("ntdll.dll"));
+      if(hNtDll == NULL)
+        return false;
+    }
+
+    if(!NtQueryInformationProcess)
+    {
+      NtQueryInformationProcess = (pfnNtQueryInformationProcess)GetProcAddress(hNtDll, "NtQueryInformationProcess");
+      if(NtQueryInformationProcess == NULL)
+        return false; 
+    }
+
+    return true;
+  }
+
+private:
+  HMODULE hNtDll;
+} ntDll;
+
+
+BOOL GetCommandLine(DWORD pid, LPWSTR commandLine, UINT maxLen)
+{
+  // Earlier versions of BDock used a the Windows Management Instrumentation interface (WMI) to determine the 
+  // command line that was used to launch a process. While this worked most of the time, it was a slow 
+  // and bloated approach.
+
+  // I came across this PEB-based technique after reading an article on getting process info with
+  // NtQueryInformationProcess by Steven A. Moore
+  // http://www.codeproject.com/Articles/19685/Get-Process-Info-with-NtQueryInformationProcess
+
+  if(!ntDll.load())
+    return FALSE;
+
+  LPCWSTR result = 0;
+
+  HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
+  if(hProcess)
+  {
+    PROCESS_BASIC_INFORMATION pbi;
+    pbi.PebBaseAddress = 0;
+    if(NT_SUCCESS(ntDll.NtQueryInformationProcess(hProcess, ProcessBasicInformation, &pbi, sizeof(pbi), NULL)))
+      if(pbi.PebBaseAddress)
+      {
+        PEB peb;
+        SIZE_T bytesRead;
+        if(ReadProcessMemory(hProcess, pbi.PebBaseAddress, &peb, sizeof(peb), &bytesRead))
+          if(bytesRead == sizeof(peb))
+          {
+            RTL_USER_PROCESS_PARAMETERS upp;
+            if(ReadProcessMemory(hProcess, peb.ProcessParameters, &upp, sizeof(upp), &bytesRead))
+              if(bytesRead == sizeof(upp))
+              {
+                UINT readLen = upp.CommandLine.Length / sizeof(WCHAR);
+                if(readLen > maxLen - 1)
+                  readLen = maxLen -1;
+                if(ReadProcessMemory(hProcess, upp.CommandLine.Buffer, commandLine, readLen * sizeof(WCHAR), &bytesRead))
+                  if(bytesRead == readLen * sizeof(WCHAR))
+                  {
+                    commandLine[readLen] = 0;
+                    CloseHandle(hProcess);
+                    return TRUE;
+                  }
+              }
+          }
+      }
+
+    CloseHandle(hProcess);
+  }
+  return FALSE;
+}

@@ -3,13 +3,9 @@
 
 #include "stdafx.h"
 
-int Launcher::instances = 0;
-
 Launcher::Launcher(Dock& dock) : dock(dock), defaultIcon(IDI_APPLICATION), activeHwnd(0), hotIcon(0)
 {
-  if(instances++ == 0)
-    wmiInit();
-} 
+}
 
 Launcher::~Launcher()
 {
@@ -18,9 +14,6 @@ Launcher::~Launcher()
 
   for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
     delete *i;
-
-  if(--instances == 0)
-    wmiCleanup();
 }
 
 bool Launcher::create()
@@ -483,21 +476,18 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
+
 bool Launcher::getCommandLine(HWND hwnd, std::wstring& path, std::wstring& param)
 {
   DWORD pid;
   if(!GetWindowThreadProcessId(hwnd, &pid))
     return false;
-  
-  if(!wmiRequestFormat(L"SELECT CommandLine FROM Win32_Process WHERE (ProcessId=%u)", pid))
-    return false;
-  if(!wmiGetNextResult())
+
+  WCHAR commandLine[32768]; // the default stack size is 1mb... so 64kb should fit on the stack
+  if(!GetCommandLine(pid, commandLine, 32768))
     return false;
 
-  LPCWSTR result;
-  if(!wmiGetStrValue(L"CommandLine", &result))
-    return false;
-
+  LPCTSTR result = commandLine;
   bool quoted = *result == L'"';
   if(quoted)
     ++result;

@@ -28,9 +28,6 @@ public:
   bool create();
 
 private:
-
-  static int instances;
-
   Dock& dock;
   WinAPI::Icon defaultIcon;
   HWND activeHwnd;

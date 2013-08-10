@@ -24,5 +24,4 @@ typedef unsigned int uint;
 typedef wchar_t wchar;
 
 #include "launcher.h"
-#include "wmi.h"
 #include "systools.h"

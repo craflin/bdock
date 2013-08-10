@@ -54,9 +54,6 @@ targets = {
         cppFlags += { "/Yc" }
       }
       if target == "Launcher" {
-        "Src/Plugins/$(target)/wmi.cpp" = cppSource + {
-          cppFlags -= { "/Yu" }
-        }
         "Src/WinAPI.cpp" = cppSource + {
           cppFlags += { -"/Yu" }
         }
