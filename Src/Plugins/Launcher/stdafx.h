@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "../../WinAPI.h"
+#include "../../Dock/WinAPI.h"
 
 //#include <Psapi.h>
 //#include <shellapi.h>

@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "../WinAPI.h"
+#include "WinAPI.h"
 
 // C RunTime Header Files
 #include <cstdlib>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -161,13 +161,13 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\Plugins\Launcher\SysTools.cpp" />
-    <ClCompile Include="Src\WinAPI.cpp">
+    <ClCompile Include="Src\Dock\WinAPI.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClInclude Include="Src\WinAPI.h" />
+    <ClInclude Include="Src\Dock\WinAPI.h" />
     <ClInclude Include="Src\Plugins\Launcher\Launcher.h" />
     <ClInclude Include="Src\Plugins\Launcher\resource.h" />
     <ClInclude Include="Src\Plugins\Launcher\stdafx.h" />

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -176,6 +176,12 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\Dock\Storage.cpp" />
+    <ClCompile Include="Src\Dock\WinAPI.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClInclude Include="Src\Dock\AboutDlg.h" />
     <ClInclude Include="Src\Dock\Assert.h" />
     <ClInclude Include="Src\Dock\Dock.h" />
@@ -190,17 +196,11 @@
     <ClInclude Include="Src\Dock\Storage.h" />
     <ClInclude Include="Src\Dock\targetver.h" />
     <ClInclude Include="Src\Dock\Timer.h" />
+    <ClInclude Include="Src\Dock\WinAPI.h" />
     <ResourceCompile Include="Src\Dock\Dock.rc" />
     <None Include="Src\Dock\Dock.ico" />
     <None Include="Src\Dock\Small.ico" />
     <ClInclude Include="Src\Dock2.h" />
-    <ClCompile Include="Src\WinAPI.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClInclude Include="Src\WinAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Launcher.vcxproj">

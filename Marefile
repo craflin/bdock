@@ -28,6 +28,9 @@ targets = {
     libs = { "Msimg32" }
     files = {
       "Src/Dock/**.cpp" = cppSource
+      "Src/Dock/WinAPI.cpp" = cppSource + {
+        cppFlags += { -"/Yu" }
+      }
       "Src/Dock/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
       }
@@ -35,10 +38,6 @@ targets = {
       "Src/Dock/**.rc" = rcSource
       "Src/Dock/*.ico"
       "Src/Dock2.h"
-      "Src/WinAPI.cpp" = cppSource + {
-        cppFlags += { -"/Yu" }
-      }
-      "Src/WinAPI.h"
     }
   }
 
@@ -54,10 +53,10 @@ targets = {
         cppFlags += { "/Yc" }
       }
       if target == "Launcher" {
-        "Src/WinAPI.cpp" = cppSource + {
+        "Src/Dock/WinAPI.cpp" = cppSource + {
           cppFlags += { -"/Yu" }
         }
-        "Src/WinAPI.h"
+        "Src/Dock/WinAPI.h"
       }
       "Src/Plugins/$(target)/**.h"
       "Src/Plugins/$(target)/**.rc" = rcSource
