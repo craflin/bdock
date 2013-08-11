@@ -21,5 +21,5 @@
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "systemtray.h"
-#include "systools.h"
+#include "SystemTray.h"
+#include "SysTools.h"

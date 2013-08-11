@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <list>
+
 template<typename V> class list_set : public std::list<V>
 {
 public:

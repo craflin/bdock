@@ -31,15 +31,15 @@ namespace API
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "assert.h"
-#include "storage.h"
-#include "settings.h"
-#include "skin.h"
-#include "icon.h"
-#include "timer.h"
-#include "plugin.h"
-#include "dock.h"
-#include "aboutdlg.h"
-#include "settingsdlg.h"
+#include "Assert.h"
+#include "Storage.h"
+#include "Settings.h"
+#include "Skin.h"
+#include "Icon.h"
+#include "Timer.h"
+#include "Plugin.h"
+#include "Dock.h"
+#include "AboutDlg.h"
+#include "SettingsDlg.h"
 
 

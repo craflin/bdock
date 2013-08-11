@@ -9,12 +9,9 @@
 
 #include "../../Dock/WinAPI.h"
 
-//#include <Psapi.h>
-//#include <shellapi.h>
-
 #include <unordered_map>
-#include <set>
-#include <vector>
+//#include <set>
+//#include <vector>
 
 #include "resource.h"
 
@@ -23,5 +20,5 @@
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "launcher.h"
-#include "systools.h"
+#include "Launcher.h"
+#include "SysTools.h"

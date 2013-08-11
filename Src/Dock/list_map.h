@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <list>
+
 template<typename K, typename V> class list_map : public std::list<std::pair<K, V> >
 {
 public:
@@ -12,9 +14,10 @@ public:
     return end();
   }
 };
-/*
 
-// TODO:
+/*
+#include <unordered_map>
+
 template<typename K, typename V> class list_map
 {
 public:
@@ -25,6 +28,8 @@ public:
     iterator(const iterator& other) : item(other.item) {}
     iterator& operator++() {item = item->next; return *this;}
     iterator operator++(int) {iterator tmp(*this); item = item->next; return tmp;}
+    iterator& operator--() {item = item->prev; return *this;}
+    iterator operator--(int) {iterator tmp(*this); item = item->prev; return tmp;}
     bool operator==(const iterator& other) {return item == other.item;}
     bool operator!=(const iterator& other) {return item != other.item;}
     std::pair<K, V>& operator*() {return item->data;}
@@ -37,14 +42,25 @@ public:
     std::unordered_map<K, Item>::iterator mapIt = map.insert(std::make_pair(item.key, Item(data)));
     Item& item = mapIt->second;
     item.mapIt = mapIt;
-    if(!firstItem)
-
-
+    if(firstItem)
+    {
+      item.next = 0;
+      item.prev = lastItem;
+      lastItem->next = &item;
+    }
+    else
+    {
+      firstItem = &item;
+      item.next = 0;
+      item.prev = 0;
+    }
+    lastItem = &item;
   }
   
   void erase(iterator& it)
   {
     map.erase(it.item->mapIt);
+    //...
   }
 
 

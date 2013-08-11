@@ -20,4 +20,4 @@
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "clock.h"
+#include "Clock.h"
