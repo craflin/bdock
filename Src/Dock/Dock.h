@@ -36,8 +36,9 @@ private:
   HBITMAP bmp;
   SIZE size;
   list_set<Icon*> icons;
-  std::unordered_set<Plugin*> plugins;
   Icon* lastHitIcon;
+  Icon* hotIcon;
+  std::unordered_set<Plugin*> plugins;
   std::unordered_set<Timer*> timers;
 
   bool loadSkin(const wchar* name);

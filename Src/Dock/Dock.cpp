@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalStorage), dockStorage(dockStorage), settings(dockStorage), 
-  skin(0), lastHitIcon(0) {}
+  skin(0), lastHitIcon(0), hotIcon(0) {}
 
 Dock::~Dock()
 {
@@ -290,18 +290,16 @@ bool Dock::handleMouseEvent(UINT message, int x, int y)
   Icon* hitIcon = hitTest(x, y);
   if (message == WM_MOUSEMOVE)
   {
-    for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-      if((*i)->flags & IF_HOT)
-      {
-        Icon* icon = *i;
-        if(icon != hitIcon)
-        {
-          icon->flags &= ~IF_HOT;
-          updateIcon(icon);
-        }
-      }
+    if(hotIcon && hotIcon != hitIcon)
+    {
+      Icon* icon = hotIcon;
+      hotIcon = 0;
+      icon->flags &= ~IF_HOT;
+      updateIcon(icon);
+    }
     if(hitIcon && !(hitIcon->flags & IF_HOT))
     {
+      hotIcon = hitIcon;
       hitIcon->flags |= IF_HOT;
       updateIcon(hitIcon);
       
@@ -375,13 +373,13 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
     break;
   case WM_MOUSELEAVE:
     {
-      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-        if((*i)->flags & IF_HOT)
-        {
-          Icon* icon = *i;
-          icon->flags &= ~IF_HOT;
-          updateIcon(icon);
-        }
+      if(hotIcon)
+      {
+        Icon* icon = hotIcon;
+        hotIcon = 0;
+        icon->flags &= ~IF_HOT;
+        updateIcon(icon);
+      }
       TRACKMOUSEEVENT tme;
       tme.cbSize = sizeof(TRACKMOUSEEVENT);
       tme.dwFlags = 0;
@@ -525,6 +523,8 @@ void Dock::removeIcon(Icon* icon)
 
   if(icon == lastHitIcon)
     lastHitIcon = 0;
+  if(icon == hotIcon)
+    hotIcon = 0;
 
   if(hwnd)
     calcIconRects(nextIt);
