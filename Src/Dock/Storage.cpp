@@ -160,6 +160,17 @@ bool Storage::deleteNumSection(uint pos)
   return true;
 }
 
+bool Storage::swapNumSections(uint pos1, uint pos2)
+{
+  uint size = (uint) current->array.size();
+  if(pos1 >= size || pos2 >= size)
+    return false;
+  Storage* tmp = current->array[pos1];
+  current->array[pos1] = current->array[pos2];
+  current->array[pos2] = tmp;
+  return true;
+}
+
 uint Storage::getNumSectionCount() const
 {
   return (uint)current->array.size();

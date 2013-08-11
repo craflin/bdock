@@ -10,8 +10,10 @@
 #include "../../Dock/WinAPI.h"
 
 #include <unordered_map>
-//#include <set>
+#include <set>
 //#include <vector>
+
+#include <cassert>
 
 #include "resource.h"
 

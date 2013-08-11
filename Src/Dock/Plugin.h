@@ -17,12 +17,18 @@ public:
 
   bool init(const wchar* name);
 
+  void swapIcon(Icon* icon1, Icon* icon2);
+
   // api functions
   API::Icon* createIcon(HBITMAP icon, uint flags);
   bool destroyIcon(API::Icon* icon);
   bool updateIcon(API::Icon* icon);
   bool updateIcons(API::Icon** icons, uint count);
   bool getIconRect(API::Icon* icon, RECT* rect);
+  API::Icon* getFirstIcon();
+  API::Icon* getLastIcon();
+  API::Icon* getNextIcon(API::Icon* icon);
+  API::Icon* getPreviousIcon(API::Icon* icon);
   API::Timer* createTimer(uint interval);
   bool updateTimer(API::Timer* timer);
   bool destroyTimer(API::Timer* timer);
@@ -35,7 +41,6 @@ private:
   HMODULE hmodule;
   list_set<Icon*> icons;
   std::unordered_set<Timer*> timers;
-  Icon* lastIcon;
 
   void addIcon(Icon* icon);
   void removeIcon(Icon* icon);
@@ -47,11 +52,15 @@ private:
 
   struct Interface
   {
-    static struct API::Icon* createIcon(HBITMAP icon, unsigned int flags);
-    static int destroyIcon(struct API::Icon* icon);
-    static int updateIcon(struct API::Icon* icon);
-    static int updateIcons(struct API::Icon** icons, uint count);
-    static int getIconRect(struct API::Icon* icon, RECT* rect);
+    static API::Icon* createIcon(HBITMAP icon, unsigned int flags);
+    static int destroyIcon(API::Icon* icon);
+    static int updateIcon(API::Icon* icon);
+    static int updateIcons(API::Icon** icons, uint count);
+    static int getIconRect(API::Icon* icon, RECT* rect);
+    static API::Icon* getFirstIcon();
+    static API::Icon* getLastIcon();
+    static API::Icon* getNextIcon(API::Icon* icon);
+    static API::Icon* getPreviousIcon(API::Icon* icon);
     static DWORD showMenu(HMENU hmenu, int x, int y);
     static struct API::Timer* createTimer(unsigned int interval);
     static int updateTimer(struct API::Timer* timer);
@@ -61,6 +70,7 @@ private:
     static int leaveStorageSection();
     static int deleteStorageSection(const char* name);
     static int deleteStorageNumSection(uint pos);
+    static int swapStorageNumSections(unsigned int pos1, unsigned int pos2);
     static unsigned int getStorageNumSectionCount();
     static int setStorageNumSectionCount(unsigned int count);
     static const wchar* getStorageString(const char* name, unsigned int* length, const wchar* default, unsigned int defaultLength);

@@ -39,10 +39,11 @@ bool Launcher::create()
     else
     {
       icon->handleMouseEvent = handleMouseEvent;
-      IconData* iconData = new IconData(*this, 0, icon, 0, path, parameters, i);;
+      icon->handleMoveEvent = handleMoveEvent;
+      IconData* iconData = new IconData(*this, 0, icon, 0, path, parameters, i);
       icon->userData = iconData;
       iconData->pinned = true;
-      icons.push_back(iconData);
+      icons.insert(iconData);
     }
   }
 
@@ -130,11 +131,12 @@ void Launcher::addIcon(HWND hwnd)
     return;
   }
   icon->handleMouseEvent = handleMouseEvent;
+  icon->handleMoveEvent = handleMoveEvent;
   IconData* iconData = new IconData(*this, hicon, icon, hwnd, path, parameters, -1);
   icon->userData = iconData;
   //GetWindowText(hwnd, newIcon->title, sizeof(newIcon->title));
 
-  icons.push_back(iconData);
+  icons.insert(iconData);
   iconsByHWND[hwnd] = iconData;
 }
 
@@ -306,7 +308,7 @@ void Launcher::removeIcon(HWND hwnd)
 
 void Launcher::removeIcon(IconData& iconData)
 {
-  icons.remove(&iconData);
+  icons.erase(&iconData);
   delete &iconData;
 
   if(&iconData == hotIcon)
@@ -381,29 +383,28 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       }
       IconData* iconToHighlight = 0;
 
-      if(!hotIcon && !icons.empty())
-        iconToHighlight = icons.front();
-      else
-        for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-          if(*i == hotIcon)
+      if(!icons.empty())
+      {
+        if(!hotIcon)
+          iconToHighlight = (IconData*) dock.getFirstIcon()->userData;
+        else
+        {
+          if(HIWORD(lParam) == VK_RIGHT)
           {
-            if(HIWORD(lParam) == VK_RIGHT)
-            {
-              if(++i != end)
-                iconToHighlight = *i;
-              else
-                iconToHighlight = icons.front();
-            
-            }
-            else if(HIWORD(lParam) == VK_LEFT)
-            {
-              if(i != icons.begin())
-                iconToHighlight = *(--i);
-              else
-                iconToHighlight = icons.back();
-            }
-            break;
+            Icon* icon = dock.getNextIcon(hotIcon->icon);
+            if(!icon)
+              icon = dock.getFirstIcon();
+            iconToHighlight = (IconData*) icon->userData;
           }
+          else if(HIWORD(lParam) == VK_LEFT)
+          {
+            Icon* icon = dock.getPreviousIcon(hotIcon->icon);
+            if(!icon)
+              icon = dock.getLastIcon();
+            iconToHighlight = (IconData*) icon->userData;
+          }
+        }
+      }
       if(iconToHighlight)
       {
         if(!(iconToHighlight->icon->flags & IF_HOT))
@@ -453,6 +454,14 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
             }
           }
           break;
+          /*
+        case HSHELL_FLASH:
+          printf("unhandled HSHELL_FLASH msg=%u\n", (uint) wParam);
+          break;
+        default:
+          printf("unhandled HSELL msg=%u\n", (uint) wParam);
+          break;
+          */
         }
         break;
       }
@@ -646,6 +655,34 @@ int Launcher::handleMouseEvent(Icon* icon, unsigned int message, int x, int y)
     break;
   default:
     return -1;
+  }
+  return 0;
+}
+
+int Launcher::handleMoveEvent(Icon* icon)
+{
+  IconData* iconData = (IconData*) icon->userData;
+  Dock& dock = iconData->launcher.dock;
+  int launcherIndex = -1;
+  for(Icon* i = dock.getFirstIcon(); i; i = dock.getNextIcon(i))
+  {
+    IconData* iconData = (IconData*) i->userData;
+    if(iconData->launcherIndex >= 0)
+    {
+      ++launcherIndex;
+      if(iconData->launcherIndex != launcherIndex)
+      {
+        for(Icon* j = dock.getNextIcon(i); j; j = dock.getNextIcon(j))
+          if(((IconData*) j->userData)->launcherIndex == launcherIndex)
+          {
+            dock.swapStorageNumSections(iconData->launcherIndex, launcherIndex);
+            ((IconData*) j->userData)->launcherIndex = iconData->launcherIndex;
+            iconData->launcherIndex = launcherIndex;
+            break;
+          }
+        assert(iconData->launcherIndex == launcherIndex);
+      }
+    }
   }
   return 0;
 }

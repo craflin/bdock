@@ -33,10 +33,11 @@ private:
   WinAPI::Icon defaultIcon;
   HWND activeHwnd;
   IconData* hotIcon;
-  std::list<IconData*> icons;
+  std::set<IconData*> icons;
   std::unordered_map<HWND, IconData*> iconsByHWND;
 
   static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
+  static int handleMoveEvent(Icon* icon);
 
   virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 

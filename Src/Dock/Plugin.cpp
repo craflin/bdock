@@ -21,7 +21,7 @@ Plugin* Plugin::lookup(void* returnAddress)
   return 0;
 }
 
-Plugin::Plugin(Dock* dock, Storage* storage) : dock(dock), storage(storage), plugin(0), hmodule(0), lastIcon(0) {}
+Plugin::Plugin(Dock* dock, Storage* storage) : dock(dock), storage(storage), plugin(0), hmodule(0) {}
 
 Plugin::~Plugin()
 {
@@ -79,6 +79,10 @@ bool Plugin::init(const wchar* name)
   dockAPI.updateIcon = Interface::updateIcon;
   dockAPI.updateIcons = Interface::updateIcons;
   dockAPI.getIconRect = Interface::getIconRect;
+  dockAPI.getFirstIcon = Interface::getFirstIcon;
+  dockAPI.getLastIcon = Interface::getLastIcon;
+  dockAPI.getNextIcon = Interface::getNextIcon;
+  dockAPI.getPreviousIcon = Interface::getPreviousIcon;
   dockAPI.showMenu = Interface::showMenu;
   dockAPI.createTimer = Interface::createTimer;
   dockAPI.updateTimer = Interface::updateTimer;
@@ -88,6 +92,7 @@ bool Plugin::init(const wchar* name)
   dockAPI.leaveStorageSection = Interface::leaveStorageSection;
   dockAPI.deleteStorageSection = Interface::deleteStorageSection;
   dockAPI.deleteStorageNumSection = Interface::deleteStorageNumSection;
+  dockAPI.swapStorageNumSections = Interface::swapStorageNumSections;
   dockAPI.getStorageNumSectionCount = Interface::getStorageNumSectionCount;
   dockAPI.setStorageNumSectionCount = Interface::setStorageNumSectionCount;
   dockAPI.getStorageString = Interface::getStorageString;
@@ -112,10 +117,22 @@ bool Plugin::init(const wchar* name)
   return true;
 }
 
+void Plugin::swapIcon(Icon* icon1, Icon* icon2)
+{
+  auto a = icons.find(icon1);
+  auto b = icons.find(icon2);
+  auto c = icons.insert(b, (Icon*) 0);
+  icons.erase(b);
+  icons.insert(a, icon2);
+  icons.erase(a);
+  icons.insert(c, icon1);
+  icons.erase(c);
+}
+
 API::Icon* Plugin::createIcon(HBITMAP icon, uint flags)
 {
   Icon* newIcon = new Icon(icon, flags, this);
-  Icon* lastIcon = this->lastIcon;
+  Icon* lastIcon = icons.empty() ? 0 : icons.back();
   addIcon(newIcon);
   dock->addIcon(lastIcon, newIcon);
   dock->update();
@@ -162,6 +179,33 @@ bool Plugin::getIconRect(API::Icon* icon, RECT* rect)
   return true;
 }
 
+API::Icon* Plugin::getFirstIcon()
+{
+  return icons.empty() ? 0 : icons.front();
+}
+
+API::Icon* Plugin::getLastIcon()
+{
+  return icons.empty() ? 0 : icons.back();
+}
+
+API::Icon* Plugin::getNextIcon(API::Icon* icon)
+{
+  auto i = icons.find((Icon*) icon);
+  if(i == icons.end())
+    return 0;
+  ++i;
+  return i == icons.end() ? 0 : *i;
+}
+
+API::Icon* Plugin::getPreviousIcon(API::Icon* icon)
+{
+  auto i = icons.find((Icon*) icon);
+  if(i == icons.end() || i == icons.begin())
+    return 0;
+  return *(--i);
+}
+
 API::Timer* Plugin::createTimer(uint interval)
 {
   Timer* newTimer = new Timer(interval, this);
@@ -196,14 +240,11 @@ void Plugin::deleteIcon(Icon* icon)
 void Plugin::addIcon(Icon* icon)
 {
   icons.push_back(icon);
-  lastIcon = icon;
 }
 
 void Plugin::removeIcon(Icon* icon)
 {
   icons.erase(icon);
-  if(icon == lastIcon)
-    lastIcon = icons.empty() ? 0 : icons.back();
 }
 
 void Plugin::deleteTimer(Timer* timer)
@@ -214,7 +255,7 @@ void Plugin::deleteTimer(Timer* timer)
 }
 
 
-struct API::Icon* Plugin::Interface::createIcon(HBITMAP icon, unsigned int flags)
+API::Icon* Plugin::Interface::createIcon(HBITMAP icon, unsigned int flags)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
@@ -222,7 +263,7 @@ struct API::Icon* Plugin::Interface::createIcon(HBITMAP icon, unsigned int flags
   return 0;
 }
 
-int Plugin::Interface::destroyIcon(struct API::Icon* icon)
+int Plugin::Interface::destroyIcon(API::Icon* icon)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->destroyIcon(icon))
@@ -230,7 +271,7 @@ int Plugin::Interface::destroyIcon(struct API::Icon* icon)
   return -1;
 }
 
-int Plugin::Interface::updateIcon(struct API::Icon* icon)
+int Plugin::Interface::updateIcon(API::Icon* icon)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->updateIcon(icon))
@@ -238,7 +279,7 @@ int Plugin::Interface::updateIcon(struct API::Icon* icon)
   return -1;
 }
 
-int Plugin::Interface::updateIcons(struct API::Icon** icons, uint count)
+int Plugin::Interface::updateIcons(API::Icon** icons, uint count)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->updateIcons(icons, count))
@@ -246,12 +287,44 @@ int Plugin::Interface::updateIcons(struct API::Icon** icons, uint count)
   return -1;
 }
 
-int Plugin::Interface::getIconRect(struct API::Icon* icon, RECT* rect)
+int Plugin::Interface::getIconRect(API::Icon* icon, RECT* rect)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->getIconRect(icon, rect))
     return 0;
   return -1;
+}
+
+API::Icon* Plugin::Interface::getFirstIcon()
+{
+  Plugin* plugin = lookup(_ReturnAddress());
+  if(plugin)
+    return plugin->getFirstIcon();
+  return 0;
+}
+
+API::Icon* Plugin::Interface::getLastIcon()
+{
+  Plugin* plugin = lookup(_ReturnAddress());
+  if(plugin)
+    return plugin->getLastIcon();
+  return 0;
+}
+
+API::Icon* Plugin::Interface::getNextIcon(API::Icon* icon)
+{
+  Plugin* plugin = lookup(_ReturnAddress());
+  if(plugin)
+    return plugin->getNextIcon(icon);
+  return 0;
+}
+
+API::Icon* Plugin::Interface::getPreviousIcon(API::Icon* icon)
+{
+  Plugin* plugin = lookup(_ReturnAddress());
+  if(plugin)
+    return plugin->getPreviousIcon(icon);
+  return 0;
 }
 
 DWORD Plugin::Interface::showMenu(HMENU hmenu, int x, int y)
@@ -326,6 +399,14 @@ int Plugin::Interface::deleteStorageNumSection(uint pos)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->storage->deleteNumSection(pos))
+    return 0;
+  return -1;
+}
+
+int Plugin::Interface::swapStorageNumSections(unsigned int pos1, unsigned int pos2)
+{
+  Plugin* plugin = lookup(_ReturnAddress());
+  if(plugin && plugin->storage->swapNumSections(pos1, pos2))
     return 0;
   return -1;
 }

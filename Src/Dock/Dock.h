@@ -41,6 +41,15 @@ private:
   std::unordered_set<Plugin*> plugins;
   std::unordered_set<Timer*> timers;
 
+  enum DragState
+  {
+    DRAG_IDLE,
+    DRAG_CLICKED,
+    DRAG_STARTED,
+  } dragState;
+  POINT dragPosition;
+  Icon* dragIcon;
+
   bool loadSkin(const wchar* name);
   bool loadPlugin(const wchar* name, Storage* storage);
 
@@ -53,6 +62,10 @@ private:
   void calcIconRects(const list_set<Icon*>::iterator& firstToUpdate);
 
   Icon* hitTest(int x, int y);
+
+  void dragStart(Icon& icon, int x, int y);
+  void dragFinish();
+  void dragMove(int x, int y);
 
   void handleContextMenu(int x, int y);
   bool handleMouseEvent(UINT message, int x, int y);

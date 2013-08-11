@@ -19,6 +19,7 @@ struct Icon
   HBITMAP icon;
   unsigned int flags;
   int (*handleMouseEvent)(struct Icon* icon, unsigned int message, int x, int y);
+  int (*handleMoveEvent)(struct Icon* icon);
   void* userData;
 };
 
@@ -43,6 +44,12 @@ struct Dock
   int (*updateIcon)(struct Icon* icon);
   int (*updateIcons)(struct Icon** icons, unsigned int count);
   int (*getIconRect)(struct Icon* icon, RECT* rect);
+
+  struct Icon* (*getFirstIcon)();
+  struct Icon* (*getLastIcon)();
+  struct Icon* (*getNextIcon)(struct Icon* icon);
+  struct Icon* (*getPreviousIcon)(struct Icon* icon);
+
   DWORD (*showMenu)(HMENU hmenu, int x, int y);
 
   struct Timer* (*createTimer)(unsigned int interval);
@@ -55,6 +62,7 @@ struct Dock
 
   int (*deleteStorageSection)(const char* name);
   int (*deleteStorageNumSection)(unsigned int pos);
+  int (*swapStorageNumSections)(unsigned int pos1, unsigned int pos2);
 
   unsigned int (*getStorageNumSectionCount)();
   int (*setStorageNumSectionCount)(unsigned int count);

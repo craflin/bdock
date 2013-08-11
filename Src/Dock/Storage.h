@@ -18,6 +18,8 @@ public:
   bool deleteSection(const char* name);
   bool deleteNumSection(uint pos);
 
+  bool swapNumSections(uint pos1, uint pos2);
+
   uint getNumSectionCount() const;
   bool setNumSectionCount(uint size);
 

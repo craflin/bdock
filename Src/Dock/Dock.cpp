@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalStorage), dockStorage(dockStorage), settings(dockStorage), 
-  skin(0), lastHitIcon(0), hotIcon(0) {}
+  skin(0), lastHitIcon(0), hotIcon(0), dragState(DRAG_IDLE), dragIcon(0) {}
 
 Dock::~Dock()
 {
@@ -285,30 +285,102 @@ Icon* Dock::hitTest(int x, int y)
   return hitIcon;
 }
 
+void Dock::dragStart(Icon& icon, int x, int y)
+{
+  dragState = DRAG_STARTED;
+  dragIcon = &icon;
+  dragPosition.x = x;
+  dragPosition.y = y;
+}
+
+void Dock::dragFinish()
+{
+  dragState = DRAG_IDLE;
+  dragIcon  = 0;
+}
+
+void Dock::dragMove(int x, int y)
+{
+  Icon* icon = hitTest(x, y);
+  if(icon != dragIcon && icon->plugin == dragIcon->plugin)
+  {
+    // swap icon positions
+    auto a = icons.find(icon);
+    auto b = icons.find(dragIcon);
+    auto c = icons.insert(b, (Icon*)0);
+    icons.erase(b);
+    icons.insert(a, dragIcon);
+    icons.erase(a);
+    icons.insert(c, icon);
+    icons.erase(c);
+    icon->plugin->swapIcon(icon, dragIcon);
+    calcIconRects(icons.begin()); // TODO: optimize this
+    update();
+
+    //
+    if(icon->handleMoveEvent)
+      icon->handleMoveEvent(icon);
+    if(dragIcon->handleMoveEvent)
+      dragIcon->handleMoveEvent(dragIcon);
+  }
+}
+
 bool Dock::handleMouseEvent(UINT message, int x, int y)
 {
   Icon* hitIcon = hitTest(x, y);
-  if (message == WM_MOUSEMOVE)
+  switch(message)
   {
-    if(hotIcon && hotIcon != hitIcon)
+  case  WM_MOUSEMOVE:
     {
-      Icon* icon = hotIcon;
-      hotIcon = 0;
-      icon->flags &= ~IF_HOT;
-      updateIcon(icon);
+      if(dragState == DRAG_CLICKED && dragIcon)
+      {
+        if(abs(dragPosition.x - x) > 3 || abs(dragPosition.y - y) > 3)
+          dragStart(*dragIcon, x, y);
+      }
+      if(dragState == DRAG_STARTED)
+        dragMove(x, y);
+
+      if(hotIcon && hotIcon != hitIcon)
+      {
+        Icon* icon = hotIcon;
+        hotIcon = 0;
+        icon->flags &= ~IF_HOT;
+        updateIcon(icon);
+      }
+      if(hitIcon && !(hitIcon->flags & IF_HOT))
+      {
+        hotIcon = hitIcon;
+        hitIcon->flags |= IF_HOT;
+        updateIcon(hitIcon);
+
+        TRACKMOUSEEVENT tme;
+        tme.cbSize = sizeof(TRACKMOUSEEVENT);
+        tme.dwFlags = TME_LEAVE;
+        tme.hwndTrack = hwnd;
+        tme.dwHoverTime = HOVER_DEFAULT;
+        TrackMouseEvent(&tme);
+      }
+      break;
     }
-    if(hitIcon && !(hitIcon->flags & IF_HOT))
+  case WM_LBUTTONDOWN:
+    if(hitIcon)
     {
-      hotIcon = hitIcon;
-      hitIcon->flags |= IF_HOT;
-      updateIcon(hitIcon);
-      
-      TRACKMOUSEEVENT tme;
-      tme.cbSize = sizeof(TRACKMOUSEEVENT);
-      tme.dwFlags = TME_LEAVE;
-      tme.hwndTrack = hwnd;
-      tme.dwHoverTime = HOVER_DEFAULT;
-      TrackMouseEvent(&tme);
+      dragState = DRAG_CLICKED;
+      dragIcon = hitIcon;
+      dragPosition.x = x;
+      dragPosition.y = y;
+      break;
+    }
+  case WM_LBUTTONUP:
+    {
+      if(dragState == DRAG_STARTED)
+      {
+        dragFinish();
+        return true;
+      }
+      else
+        dragFinish();
+      break;
     }
   }
   if(hitIcon && hitIcon->handleMouseEvent && hitIcon->handleMouseEvent(hitIcon, message, x + pos.x, y + pos.y) == 0)
@@ -373,6 +445,7 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
     break;
   case WM_MOUSELEAVE:
     {
+      dragFinish();
       if(hotIcon)
       {
         Icon* icon = hotIcon;
@@ -525,6 +598,8 @@ void Dock::removeIcon(Icon* icon)
     lastHitIcon = 0;
   if(icon == hotIcon)
     hotIcon = 0;
+  if(icon == dragIcon)
+    dragFinish();
 
   if(hwnd)
     calcIconRects(nextIt);
