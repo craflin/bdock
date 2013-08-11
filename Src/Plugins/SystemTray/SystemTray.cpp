@@ -203,7 +203,7 @@ void SystemTray::addIcon(PNOTIFYICONDATA32 nid)
     return;
   }
   IconData* iconData;
-  icon->userData = iconData = new IconData((HICON)nid->hIcon, icon, nid);
+  icon->userData = iconData = new IconData(*this, (HICON)nid->hIcon, icon, nid);
   icon->handleMouseEvent = handleMouseEvent;
 //  if(nid->uFlags & NIF_GUID)
 //    memcpy(&iconData->guidItem, &nid->guidItem, sizeof(GUID));
@@ -259,7 +259,6 @@ void SystemTray::removeIcon(PNOTIFYICONDATA32 nid)
 
   Icon* icon = i->second;
   delete (IconData*)icon->userData;
-  dock.destroyIcon(icon);
   icons.erase(i);
 }
 
@@ -344,15 +343,19 @@ int SystemTray::handleMouseEvent(Icon* icon, unsigned int message, int x, int y)
   return 0;
 }
 
-IconData::IconData(HICON hicon, Icon* icon, PNOTIFYICONDATA32 nid) : 
-hicon(hicon), icon(icon), hwnd((HWND)nid->hWnd), 
-callbackMessage(nid->uFlags & NIF_MESSAGE ? nid->uCallbackMessage : 0),
-version(0), id(nid->uID)
+IconData::IconData(SystemTray& systemTray, HICON hicon, Icon* icon, PNOTIFYICONDATA32 nid) : 
+  systemTray(systemTray), hicon(hicon), icon(icon), hwnd((HWND)nid->hWnd), 
+  callbackMessage(nid->uFlags & NIF_MESSAGE ? nid->uCallbackMessage : 0),
+  version(0), id(nid->uID)
 {
 }
 
 IconData::~IconData()
 {
-  if(icon && icon->icon)
-    DeleteObject(icon->icon);
+  if(icon)
+  {
+    if(icon->icon)
+      DeleteObject(icon->icon);
+    systemTray.dock.destroyIcon(icon);
+  }
 }

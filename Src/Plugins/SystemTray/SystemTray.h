@@ -39,9 +39,12 @@ typedef struct _NOTIFYICONDATA32 {
     DWORD hBalloonIcon;
 } NOTIFYICONDATA32, *PNOTIFYICONDATA32;
 
+class SystemTray;
+
 class IconData
 {
 public:
+  SystemTray& systemTray;
   HICON hicon;
   Icon* icon;
   HWND hwnd;
@@ -49,13 +52,15 @@ public:
   uint version;
   uint id;
 
-  IconData(HICON hicon, Icon* icon, PNOTIFYICONDATA32 nid);
+  IconData(SystemTray& systemTray, HICON hicon, Icon* icon, PNOTIFYICONDATA32 nid);
   ~IconData();
 };
 
 class SystemTray
 {
 public:
+  Dock& dock;
+
   SystemTray(Dock& dock);
   ~SystemTray();
 
@@ -65,7 +70,6 @@ private:
   static ATOM wndClass;
   static int instances;
 
-  Dock& dock;
   DllInjection dllInjection;
   HWND hwnd;
   stdext::hash_map<std::string, Icon*> icons;
