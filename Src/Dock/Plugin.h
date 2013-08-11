@@ -33,7 +33,7 @@ private:
   API::Dock dockAPI;
   API::Plugin* plugin;
   HMODULE hmodule;
-  std::unordered_set<Icon*> icons;
+  list_set<Icon*> icons;
   std::unordered_set<Timer*> timers;
   Icon* lastIcon;
 

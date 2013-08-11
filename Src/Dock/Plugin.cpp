@@ -114,9 +114,10 @@ bool Plugin::init(const wchar* name)
 
 API::Icon* Plugin::createIcon(HBITMAP icon, uint flags)
 {
-  Icon* newIcon = new Icon(icon, flags, this, lastIcon ? lastIcon : (dock->settings.alignment == Settings::right ? 0 : dock->lastIcon), dock->firstIcon);
+  Icon* newIcon = new Icon(icon, flags, this);
+  Icon* lastIcon = this->lastIcon;
   addIcon(newIcon);
-  dock->addIcon(newIcon);
+  dock->addIcon(lastIcon, newIcon);
   dock->update();
   return newIcon;
 }
@@ -153,10 +154,11 @@ bool Plugin::getIconRect(API::Icon* icon, RECT* rect)
   if(i == icons.end())
     return false;
   *rect = (*i)->rect;
-  rect->left += dock->pos.x;
-  rect->right += dock->pos.x;
-  rect->top += dock->pos.y;
-  rect->bottom += dock->pos.y;
+  const POINT& pos = dock->getPosition();
+  rect->left += pos.x;
+  rect->right += pos.x;
+  rect->top += pos.y;
+  rect->bottom += pos.y;
   return true;
 }
 
@@ -193,7 +195,7 @@ void Plugin::deleteIcon(Icon* icon)
 
 void Plugin::addIcon(Icon* icon)
 {
-  icons.insert(icon);
+  icons.push_back(icon);
   lastIcon = icon;
 }
 
@@ -201,19 +203,7 @@ void Plugin::removeIcon(Icon* icon)
 {
   icons.erase(icon);
   if(icon == lastIcon)
-  {
-    if(icons.begin() == icons.end())
-      lastIcon = 0;
-    else
-    {
-      for(;;)
-      {
-        lastIcon = lastIcon->previous;
-        if(!lastIcon || lastIcon->plugin == this)
-          break;
-      }
-    }
-  }
+    lastIcon = icons.empty() ? 0 : icons.back();
 }
 
 void Plugin::deleteTimer(Timer* timer)

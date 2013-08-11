@@ -1,25 +1,12 @@
 
 #include "stdafx.h"
 
-Icon::Icon(HBITMAP icon, uint flags, Plugin* plugin, Icon* insertAfter, Icon* first) : 
-  plugin(plugin), previous(insertAfter), next(insertAfter ? insertAfter->next : first)
+Icon::Icon(HBITMAP icon, uint flags, Plugin* plugin) : 
+  plugin(plugin)
 {
   memset((API::Icon*)this, 0, sizeof(API::Icon));
   this->icon = icon;
   this->flags = flags;
-
-  if(previous)
-    previous->next = this;
-  if(next)
-    next->previous = this;
-}
-
-Icon::~Icon()
-{
-  if(previous)
-    previous->next = next;
-  if(next)
-    next->previous = previous;
 }
 
 void Icon::draw(HDC dest, const Settings& settings)

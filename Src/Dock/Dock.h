@@ -7,17 +7,13 @@ class Plugin;
 class Dock : private WinAPI::Window
 {
 public:
-  Icon* lastIcon;
-  Icon* firstIcon;
-  Settings settings;
-  POINT pos;
-
   Dock(Storage& globalStorage, Storage& dockStorage);
   ~Dock();
 
   bool create();
+  const POINT& getPosition() {return pos;}
 
-  void addIcon(Icon* icon);
+  void addIcon(Icon* insertAfter, Icon* icon);
   void removeIcon(Icon* icon);
   void addTimer(Timer* timer);
   void removeTimer(Timer* timer);
@@ -32,12 +28,14 @@ public:
   DWORD showMenu(HMENU hmenu, int x, int y);
 
 private:
+  Settings settings;
+  POINT pos;
   Storage& globalStorage;
   Storage& dockStorage;
   Skin* skin;
   HBITMAP bmp;
   SIZE size;
-  int iconCount;
+  list_set<Icon*> icons;
   std::unordered_set<Plugin*> plugins;
   Icon* lastHitIcon;
   std::unordered_set<Timer*> timers;
@@ -51,7 +49,7 @@ private:
 
   void update(RECT* update);
   void draw(HDC dest, const RECT& update);
-  void calcIconRects(Icon* previous, Icon* firstToUpdate);
+  void calcIconRects(const list_set<Icon*>::iterator& firstToUpdate);
 
   Icon* hitTest(int x, int y);
 

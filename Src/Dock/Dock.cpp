@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalStorage), dockStorage(dockStorage), settings(dockStorage), 
-  skin(0), iconCount(0), firstIcon(0), lastIcon(0), lastHitIcon(0) {}
+  skin(0), lastHitIcon(0) {}
 
 Dock::~Dock()
 {
@@ -13,7 +13,8 @@ Dock::~Dock()
     delete skin;
   while(plugins.begin() != plugins.end())
     deletePlugin(*plugins.begin());
-  ASSERT(iconCount == 0);
+  ASSERT(icons.empty());
+  ASSERT(timers.empty());
 }
 
 bool Dock::create()
@@ -51,7 +52,7 @@ bool Dock::create()
     return false;
 
   // show window
-  calcIconRects(0, firstIcon);
+  calcIconRects(icons.begin());
   show(SW_SHOW);
   update();
 
@@ -104,8 +105,9 @@ void Dock::draw(HDC dest, const RECT& update)
 {
   skin->draw(dest, size, update);
 
-  for(Icon* icon = firstIcon; icon; icon = icon->next)
+  for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
   {
+    Icon* icon = *i;
     const RECT& rect(icon->rect);
     if(rect.left >= update.left && rect.right <= update.right)
     {
@@ -151,7 +153,7 @@ void Dock::update(RECT* update)
   SIZE size;
   {
 
-    size.cx = (lastIcon ? lastIcon->rect.right : settings.leftMargin) + settings.rightMargin;
+    size.cx = (icons.empty() ? settings.leftMargin : icons.back()->rect.right) + settings.rightMargin;
     if(skin->leftBg.bmp && skin->rightBg.bmp && skin->midBg.bmp)
       if(size.cx < skin->leftBg.size.cx + skin->rightBg.size.cx)
         size.cx = skin->leftBg.size.cx + skin->rightBg.size.cx;
@@ -273,32 +275,35 @@ Icon* Dock::hitTest(int x, int y)
       hitIcon = lastHitIcon;
   }
   if(!hitIcon)
-    for(Icon* icon = firstIcon; icon; icon = icon->next)
-      if(icon != lastHitIcon)
-      {
-        const RECT& rect(icon->rect);
-        if(x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom)
-          hitIcon = icon;
-      }
+    for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+    {
+      const RECT& rect((*i)->rect);
+      if(x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom)
+        hitIcon = *i;
+    }
   lastHitIcon = hitIcon;
   return hitIcon;
 }
 
 bool Dock::handleMouseEvent(UINT message, int x, int y)
 {
-  Icon* icon = hitTest(x, y);
+  Icon* hitIcon = hitTest(x, y);
   if (message == WM_MOUSEMOVE)
   {
-    for(Icon* i = firstIcon; i; i = i->next)
-      if(i->flags & IF_HOT && i != icon)
+    for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+      if((*i)->flags & IF_HOT)
       {
-        i->flags &= ~IF_HOT;
-        updateIcon(i);
+        Icon* icon = *i;
+        if(icon != hitIcon)
+        {
+          icon->flags &= ~IF_HOT;
+          updateIcon(icon);
+        }
       }
-    if(icon && !(icon->flags & IF_HOT))
+    if(hitIcon && !(hitIcon->flags & IF_HOT))
     {
-      icon->flags |= IF_HOT;
-      updateIcon(icon);
+      hitIcon->flags |= IF_HOT;
+      updateIcon(hitIcon);
       
       TRACKMOUSEEVENT tme;
       tme.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -308,7 +313,7 @@ bool Dock::handleMouseEvent(UINT message, int x, int y)
       TrackMouseEvent(&tme);
     }
   }
-  if(icon && icon->handleMouseEvent && icon->handleMouseEvent(icon, message, x + pos.x, y + pos.y) == 0)
+  if(hitIcon && hitIcon->handleMouseEvent && hitIcon->handleMouseEvent(hitIcon, message, x + pos.x, y + pos.y) == 0)
     return true;
   return false;
 }
@@ -370,11 +375,12 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
     break;
   case WM_MOUSELEAVE:
     {
-      for(Icon* i = firstIcon; i; i = i->next)
-      if(i->flags & IF_HOT)
+      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+        if((*i)->flags & IF_HOT)
         {
-          i->flags &= ~IF_HOT;
-          updateIcon(i);
+          Icon* icon = *i;
+          icon->flags &= ~IF_HOT;
+          updateIcon(icon);
         }
       TRACKMOUSEEVENT tme;
       tme.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -485,39 +491,57 @@ DWORD Dock::showMenu(HMENU hmenu, int x, int y)
   return cmd;
 }
 
-void Dock::addIcon(Icon* icon)
+void Dock::addIcon(Icon* insertAfter, Icon* icon)
 {
-  ++iconCount;
-  if(!icon->previous)
-    firstIcon = icon;
-  if(!icon->next)
-    lastIcon = icon;
+  std::list<Icon*>::iterator iconIt;
+  if(insertAfter)
+  {
+    std::list<Icon*>::iterator insertAfterit = icons.find(insertAfter);
+    if(insertAfterit != icons.end())
+    {
+      iconIt = icons.insert(++insertAfterit, icon);
+      goto inserted;
+    }
+  }
+  if(settings.alignment == Settings::right)
+    iconIt = icons.insert(icons.begin(), icon);
+  else
+    iconIt = icons.insert(icons.end(), icon);
+inserted: ;
 
   if(hwnd)
-    calcIconRects(icon->previous, icon);
+    calcIconRects(iconIt);
 }
 
 void Dock::removeIcon(Icon* icon)
 {
-  --iconCount;
-  if(icon == firstIcon)
-    firstIcon = icon->next;
-  if(icon == lastIcon)
-    lastIcon = icon->previous;
+  auto it = icons.find(icon);
+  if(it == icons.end())
+    return;
+
+  auto nextIt = it;
+  ++nextIt;
+  icons.erase(it);
+
   if(icon == lastHitIcon)
     lastHitIcon = 0;
 
   if(hwnd)
-    calcIconRects(icon->previous, icon->next);
+    calcIconRects(nextIt);
 }
 
-void Dock::calcIconRects(Icon* previous, Icon* firstToUpdate)
+void Dock::calcIconRects(const list_set<Icon*>::iterator& firstToUpdate)
 {
   RECT rect = { settings.leftMargin, 0, 0, settings.barHeight };
-  if(previous)
-    rect.left = previous->rect.right;
-  for(Icon* icon = firstToUpdate; icon; icon = icon->next)
+  if(firstToUpdate != icons.begin())
   {
+    std::list<Icon*>::iterator previous = firstToUpdate;
+    --previous;
+    rect.left = (*previous)->rect.right;
+  }
+  for(std::list<Icon*>::iterator i  = firstToUpdate, end = icons.end(); i != end; ++i)
+  {
+    Icon* icon = *i;
     rect.right = rect.left + (icon->flags & IF_SMALL ? settings.itemWidth / 2 : settings.itemWidth);
     icon->rect = rect;
     rect.left = rect.right;

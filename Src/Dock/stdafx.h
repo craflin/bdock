@@ -19,6 +19,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include "list_map.h"
 
 #include "resource.h"
 
