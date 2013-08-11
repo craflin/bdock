@@ -22,13 +22,14 @@ public:
 class Launcher : public WinAPI::Window
 {
 public:
+  Dock& dock;
+
   Launcher(Dock& dock);
   ~Launcher();
 
   bool create();
 
 private:
-  Dock& dock;
   WinAPI::Icon defaultIcon;
   HWND activeHwnd;
   IconData* hotIcon;

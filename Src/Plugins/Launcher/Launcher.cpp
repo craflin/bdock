@@ -259,8 +259,7 @@ void Launcher::removeIcon(HWND hwnd)
           
           Icon* itIcon = itIconData->icon;
           icons.remove(itIconData);
-          delete itIconData; // delete iconData before destroying the icon to free icon->icon bitmap
-          dock.destroyIcon(itIcon);
+          delete itIconData;
           updateIcon(iconData->hwnd, true);
           return;
         }
@@ -307,8 +306,7 @@ void Launcher::removeIcon(HWND hwnd)
   {
     Icon* icon = iconData->icon;
     icons.remove(iconData);
-    delete iconData; // delete iconData before destroying the icon to free icon->icon bitmap
-    dock.destroyIcon(icon);
+    delete iconData;
   }
 }
 
@@ -574,8 +572,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
         if(!iconData->hwnd)
         {
           icons.remove(iconData);
-          delete iconData; // delete iconData before destroying the icon to free icon->icon bitmap
-          dock.destroyIcon(icon);
+          delete iconData;
         }
       }
     }
@@ -675,6 +672,10 @@ IconData::IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const
 
 IconData::~IconData()
 {
-  if(icon && icon->icon)
-    DeleteObject(icon->icon);
+  if(icon)
+  {
+    if(icon->icon)
+      DeleteObject(icon->icon);
+    launcher.dock.destroyIcon(icon);
+  }
 }
