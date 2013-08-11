@@ -257,9 +257,7 @@ void Launcher::removeIcon(HWND hwnd)
           iconsByHWND.erase(itIconData->hwnd);
           iconsByHWND[iconData->hwnd] = iconData;
           
-          Icon* itIcon = itIconData->icon;
-          icons.remove(itIconData);
-          delete itIconData;
+          removeIcon(*itIconData);
           updateIcon(iconData->hwnd, true);
           return;
         }
@@ -303,11 +301,16 @@ void Launcher::removeIcon(HWND hwnd)
     dock.updateIcon(iconData->icon);
   }
   else
-  {
-    Icon* icon = iconData->icon;
-    icons.remove(iconData);
-    delete iconData;
-  }
+    removeIcon(*iconData);
+}
+
+void Launcher::removeIcon(IconData& iconData)
+{
+  icons.remove(&iconData);
+  delete &iconData;
+
+  if(&iconData == hotIcon)
+    hotIcon = 0;
 }
 
 bool Launcher::launch(Icon& icon)
@@ -347,41 +350,24 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
     {
       if(hotIcon)
       {
-        for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-          if(*i == hotIcon)
-            goto hotIconValid;
+        IconData* icon = hotIcon;
         hotIcon = 0;
-        break;
-      hotIconValid:
-        if(hotIcon)
-        {
-          hotIcon->icon->flags &= ~IF_HOT;
-          handleMouseEvent(hotIcon->icon, WM_LBUTTONUP, 0, 0);
-          hotIcon = 0;
-        }
+        icon->icon->flags &= ~IF_HOT;
+        handleMouseEvent(icon->icon, WM_LBUTTONUP, 0, 0);
       }
     }
     break;
   case WM_KILLFOCUS:
     if(hotIcon)
     {
-      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-        if(*i == hotIcon)
-        {
-          hotIcon->icon->flags &= ~IF_HOT;
-          dock.updateIcon(hotIcon->icon);
-          break;
-        }
+      IconData* icon = hotIcon;
       hotIcon = 0;
+      icon->icon->flags &= ~IF_HOT;
+      dock.updateIcon(icon->icon);
     }
     break;
   case WM_HOTKEY:
     {
-      for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
-        if(*i == hotIcon)
-          goto hotIconValid2;
-      hotIcon = 0;
-    hotIconValid2:
       if(hotIcon && hotIcon->icon->flags & IF_HOT)
       {
         hotIcon->icon->flags &= ~IF_HOT;
@@ -570,10 +556,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
 
         // remove icon
         if(!iconData->hwnd)
-        {
-          icons.remove(iconData);
-          delete iconData;
-        }
+          removeIcon(*iconData);
       }
     }
     else

@@ -43,6 +43,7 @@ private:
   void addIcon(HWND hwnd);
   void activateIcon(HWND hwnd);
   void removeIcon(HWND hwnd);
+  void removeIcon(IconData& iconData);
   void updateIcon(HWND hwnd, bool forceUpdate);
 
   static bool hasTaskBarIcon(HWND hwnd);
