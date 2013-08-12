@@ -53,7 +53,7 @@ private:
   Icon* dragIcon;
 
   bool loadSkin(const wchar* name);
-  bool loadPlugin(const wchar* name, Storage* storage);
+  bool loadPlugin(const wchar* name, Storage& storage);
 
   void addPlugin(Plugin* plugin) { plugins.insert(plugin); }
   void removePlugin(Plugin* plugin) { plugins.erase(plugin); }

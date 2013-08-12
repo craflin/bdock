@@ -21,7 +21,7 @@ Plugin* Plugin::lookup(void* returnAddress)
   return 0;
 }
 
-Plugin::Plugin(Dock* dock, Storage* storage) : dock(dock), storage(storage), plugin(0), hmodule(0) {}
+Plugin::Plugin(Dock& dock, Storage& storage) : dock(dock), storage(storage), plugin(0), hmodule(0) {}
 
 Plugin::~Plugin()
 {
@@ -117,7 +117,7 @@ bool Plugin::init(const wchar* name)
   return true;
 }
 
-void Plugin::swapIcon(Icon* icon1, Icon* icon2)
+void Plugin::swapIcons(Icon* icon1, Icon* icon2)
 {
   auto a = icons.find(icon1);
   auto b = icons.find(icon2);
@@ -134,8 +134,8 @@ API::Icon* Plugin::createIcon(HBITMAP icon, uint flags)
   Icon* newIcon = new Icon(icon, flags, this);
   Icon* lastIcon = icons.empty() ? 0 : icons.back();
   addIcon(newIcon);
-  dock->addIcon(lastIcon, newIcon);
-  dock->update();
+  dock.addIcon(lastIcon, newIcon);
+  dock.update();
   return newIcon;
 }
 
@@ -144,7 +144,7 @@ bool Plugin::destroyIcon(API::Icon* icon)
   if(icons.find((Icon*)icon) == icons.end())
     return false;
   deleteIcon((Icon*)icon);
-  dock->update();
+  dock.update();
   return true;
 }
 
@@ -152,7 +152,7 @@ bool Plugin::updateIcon(API::Icon* icon)
 {
   if(icons.find((Icon*)icon) == icons.end())
     return false;
-  dock->updateIcon((Icon*)icon);
+  dock.updateIcon((Icon*)icon);
   return true;
 }
 
@@ -161,7 +161,7 @@ bool Plugin::updateIcons(API::Icon** icons, uint count)
   //if(icons.find((Icon*)icon) == icons.end())
     //return false;
   // TODO: optimize this
-  dock->update();
+  dock.update();
   return true;
 }
 
@@ -171,7 +171,7 @@ bool Plugin::getIconRect(API::Icon* icon, RECT* rect)
   if(i == icons.end())
     return false;
   *rect = (*i)->rect;
-  const POINT& pos = dock->getPosition();
+  const POINT& pos = dock.getPosition();
   rect->left += pos.x;
   rect->right += pos.x;
   rect->top += pos.y;
@@ -210,7 +210,7 @@ API::Timer* Plugin::createTimer(uint interval)
 {
   Timer* newTimer = new Timer(interval, this);
   addTimer(newTimer);
-  dock->addTimer(newTimer);
+  dock.addTimer(newTimer);
   return newTimer;
 }
 
@@ -218,7 +218,7 @@ bool Plugin::updateTimer(API::Timer* timer)
 {
   if(timers.find((Timer*)timer) == timers.end())
     return false;
-  dock->updateTimer((Timer*)timer);
+  dock.updateTimer((Timer*)timer);
   return true;
 }
 
@@ -233,7 +233,7 @@ bool Plugin::destroyTimer(API::Timer* timer)
 void Plugin::deleteIcon(Icon* icon)
 {
   removeIcon(icon);
-  dock->removeIcon(icon);
+  dock.removeIcon(icon);
   delete icon;
 }
 
@@ -250,7 +250,7 @@ void Plugin::removeIcon(Icon* icon)
 void Plugin::deleteTimer(Timer* timer)
 {
   removeTimer(timer);
-  dock->removeTimer(timer);
+  dock.removeTimer(timer);
   delete timer;
 }
 
@@ -331,7 +331,7 @@ DWORD Plugin::Interface::showMenu(HMENU hmenu, int x, int y)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->dock->showMenu(hmenu, x, y);
+    return plugin->dock.showMenu(hmenu, x, y);
   return 0;
 }
 
@@ -362,7 +362,7 @@ int Plugin::Interface::destroyTimer(struct API::Timer* timer)
 int Plugin::Interface::enterStorageSection(const char* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->enterSection(name))
+  if(plugin && plugin->storage.enterSection(name))
     return 0;
   return -1;
 }
@@ -370,7 +370,7 @@ int Plugin::Interface::enterStorageSection(const char* name)
 int Plugin::Interface::enterStorageNumSection(unsigned int pos)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->enterNumSection(pos))
+  if(plugin && plugin->storage.enterNumSection(pos))
     return 0;
   return -1;
 }
@@ -380,7 +380,7 @@ int Plugin::Interface::leaveStorageSection()
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
   {
-    Storage* storage = plugin->storage;
+    Storage* storage = &plugin->storage;
     if(storage->getCurrentStorage() != storage && storage->leave())
       return 0;
   }
@@ -390,7 +390,7 @@ int Plugin::Interface::leaveStorageSection()
 int Plugin::Interface::deleteStorageSection(const char* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->deleteSection(name) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.deleteSection(name) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -398,7 +398,7 @@ int Plugin::Interface::deleteStorageSection(const char* name)
 int Plugin::Interface::deleteStorageNumSection(uint pos)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->deleteNumSection(pos) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.deleteNumSection(pos) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -406,7 +406,7 @@ int Plugin::Interface::deleteStorageNumSection(uint pos)
 int Plugin::Interface::swapStorageNumSections(unsigned int pos1, unsigned int pos2)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->swapNumSections(pos1, pos2) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.swapNumSections(pos1, pos2) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -415,14 +415,14 @@ unsigned int Plugin::Interface::getStorageNumSectionCount()
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage->getNumSectionCount();
+    return plugin->storage.getNumSectionCount();
   return 0;
 }
 
 int Plugin::Interface::setStorageNumSectionCount(unsigned int count)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setNumSectionCount(count) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.setNumSectionCount(count) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -431,7 +431,7 @@ const wchar* Plugin::Interface::getStorageString(const char* name, unsigned int*
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage->getStr(name, length, default, defaultLength);
+    return plugin->storage.getStr(name, length, default, defaultLength);
   if(length)
     *length = defaultLength;
   return default;
@@ -441,7 +441,7 @@ int Plugin::Interface::getStorageInt(const char* name, int default)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage->getInt(name, default);
+    return plugin->storage.getInt(name, default);
   return default;
 }
 
@@ -449,7 +449,7 @@ unsigned int Plugin::Interface::getStorageUInt(const char* name, unsigned int de
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage->getUInt(name, default);
+    return plugin->storage.getUInt(name, default);
   return default;
 }
 
@@ -457,7 +457,7 @@ int Plugin::Interface::getStorageData(const char* name, char** data, unsigned in
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage->getData(name, data, length, defaultData, defaultLength) ? 0 : -1;
+    return plugin->storage.getData(name, data, length, defaultData, defaultLength) ? 0 : -1;
   *data = (char*)defaultData;
   if(length)
     *length = defaultLength;
@@ -467,7 +467,7 @@ int Plugin::Interface::getStorageData(const char* name, char** data, unsigned in
 int Plugin::Interface::setStorageString(const char* name, const wchar_t* value, unsigned int length)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setStr(name, value, length) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.setStr(name, value, length) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -475,7 +475,7 @@ int Plugin::Interface::setStorageString(const char* name, const wchar_t* value, 
 int Plugin::Interface::setStorageInt(const char* name, int value)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setInt(name, value) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.setInt(name, value) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -483,7 +483,7 @@ int Plugin::Interface::setStorageInt(const char* name, int value)
 int Plugin::Interface::setStorageUInt(const char* name, unsigned int value)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setUInt(name, value) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.setUInt(name, value) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -491,7 +491,7 @@ int Plugin::Interface::setStorageUInt(const char* name, unsigned int value)
 int Plugin::Interface::setStorageData(const char* name, char* data, unsigned int length)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setData(name, data, length) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.setData(name, data, length) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }
@@ -499,7 +499,7 @@ int Plugin::Interface::setStorageData(const char* name, char* data, unsigned int
 int Plugin::Interface::deleteStorageEntry(const char* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->deleteEntry(name) && plugin->dock->saveStorage())
+  if(plugin && plugin->storage.deleteEntry(name) && plugin->dock.saveStorage())
     return 0;
   return -1;
 }

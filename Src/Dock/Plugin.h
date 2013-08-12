@@ -9,15 +9,15 @@ class Plugin
 public:
   static Plugin* lookup(void* returnAddress);
 
-  Dock* dock;
-  Storage* storage;
+  Dock& dock;
+  Storage& storage;
 
-  Plugin(Dock* dock, Storage* storage);
+  Plugin(Dock& dock, Storage& storage);
   ~Plugin();
 
   bool init(const wchar* name);
 
-  void swapIcon(Icon* icon1, Icon* icon2);
+  void swapIcons(Icon* icon1, Icon* icon2);
 
   // api functions
   API::Icon* createIcon(HBITMAP icon, uint flags);

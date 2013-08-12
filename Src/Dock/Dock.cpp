@@ -34,7 +34,7 @@ bool Dock::create()
     dockStorage.enterNumSection(i);
     const wchar* name = dockStorage.getStr("name");
     if(name)
-      if(!loadPlugin(name, dockStorage.getSection("config")))
+      if(!loadPlugin(name, *dockStorage.getSection("config")))
       {
         // TODO: error message
       }
@@ -73,9 +73,9 @@ bool Dock::loadSkin(const wchar* name)
   return true;
 }
 
-bool Dock::loadPlugin(const wchar* name, Storage* storage)
+bool Dock::loadPlugin(const wchar* name, Storage& storage)
 {
-  Plugin* plugin = new Plugin(this, storage);
+  Plugin* plugin = new Plugin(*this, storage);
   if(!plugin->init(name))
   {
     delete plugin;
@@ -313,7 +313,7 @@ void Dock::dragMove(int x, int y)
     icons.erase(a);
     icons.insert(c, icon);
     icons.erase(c);
-    icon->plugin->swapIcon(icon, dragIcon);
+    icon->plugin->swapIcons(icon, dragIcon);
     calcIconRects(icons.begin()); // TODO: optimize this
     update();
 
