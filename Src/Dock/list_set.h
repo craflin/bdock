@@ -6,7 +6,7 @@
 template<typename V> class list_set : public std::list<V>
 {
 public:
-  std::list<V>::iterator find(const V& value)
+  iterator find(const V& value)
   {
     for(auto i = begin(), _end = end(); i != _end; ++i)
       if(*i == value)
@@ -19,7 +19,7 @@ public:
     return remove(value);
   }
 
-  void erase(const std::list<V>::iterator& it)
+  void erase(const iterator& it)
   {
     std::list<V>::erase(it);
   }

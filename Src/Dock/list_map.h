@@ -6,7 +6,7 @@
 template<typename K, typename V> class list_map : public std::list<std::pair<K, V> >
 {
 public:
-  std::list<std::pair<K, V> >::iterator find(const K& key)
+  iterator find(const K& key)
   {
     for(auto i = begin(), _end = end(); i != _end; ++i)
       if(i->first == key)
