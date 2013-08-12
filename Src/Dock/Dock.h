@@ -24,6 +24,8 @@ public:
 
   bool showSettingsDlg();
 
+  bool saveStorage();
+
   // api functions
   DWORD showMenu(HMENU hmenu, int x, int y);
 

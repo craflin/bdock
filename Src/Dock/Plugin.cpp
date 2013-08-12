@@ -390,7 +390,7 @@ int Plugin::Interface::leaveStorageSection()
 int Plugin::Interface::deleteStorageSection(const char* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->deleteSection(name))
+  if(plugin && plugin->storage->deleteSection(name) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -398,7 +398,7 @@ int Plugin::Interface::deleteStorageSection(const char* name)
 int Plugin::Interface::deleteStorageNumSection(uint pos)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->deleteNumSection(pos))
+  if(plugin && plugin->storage->deleteNumSection(pos) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -406,7 +406,7 @@ int Plugin::Interface::deleteStorageNumSection(uint pos)
 int Plugin::Interface::swapStorageNumSections(unsigned int pos1, unsigned int pos2)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->swapNumSections(pos1, pos2))
+  if(plugin && plugin->storage->swapNumSections(pos1, pos2) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -422,7 +422,7 @@ unsigned int Plugin::Interface::getStorageNumSectionCount()
 int Plugin::Interface::setStorageNumSectionCount(unsigned int count)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setNumSectionCount(count))
+  if(plugin && plugin->storage->setNumSectionCount(count) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -467,7 +467,7 @@ int Plugin::Interface::getStorageData(const char* name, char** data, unsigned in
 int Plugin::Interface::setStorageString(const char* name, const wchar_t* value, unsigned int length)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setStr(name, value, length))
+  if(plugin && plugin->storage->setStr(name, value, length) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -475,7 +475,7 @@ int Plugin::Interface::setStorageString(const char* name, const wchar_t* value, 
 int Plugin::Interface::setStorageInt(const char* name, int value)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setInt(name, value))
+  if(plugin && plugin->storage->setInt(name, value) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -483,7 +483,7 @@ int Plugin::Interface::setStorageInt(const char* name, int value)
 int Plugin::Interface::setStorageUInt(const char* name, unsigned int value)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setUInt(name, value))
+  if(plugin && plugin->storage->setUInt(name, value) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -491,7 +491,7 @@ int Plugin::Interface::setStorageUInt(const char* name, unsigned int value)
 int Plugin::Interface::setStorageData(const char* name, char* data, unsigned int length)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->setData(name, data, length))
+  if(plugin && plugin->storage->setData(name, data, length) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }
@@ -499,7 +499,7 @@ int Plugin::Interface::setStorageData(const char* name, char* data, unsigned int
 int Plugin::Interface::deleteStorageEntry(const char* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage->deleteEntry(name))
+  if(plugin && plugin->storage->deleteEntry(name) && plugin->dock->saveStorage())
     return 0;
   return -1;
 }

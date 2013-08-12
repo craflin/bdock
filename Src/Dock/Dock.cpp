@@ -414,6 +414,13 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
         else
           ShowWindow(hwnd, SW_HIDE);
       }
+      break;
+    }
+    if(wParam == 1) // save storage timer
+    {
+      killTimer(1);
+      globalStorage.save();
+      break;
     }
     if(wParam != 0) // plugin timer
     {
@@ -560,6 +567,13 @@ DWORD Dock::showMenu(HMENU hmenu, int x, int y)
   if(deleteHMenu)
     DestroyMenu(hmenu);
   return cmd;
+}
+
+bool Dock::saveStorage()
+{
+  killTimer(1);
+  setTimer(1, 300, NULL);
+  return true;
 }
 
 void Dock::addIcon(Icon* insertAfter, Icon* icon)

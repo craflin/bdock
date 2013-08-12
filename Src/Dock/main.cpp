@@ -60,10 +60,6 @@ int _tmain( DWORD, TCHAR**, TCHAR** )
 
 #endif
 
-
-//LRESULT CALLBACK  wndProc(HWND, UINT, WPARAM, LPARAM);
-//INT_PTR CALLBACK  aboutDlgProc(HWND, UINT, WPARAM, LPARAM);
-
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -84,13 +80,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   WinAPI::Application application(hInstance, ICC_LINK_CLASS);
 
   // load storage
-  std::wstring storageFile;
   Storage storage;
   {
     WCHAR path[MAX_PATH];
     if(WinAPI::Shell::getFolderPath(CSIDL_APPDATA | CSIDL_FLAG_CREATE, path, MAX_PATH)) 
     {
-      storageFile = path;
+      std::wstring storageFile = path;
       storageFile += L"/BDock";
       if(GetFileAttributes(storageFile.c_str()) == INVALID_FILE_ATTRIBUTES)
         CreateDirectory(storageFile.c_str(), 0);
@@ -129,10 +124,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     */
   }
 
-  // autostart?
-  //SHGetFolderPath(
-  //if(storage.getInt("autostart", 1) 
-
   // create docks
   std::vector<Dock*> docks(storage.getNumSectionCount());
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
@@ -151,10 +142,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   for(std::vector<Dock*>::iterator i = docks.begin(), end = docks.end(); i != end; ++i)
     delete *i;
   docks.clear();
-
-  // save storage
-  if(!storageFile.empty())
-    storage.save(storageFile.c_str());
 
   CloseHandle(hMutex);
   return (int) exitCode;

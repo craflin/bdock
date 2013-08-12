@@ -35,7 +35,7 @@ public:
   bool setData(const char* name, char* data, uint length);
   bool deleteEntry(const char* name);
 
-  bool save(const wchar* file);
+  bool save();
   bool load(const wchar* file);
 
 private:
@@ -85,6 +85,7 @@ private:
     void free();
   };
 
+  std::wstring filename;
   std::unordered_map<std::string, Variant> entries;
   std::unordered_map<std::string, Storage*> storages;
   std::vector<Storage*> array;

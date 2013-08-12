@@ -307,9 +307,11 @@ bool Storage::deleteEntry(const char* name)
   return true;
 }
 
-bool Storage::save(const wchar* file)
+bool Storage::save()
 {
-  HANDLE hFile = CreateFile(file, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+  if(filename.empty())
+    return false;
+  HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
   if (hFile == INVALID_HANDLE_VALUE)
     return false;    
   uint header = 1; // minimal header
@@ -326,6 +328,8 @@ bool Storage::load(const wchar* file)
   uint header;
   bool ret = read(hFile, &header, sizeof(header)) && header == 1 && load(hFile);
   CloseHandle(hFile);
+  if(ret)
+    filename = file;
   return ret;
 }
 
