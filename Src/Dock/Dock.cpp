@@ -8,7 +8,11 @@ Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalS
 Dock::~Dock()
 {
   if(hwnd)
+  {
     deregisterShellHookWindow();
+    DestroyWindow(hwnd);
+    hwnd = 0;
+  }
   if(skin)
     delete skin;
   while(plugins.begin() != plugins.end())
