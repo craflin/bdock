@@ -123,7 +123,7 @@ void Launcher::addIcon(HWND hwnd)
   if(!hicon)
     hicon = defaultIcon;
 
-  HBITMAP bitmap = createBitmapFromIcon(hicon, 0);
+  HBITMAP bitmap = CreateBitmapFromIcon(32, 32, hicon);
   Icon* icon = dock.createIcon(bitmap, hwnd == activeHwnd ? IF_ACTIVE : 0);
   if(!icon)
   {
@@ -225,7 +225,7 @@ void Launcher::updateIcon(HWND hwnd, bool forceUpdate)
     iconData->hicon = hicon;
     if(icon->icon)
       DeleteObject(icon->icon);
-    icon->icon = createBitmapFromIcon(hicon, 0);
+    icon->icon = CreateBitmapFromIcon(32, 32, hicon);
     forceUpdate = true;
   }
 

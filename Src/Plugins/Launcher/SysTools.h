@@ -2,6 +2,6 @@
 #pragma once
 
 HMENU CopyMenu(HMENU hmenu);
-HBITMAP createBitmapFromIcon(HICON icon, SIZE* size);
+HBITMAP CreateBitmapFromIcon(UINT destWidth, UINT destHeight, HICON icon);
 
 BOOL GetCommandLine(DWORD pid, LPWSTR commandLine, UINT maxLen);

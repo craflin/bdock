@@ -35,7 +35,7 @@ HMENU CopyMenu(HMENU hmenu)
 }
 
 // TODO: optimize this function using DIB-Bitmap!
-HBITMAP createBitmapFromIcon(HICON icon, SIZE* size)
+HBITMAP CreateBitmapFromIcon(HICON icon, SIZE* size)
 {
   HBITMAP bmp = 0;
   ICONINFO ii;
@@ -147,81 +147,40 @@ abruption:
   return 0;
 }
 
-#if 0
-HBITMAP CreateBitmapFromIcon(HICON icon)
+HBITMAP CreateResizedBitmap(UINT destWidth, UINT destHeight, HBITMAP hsrc, UINT srcX, UINT srcY, UINT srcWidth, UINT srcHeight)
 {
-  ICONINFO ii;
-  if(!GetIconInfo(icon, &ii))
-    return 0;
+  // create source dc
+  HDC src = CreateCompatibleDC(NULL);
+  HBITMAP oldSrcBmp = (HBITMAP)SelectObject(src, hsrc);
 
-  BITMAP bmMask;
-  if(!GetObject(ii.hbmMask, sizeof(BITMAP), &bmMask))
-    goto abruption;
+  // create dest dc
+  HBITMAP bmp = CreateBitmap(destWidth, destHeight, 1, 32, NULL);
+  HDC dest = CreateCompatibleDC(NULL);
+  HBITMAP oldDestBmp = (HBITMAP)SelectObject(dest, bmp);
+  
 
-  unsigned char mask[128 * 128 / 8];
-  if(bmMask.bmBitsPixel != 1 || bmMask.bmWidthBytes * bmMask.bmHeight > 128 * 128 / 8)
-    goto abruption;
+  SetStretchBltMode(dest, COLORONCOLOR);
+  StretchBlt(dest, 0, 0, destWidth, destHeight, src, srcX, srcY, srcWidth, srcHeight, SRCCOPY);
 
-  BITMAP bmColor;
-  if(!GetObject(ii.hbmColor, sizeof(BITMAP), &bmColor))
-    goto abruption;
+  // cleanup
+  SelectObject(dest, oldDestBmp);
+  SelectObject(src, oldSrcBmp);
+  DeleteDC(dest);
+  DeleteDC(src);
 
-  char color[128 * 128 * 4];
-  if(bmColor.bmBitsPixel != 32 || bmColor.bmWidthBytes * bmColor.bmHeight > 128 * 128 * 4)
-    goto abruption;
-
-  if(!GetBitmapBits(ii.hbmMask, bmMask.bmWidthBytes * bmMask.bmHeight, mask) ||
-     !GetBitmapBits(ii.hbmColor, bmColor.bmWidthBytes * bmColor.bmHeight, color))
-    goto abruption;
-
-  DWORD* pos, * end;
-  unsigned char* maskPos;
-  int maskSubPos;
-  for(int y = bmColor.bmHeight - 1; y >= 0; --y)
-  {
-    pos = (DWORD*)&color[y * bmColor.bmWidthBytes];
-    end = pos + bmColor.bmWidth;
-    maskPos = &mask[y * bmMask.bmWidthBytes];
-    maskSubPos = 7;
-    for(; pos < end; ++pos)
-    {
-      if(*maskPos & (1 << maskSubPos)) // transparent
-      {
-        *pos = 0x0;
-      }
-      else // not transparent
-      {
-        if(*pos & 0xff000000) // alpha channel has the same opinion => ii.hbmColor is ok
-        {
-          //DeleteObject(ii.hbmMask);
-          //return ii.hbmColor;
-        }
-        else // apply mask
-        {
-          *pos |= 0xff000000;
-        }
-      }
-      if(--maskSubPos < 0)
-      {
-        maskSubPos = 7;
-        ++maskPos;
-      }
-    }
-  }
-
-  if(!SetBitmapBits(ii.hbmColor, bmColor.bmWidthBytes * bmColor.bmHeight, color))
-    goto abruption;
-
-  DeleteObject(ii.hbmMask);
-  return ii.hbmColor;
-
-abruption:
-    DeleteObject(ii.hbmColor);
-    DeleteObject(ii.hbmMask);
-    return 0;
+  return bmp;
 }
-#endif 
 
+HBITMAP CreateBitmapFromIcon(UINT destWidth, UINT destHeight, HICON icon)
+{
+  SIZE size;
+  HBITMAP hbitmap = CreateBitmapFromIcon(icon, &size);
+  if(size.cy == destWidth && size.cx == destHeight)
+    return hbitmap;
+  HBITMAP hresized = CreateResizedBitmap(destWidth, destHeight, hbitmap, 0, 0, size.cy, size.cx);
+  DeleteObject(hbitmap);
+  return hresized;
+}
 
 
 #include <Winternl.h>

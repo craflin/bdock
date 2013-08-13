@@ -51,6 +51,7 @@ private:
   } dragState;
   POINT dragPosition;
   Icon* dragIcon;
+  HIMAGELIST hDragImageList;
 
   bool loadSkin(const wchar* name);
   bool loadPlugin(const wchar* name, Storage& storage);

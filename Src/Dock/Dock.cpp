@@ -3,10 +3,11 @@
 #include "stdafx.h"
 
 Dock::Dock(Storage& globalStorage, Storage& dockStorage) : globalStorage(globalStorage), dockStorage(dockStorage), settings(dockStorage), 
-  skin(0), lastHitIcon(0), hotIcon(0), dragState(DRAG_IDLE), dragIcon(0) {}
+  skin(0), lastHitIcon(0), hotIcon(0), dragState(DRAG_IDLE), dragIcon(0), hDragImageList(0) {}
 
 Dock::~Dock()
 {
+  dragFinish();
   if(hwnd)
   {
     deregisterShellHookWindow();
@@ -112,38 +113,45 @@ void Dock::draw(HDC dest, const RECT& update)
   for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
   {
     Icon* icon = *i;
-    const RECT& rect(icon->rect);
+    uint flags = icon->flags;
+    if(icon == dragIcon)
+    {
+      flags &= ~(IF_ACTIVE | IF_HALFBG | IF_FULLBG);
+      flags |= IF_HOT;
+    }
+    const RECT& rect = icon->rect;
     if(rect.left >= update.left && rect.right <= update.right)
     {
-      if(icon->flags & IF_ACTIVE && skin->activeBg.bmp)
+      if(flags & IF_ACTIVE && skin->activeBg.bmp)
       {
         const SIZE& size(skin->activeBg.size);
         skin->activeBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
       }
       else
       {
-        if(!(icon->flags & (IF_HALFBG | IF_FULLBG | IF_HOT)) && skin->defaultBg.bmp)
+        if(!(flags & (IF_HALFBG | IF_FULLBG | IF_HOT)) && skin->defaultBg.bmp)
         {
           const SIZE& size(skin->defaultBg.size);
           skin->defaultBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
         }
-        if(icon->flags & IF_HOT && skin->hotBg.bmp)
+        if(flags & IF_HOT && skin->hotBg.bmp)
         {
           const SIZE& size(skin->hotBg.size);
           skin->hotBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
         }
-        if(icon->flags & IF_HALFBG && skin->halfBg.bmp)
+        if(flags & IF_HALFBG && skin->halfBg.bmp)
         {
           const SIZE& size(skin->halfBg.size);
           skin->halfBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + settings.iconHeight / 2 + (settings.iconHeight - size.cx) / 2);
         }
-        if(icon->flags & IF_FULLBG && skin->fullBg.bmp)
+        if(flags & IF_FULLBG && skin->fullBg.bmp)
         {
           const SIZE& size(skin->fullBg.size);
           skin->fullBg.draw(dest, rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2);
         }
       }
-      icon->draw(dest, settings);
+      if(icon != dragIcon)
+        icon->draw(dest, settings);
     }
   }
 }
@@ -295,18 +303,46 @@ void Dock::dragStart(Icon& icon, int x, int y)
   dragIcon = &icon;
   dragPosition.x = x;
   dragPosition.y = y;
+
+  SIZE size = { settings.iconWidth, settings.iconHeight };
+  hDragImageList = ImageList_Create(size.cx, size.cy, ILC_COLOR32, 1, 1);
+  ImageList_Add(hDragImageList, icon.icon, NULL);
+
+  POINT ptHot = { icon.rect.left + (settings.itemWidth - size.cx) / 2, settings.topMargin + (settings.iconHeight - size.cx) / 2};
+  ImageList_BeginDrag(hDragImageList, 0, x - ptHot.x, y - ptHot.y);
+  POINT dragPosition = {x, y};
+  ClientToScreen(hwnd, &dragPosition);
+  ImageList_DragEnter(GetDesktopWindow(), dragPosition.x, dragPosition.y);
+  SetCapture(hwnd);
+
+  updateIcon(&icon);
 }
 
 void Dock::dragFinish()
 {
+  if(dragState == DRAG_IDLE)
+    return;
+
   dragState = DRAG_IDLE;
-  dragIcon  = 0;
+  Icon* icon = dragIcon;
+  dragIcon = 0;
+  ImageList_DragLeave(GetDesktopWindow());
+  ImageList_EndDrag();
+  ImageList_Destroy(hDragImageList);
+  hDragImageList = NULL;
+  ReleaseCapture();
+
+  updateIcon(icon);
 }
 
 void Dock::dragMove(int x, int y)
 {
+  POINT dragPosition = {x, y};
+  ClientToScreen(hwnd, &dragPosition);
+  ImageList_DragMove(dragPosition.x, dragPosition.y);
+  y = (dragIcon->rect.top + dragIcon->rect.bottom) / 2;
   Icon* icon = hitTest(x, y);
-  if(icon != dragIcon && icon->plugin == dragIcon->plugin)
+  if(icon != dragIcon && icon && dragIcon && icon->plugin == dragIcon->plugin)
   {
     // swap icon positions
     auto a = icons.find(icon);
@@ -326,6 +362,10 @@ void Dock::dragMove(int x, int y)
       icon->handleMoveEvent(icon);
     if(dragIcon->handleMoveEvent)
       dragIcon->handleMoveEvent(dragIcon);
+
+    //icon = dragIcon;
+    //dragFinish();
+    //dragStart(*icon, x, y);
   }
 }
 
