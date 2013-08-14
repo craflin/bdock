@@ -16,6 +16,8 @@ private:
   WinAPI::ImageList pageImageList;
   WinAPI::TreeView pageTreeView;
 
+  WinAPI::Dialog generalPage;
+
   WinAPI::Button autostartButton;
 
   virtual bool onInitDialog();
