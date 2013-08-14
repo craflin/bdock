@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Icons">
+      <UniqueIdentifier>{8F679730-0715-8337-3465-84551B093BE8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Dock\AboutDlg.cpp" />
@@ -28,6 +31,24 @@
     <ResourceCompile Include="Src\Dock\Dock.rc" />
     <None Include="Src\Dock\Dock.ico" />
     <None Include="Src\Dock\Small.ico" />
+    <None Include="Src\Dock\Icons\arrow_out.ico">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Src\Dock\Icons\cross.ico">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Src\Dock\Icons\plugin.ico">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Src\Dock\Icons\tab.ico">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Src\Dock\Icons\tab_add.ico">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Src\Dock\Icons\wrench_orange.ico">
+      <Filter>Icons</Filter>
+    </None>
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>

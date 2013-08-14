@@ -128,29 +128,17 @@ namespace WinAPI
 
   String::String(UINT stringId)
   {
-#ifdef UNICODE
-    data = 0;
-    buffer = 0;
-    LoadString(Application::getInstance(), stringId, (LPTSTR)&data, 0);
-#else
-    data = 0;
-    buffer = 0;
-    LPCWSTR wdata;
-    LoadStringW(Application::getInstance(), stringId, (LPTSTR)&wdata, 0);
-    if(wdata)
-    {
-      int len = wstrlen(wdata);
-      data = buffer = new TCHAR[len];
-      WideCharToMultiByte(
-#error TODO
-    }
-#endif
+    TCHAR buffer[4096];
+    LoadString(Application::getInstance(), stringId, buffer, sizeof(buffer));
+    size_t len = _tcslen(buffer);
+    data = new TCHAR[len + 1];
+    memcpy((LPSTR) data, buffer, (len + 1) * sizeof(TCHAR));
   }
 
   String::~String()
   {
-    if(buffer)
-      delete[] buffer;
+    if(data)
+      delete[] (LPSTR) data;
   }
 
   Icon::Icon(LPCTSTR icon) : hicon(LoadIcon(NULL, icon)) {}

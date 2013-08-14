@@ -202,6 +202,12 @@
     <ResourceCompile Include="Src\Dock\Dock.rc" />
     <None Include="Src\Dock\Dock.ico" />
     <None Include="Src\Dock\Small.ico" />
+    <None Include="Src\Dock\Icons\arrow_out.ico" />
+    <None Include="Src\Dock\Icons\cross.ico" />
+    <None Include="Src\Dock\Icons\plugin.ico" />
+    <None Include="Src\Dock\Icons\tab.ico" />
+    <None Include="Src\Dock\Icons\tab_add.ico" />
+    <None Include="Src\Dock\Icons\wrench_orange.ico" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
   <ItemGroup>
