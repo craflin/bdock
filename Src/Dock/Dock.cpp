@@ -110,6 +110,7 @@ void Dock::draw(HDC dest, const RECT& update)
 {
   skin->draw(dest, size, update);
 
+  Icon* dragIcon = dragState == DRAG_STARTED ? this->dragIcon : 0;
   for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
   {
     Icon* icon = *i;
