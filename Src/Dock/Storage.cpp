@@ -322,14 +322,13 @@ bool Storage::save()
 
 bool Storage::load(const wchar* file)
 {
+  filename = file;
   HANDLE hFile = CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL); 
   if (hFile == INVALID_HANDLE_VALUE)
     return false;
   uint header;
   bool ret = read(hFile, &header, sizeof(header)) && header == 1 && load(hFile);
   CloseHandle(hFile);
-  if(ret)
-    filename = file;
   return ret;
 }
 
