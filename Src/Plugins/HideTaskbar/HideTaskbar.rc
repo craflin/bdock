@@ -78,7 +78,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Colin Graf"
-            VALUE "FileDescription", "Removes the windows taskbar from the desktop."
+            VALUE "FileDescription", "Removes the Windows taskbar from the desktop."
             VALUE "FileVersion", "0.4.0.0"
             VALUE "InternalName", "HideTaskbar.dll"
             VALUE "LegalCopyright", "Copyright (C) 2013"

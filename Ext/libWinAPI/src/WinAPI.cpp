@@ -129,16 +129,82 @@ namespace WinAPI
   String::String(UINT stringId)
   {
     TCHAR buffer[4096];
-    LoadString(Application::getInstance(), stringId, buffer, sizeof(buffer));
-    size_t len = _tcslen(buffer);
+    int len = LoadString(Application::getInstance(), stringId, buffer, sizeof(buffer) / sizeof(TCHAR));
+    if(len < sizeof(buffer) / sizeof(TCHAR) - 1)
+    {
+      if(len > 0)
+      {
+        data = new TCHAR[len + 1];
+        memcpy(data, buffer, (len + 1) * sizeof(TCHAR));
+        this->len = len;
+      }
+      else
+      {
+        data = 0;
+        this->len = 0;
+      }
+    }
+    else
+    {
+      for(;;)
+      {
+        INT dataSize = len * 2;
+        data = new TCHAR[dataSize];
+        len = LoadString(Application::getInstance(), stringId, data, dataSize);
+        if(len < dataSize - 1)
+          break;
+        delete[] data;
+      }
+      this->len = len;
+    }
+  }
+
+  String::String(LPCTSTR str, UINT len)
+  {
     data = new TCHAR[len + 1];
-    memcpy((LPSTR) data, buffer, (len + 1) * sizeof(TCHAR));
+    this->len = len;
+    memcpy(data, str, len * sizeof(TCHAR));
+    data[len] = 0;
   }
 
   String::~String()
   {
-    if(data)
-      delete[] (LPSTR) data;
+    delete[] data;
+  }
+
+  void String::assign(LPCTSTR str, UINT len)
+  {
+    delete[] data;
+    data = new TCHAR[len + 1];
+    this->len = len;
+    memcpy(data, str, len * sizeof(TCHAR));
+    data[len] = 0;
+  }
+
+  void String::alloc(UINT len)
+  {
+    delete[] data;
+    data = new TCHAR[len + 1];
+    this->len = len;
+    data[0] = 0;
+  }
+
+  void String::resize(UINT len)
+  {
+    if(len <= this->len)
+    {
+      this->len = len;
+      data[len] = 0;
+    }
+    else
+    {
+      TCHAR* newData = new TCHAR[len + 1];
+      memcpy(newData, data, (this->len + 1) * sizeof(TCHAR));
+      newData[len] = 0;
+      this->len = len;
+      delete[] data;
+      data = newData;
+    }
   }
 
   Icon::Icon(LPCTSTR icon) : hicon(LoadIcon(NULL, icon)) {}
@@ -227,22 +293,51 @@ namespace WinAPI
         return 0;
       break;
     case WM_COMMAND:
-      if(onCommand(LOWORD(wParam), (HWND) lParam))
+      if(onCommand(LOWORD(wParam), HIWORD(wParam), (HWND)lParam))
         return 0;
     }
     return DefWindowProc(hwnd, message, wParam, lParam);
   }
 
+  bool Window::getText(String& text)
+  {
+    int len = GetWindowTextLength(hwnd);
+    if(len < 0)
+      return false;
+    text.alloc(len);
+    if(len > 0)
+    {
+      len = GetWindowText(hwnd, (LPTSTR) text, len + 1);
+      if(len < 0)
+        return false;
+    }
+    return len == 0 ? GetLastError() == ERROR_SUCCESS : true;
+  }
+
+  bool Window::setText(LPCTSTR text)
+  {
+    return SetWindowText(hwnd, text) == TRUE;
+  }
+
+  HWND Window::getParent() const {return GetParent(hwnd);}
   bool Window::setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList) {return SetWindowTheme(hwnd, pszSubAppName, pszSubIdList) == S_OK;}
   bool Window::isVisible() {return IsWindowVisible(hwnd) == TRUE;}
+  HWND Window::setFocus() {return SetFocus(hwnd);}
   bool Window::show(INT nCmdShow) {return ShowWindow(hwnd, nCmdShow) == TRUE;}
   bool Window::move(INT X, INT Y, INT nWidth, INT nHeight, bool bRepaint) {return MoveWindow(hwnd, X, Y, nWidth, nHeight, bRepaint) == TRUE;}
+  bool Window::move(const RECT& rect, bool bRepaint) {return MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom -  rect.top, bRepaint) == TRUE;}
+  void Window::setStyle(UINT style) {SetWindowLong(hwnd, GWL_STYLE, style);}
+  UINT Window::getStyle() const {return GetWindowLong(hwnd, GWL_STYLE);}
+  bool Window::enable(bool enable) {return EnableWindow(hwnd, enable) == TRUE;}
+  bool Window::isEnabled() const {return IsWindowEnabled(hwnd) == TRUE;}
   bool Window::registerShellHookWindow() {return RegisterShellHookWindow(hwnd) == TRUE;}
   bool Window::deregisterShellHookWindow() {return DeregisterShellHookWindow(hwnd) == TRUE;}
   bool Window::setTimer(UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc) {return SetTimer(hwnd, nIDEvent, uElapse, lpTimerFunc) == TRUE;}
   bool Window::killTimer(UINT_PTR nIDEvent) {return KillTimer(hwnd, nIDEvent) == TRUE;}
   LRESULT Window::sendMessage(UINT msg, WPARAM wParam, LPARAM lParam) {return SendMessage(hwnd, msg, wParam, lParam);}
   bool Window::postMessage(UINT msg, WPARAM wParam, LPARAM lParam) {return PostMessage(hwnd, msg, wParam, lParam) == TRUE;}
+  bool Window::getRect(RECT& rect) {return GetWindowRect(hwnd, &rect) == TRUE;}
+  bool Window::getClientRect(RECT& rect) {return GetClientRect(hwnd, &rect) == TRUE;}
 
   Dialog::~Dialog()
   {
@@ -286,7 +381,7 @@ namespace WinAPI
     return hwnd != NULL;
   }
 
-  UINT Dialog::show(UINT ressourceId, HWND hwndParent)
+  UINT Dialog::showBox(UINT ressourceId, HWND hwndParent)
   {
     if(hwnd)
       return 0; // already created
@@ -330,7 +425,7 @@ namespace WinAPI
     switch(message)
     {
     case WM_INITDIALOG: return onInitDialog();
-    case WM_COMMAND: return onCommand(LOWORD(wParam), (HWND) lParam);
+    case WM_COMMAND: return onCommand(LOWORD(wParam), HIWORD(wParam), (HWND) lParam);
     }
     return false;
   }
@@ -340,7 +435,7 @@ namespace WinAPI
     return true;
   }
 
-  bool Dialog::onCommand(UINT command, HWND source)
+  bool Dialog::onCommand(UINT command, UINT notificationCode, HWND source)
   {
     if(command == IDOK || command == IDCANCEL)
     {
@@ -350,12 +445,36 @@ namespace WinAPI
     return false;
   }
 
-  bool Control::initialize(Window& parent, UINT id)
+  Control::~Control()
+  {
+    if(attached)
+      hwnd = 0; // avoid DestroyWindow call
+  }
+
+  bool Control::attach(HWND hwnd)
+  {
+    if(this->hwnd)
+      return false;
+    this->hwnd = hwnd;
+    if(hwnd)
+    {
+      attached = true;
+      return true;
+    }
+    return false;
+  }
+
+  bool Control::attach(HWND parent, UINT id)
   {
     if(hwnd)
       return false;
     hwnd = GetDlgItem(parent, id);
-    return hwnd != NULL;
+    if(hwnd)
+    {
+      attached = true;
+      return true;
+    }
+    return false;
   }
 
   bool Button::setCheck(INT check)
@@ -400,6 +519,61 @@ namespace WinAPI
     return ListView_InsertItem(hwnd, &item);
   }
 
+  bool ListView::deleteItem(INT item) {return ListView_DeleteItem(hwnd, item) == TRUE;}
+  bool ListView::deleteAllItems() {return ListView_DeleteAllItems(hwnd) == TRUE;}
+  bool ListView::setItem(LVITEM& item) {return ListView_SetItem(hwnd, &item) == TRUE;}
+
+  bool ListView::setItemText(INT item, INT subItem, LPCTSTR text)
+  {
+    LVITEM lvi;
+    lvi.mask = LVIF_TEXT;
+    lvi.iItem = item;
+    lvi.iSubItem = subItem;
+    lvi.pszText = (LPTSTR) text;
+    return ListView_SetItem(hwnd, &lvi) == TRUE;
+  }
+
+  bool ListView::getItemData(INT item, void*& data)
+  {
+    LVITEM lvi;
+    lvi.mask = LVIF_PARAM;
+    lvi.iItem = item;
+    lvi.iSubItem = 0;
+    if(!ListView_GetItem(hwnd, &lvi))
+      return false;
+    data = (void*)lvi.lParam;
+    return true;
+  }
+
+  bool ListView::getEditControl(Edit& edit)
+  {
+    HWND edithwnd = ListView_GetEditControl(hwnd);
+    if(edithwnd == NULL)
+      return false;
+    return edit.attach(edithwnd);
+  }
+
+  INT ListView::getFirstItem(UINT flags) {return ListView_GetNextItem(hwnd, -1, flags);}
+  INT ListView::getNextItem(INT start, UINT flags) {return ListView_GetNextItem(hwnd, start, flags);}
+  HWND ListView::editLabel(INT item) {return ListView_EditLabel(hwnd, item);}
+
+  bool ListView::setCheckState(INT item, BOOL fCheck)
+  {
+    ListView_SetCheckState(hwnd, (UINT)item, fCheck);
+    return true;
+  }
+
+  bool ListView::setView(UINT viewStyle)
+  {
+    return ListView_SetView(hwnd, viewStyle) == 1;
+  }
+
+  bool ListView::setExtendedStyle(UINT extendedListViewStyle)
+  {
+    ListView_SetExtendedListViewStyle(hwnd, extendedListViewStyle);
+    return true;
+  }
+
   bool TreeView::setImageList(HIMAGELIST imageList, INT iImageList)
   {
     TreeView_SetImageList(hwnd, imageList, iImageList);
@@ -409,7 +583,105 @@ namespace WinAPI
   HTREEITEM TreeView::insertItem(TVINSERTSTRUCT& item)
   {
     return TreeView_InsertItem(hwnd, &item);
-    return 0;
+  }
+
+  bool TreeView::deleteItem(HTREEITEM hItem) {return TreeView_DeleteItem(hwnd, hItem) == TRUE;}
+  bool TreeView::deleteAllItems() {return TreeView_DeleteAllItems(hwnd) == TRUE;}
+  bool TreeView::getItem(TVITEM& item) {return TreeView_GetItem(hwnd, &item) == TRUE;}
+  HTREEITEM TreeView::getParent(HTREEITEM hItem) {return TreeView_GetParent(hwnd, hItem);}
+  HTREEITEM TreeView::getItemParent(HTREEITEM hItem) {return TreeView_GetParent(hwnd, hItem);}
+
+  LPARAM TreeView::getItemData(HTREEITEM hItem)
+  {
+    TVITEM tvi;
+    tvi.hItem = hItem;
+    tvi.mask = TVIF_PARAM;
+    if(TreeView_GetItem(hwnd, &tvi) != TRUE)
+      return 0;
+    return tvi.lParam;
+  }
+
+  bool TreeView::setItemText(HTREEITEM hitem, LPCTSTR str)
+  {
+    TVITEM tvi;
+    tvi.hItem = hitem;
+    tvi.mask = TVIF_TEXT;
+    tvi.pszText = (LPTSTR) str;
+    return TreeView_SetItem(hwnd, &tvi) != 0;
+  }
+
+  bool TreeView::getItemText(HTREEITEM hItem, String& str)
+  {
+    TCHAR bufferBuf[4096];
+    TVITEM tvi;
+    tvi.pszText = bufferBuf;
+    tvi.cchTextMax = sizeof(bufferBuf) / sizeof(*bufferBuf) - 1;
+    tvi.hItem = hItem;
+    tvi.mask = TVIF_TEXT;
+    for(;;)
+    {
+      if(TreeView_GetItem(hwnd, &tvi) != TRUE)
+        return false;
+      int len = (int)_tcslen(tvi.pszText);
+      if(len >= tvi.cchTextMax - 1)
+      {
+        str.alloc(len * 2);
+        tvi.pszText = (LPTSTR)str;
+        tvi.cchTextMax = str.length();
+        continue;
+      }
+      if(tvi.pszText != (LPTSTR)str)
+        str.assign(tvi.pszText, len);
+      else
+        str.resize(len);
+      return true;
+    }
+  }
+
+  bool TreeView::selectItem(HTREEITEM hItem)
+  {
+    return TreeView_SelectItem(hwnd, hItem) == TRUE;
+  }
+
+  bool Toolbar::create(HWND hParent, UINT windowStyle)
+  {
+    if(hwnd)
+      return false;
+    hwnd = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,  windowStyle, 0, 0, 0, 0, hParent, NULL, Application::getInstance(), NULL);
+    return hwnd != NULL;
+  }
+
+  bool Toolbar::setImageList(INT imageListID, HIMAGELIST hImageList)
+  {
+    SendMessage(hwnd, TB_SETIMAGELIST,  (WPARAM)imageListID,  (LPARAM)hImageList);
+    return true;
+  }
+
+  bool Toolbar::addButtons(TBBUTTON* buttons, UINT numButtons)
+  {
+    SendMessage(hwnd, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
+    return SendMessage(hwnd, TB_ADDBUTTONS, (WPARAM)numButtons, (LPARAM)buttons) == TRUE;
+  }
+
+  bool Toolbar::autoSize()
+  {
+    SendMessage(hwnd, TB_AUTOSIZE, 0, 0); 
+    return true;
+  }
+
+  bool Toolbar::setExtendedStyle(UINT extendedStyle)
+  {
+    SendMessage(hwnd, TB_SETEXTENDEDSTYLE, 0, (LPARAM) extendedStyle);
+    return true;
+  }
+
+  bool Toolbar::setButtonState(UINT cmdId, BYTE state)
+  {
+    TBBUTTONINFO tbInfo;
+    tbInfo.cbSize  = sizeof(TBBUTTONINFO);
+    tbInfo.dwMask  = TBIF_STATE;
+    tbInfo.fsState = state;
+    return SendMessage(hwnd, TB_SETBUTTONINFO, (WPARAM)cmdId, (LPARAM)&tbInfo) != 0;
   }
 
 } // namespace

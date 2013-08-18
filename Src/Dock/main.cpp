@@ -143,6 +143,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     // launcher dock
     storage.enterNumSection(0);
+    WinAPI::String dockName(IDS_MAIN_DOCK);
+    storage.setStr(_T("name"), String(dockName, String::length(dockName)));
+
     storage.setNumSectionCount(2);
     storage.enterNumSection(0);
     storage.setStr(_T("name"), _T("launcher"));
@@ -155,6 +158,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     /*
     // system tray dock
     storage.enterNumSection(1);
+    storage.setStr("name", L"SystemTrayDock", 0); // dock name, TODO: load name from string table
     storage.setInt("alignment", Settings::right);
     storage.setInt("rightMargin", 0);
     storage.setNumSectionCount(2);

@@ -4,7 +4,7 @@
 
 UINT AboutDlg::show(HWND hwndParent)
 {
-  return WinAPI::Dialog::show(IDD_ABOUTBOX, hwndParent);
+  return WinAPI::Dialog::showBox(IDD_ABOUTBOX, hwndParent);
 }
 
 bool AboutDlg::onDlgMessage(UINT message, WPARAM wParam, LPARAM lParam)

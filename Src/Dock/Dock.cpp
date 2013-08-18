@@ -747,12 +747,14 @@ bool Dock::showSettingsDlg()
   _tcscat_s(startupLinkFilePath, _T("\\BDock.lnk"));
   
   bool startup = GetFileAttributes(startupLinkFilePath) != INVALID_FILE_ATTRIBUTES;
-  globalStorage.setUInt(L"autostart", startup);
+  globalStorage.setUInt(_T("autostart"), startup);
 
   if(SettingsDlg(globalStorage).show(hwnd) != IDOK)
     return false;
 
-  if(globalStorage.getUInt(L"autostart", 0))
+  globalStorage.save();
+
+  if(globalStorage.getUInt(_T("autostart"), 0))
   {
     if(GetFileAttributes(startupLinkFilePath) == INVALID_FILE_ATTRIBUTES)
     {

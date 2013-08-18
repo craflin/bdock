@@ -9,7 +9,16 @@
 
 namespace WinAPI 
 {
-  class Application
+  class Uncopyable
+  {
+  public:
+    Uncopyable() {}
+  private:
+    Uncopyable(const Uncopyable&);
+    Uncopyable& operator=(const Uncopyable&);
+  };
+
+  class Application : Uncopyable
   {
   public:
     Application(HINSTANCE hinstance, DWORD dwICC =  ICC_WIN95_CLASSES);
@@ -24,7 +33,7 @@ namespace WinAPI
     static HINSTANCE hinstance;
   };
 
-  class Shell
+  class Shell : Uncopyable
   {
   public:
     static bool getFolderPath(INT folder, LPTSTR path, UINT size);
@@ -34,21 +43,29 @@ namespace WinAPI
       LPCTSTR lpDirectory, INT nShowCmd);
   };
 
-  class String 
+  class String : Uncopyable
   {
   public:
-    String() : data(0), buffer(0) {}
+    String() : data(0), len(0) {}
     String(UINT stringId);
+    String(LPCTSTR str, UINT len);
     ~String();
 
-    operator LPCTSTR() {return data;}
+    void assign(LPCTSTR str, UINT len);
+    void alloc(UINT len);
+    void resize(UINT len);
+
+    UINT length() const {return len;}
+
+    operator LPCTSTR() const {return data;}
+    operator LPTSTR() {return data;}
 
   private:
-    LPCTSTR data;
-    LPTSTR buffer;
+    LPTSTR data;
+    UINT len;
   };
 
-  class Icon
+  class Icon : Uncopyable
   {
   public:
     
@@ -63,7 +80,7 @@ namespace WinAPI
     HICON hicon;
   };
 
-  class Cursor
+  class Cursor : Uncopyable
   {
   public:
     Cursor() : hcursor(0) {}
@@ -77,7 +94,7 @@ namespace WinAPI
     HCURSOR hcursor;
   };
 
-  class Menu
+  class Menu : Uncopyable
   {
   public:
     Menu() : hmenu(0) {}
@@ -88,23 +105,32 @@ namespace WinAPI
     HMENU hmenu;
   };
 
-  class Window
+  class Window : Uncopyable
   {
   public:
     Window() : hwnd(0) {}
-    ~Window();
+    virtual ~Window();
 
     bool create(LPCTSTR className, UINT windowClassStyle = CS_DBLCLKS, 
       HWND hwndParent = NULL, HICON icon = NULL, HICON smallIcon = NULL, 
       HCURSOR cursor = Cursor(IDC_ARROW), LPCTSTR windowName = _T(""), 
       UINT exStyle = 0, UINT style = WS_POPUP);
 
+    bool setText(LPCTSTR text);
+    bool getText(String& text);
+    HWND getParent() const;
     bool setTheme(LPCTSTR pszSubAppName, LPCTSTR pszSubIdList);
     bool isVisible();
+    HWND setFocus();
     bool show(INT nCmdShow);
     bool move(INT X, INT Y, INT nWidth, INT nHeight, bool bRepaint);
-    void setStyle(UINT style) {SetWindowLong(hwnd, GWL_STYLE, style);}
-    UINT getStyle() const {return GetWindowLong(hwnd, GWL_STYLE);}
+    bool move(const RECT& rect, bool bRepaint);
+    void setStyle(UINT style);
+    UINT getStyle() const;
+    bool enable(bool enable);
+    bool isEnabled() const;
+    bool getRect(RECT& rect);
+    bool getClientRect(RECT& rect);
 
     bool registerShellHookWindow();
     bool deregisterShellHookWindow();
@@ -122,7 +148,7 @@ namespace WinAPI
 
     virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
-    virtual bool onCommand(UINT command, HWND source) {return false;}
+    virtual bool onCommand(UINT command, UINT notificationCode, HWND source) {return false;}
     virtual bool onContextMenu(INT x, INT y) {return false;}
   };
 
@@ -130,10 +156,10 @@ namespace WinAPI
   {
   public:
     Dialog() {}
-    ~Dialog();
+    virtual ~Dialog();
 
     bool create(UINT ressourceId, HWND hwndParent);
-    UINT show(UINT ressourceId, HWND hwndParent = NULL);
+    UINT showBox(UINT ressourceId, HWND hwndParent = NULL);
 
     bool end(UINT result);
 
@@ -143,13 +169,19 @@ namespace WinAPI
 
     virtual bool onInitDialog();
 
-    virtual bool onCommand(UINT command, HWND source);
+    virtual bool onCommand(UINT command, UINT notificationCode, HWND source);
   };
 
   class Control : public Window
   {
   public:
-    bool initialize(Window& parent, UINT id);
+    Control() : attached(false) {}
+    ~Control();
+
+    bool attach(HWND hwnd);
+    bool attach(HWND parent, UINT id);
+  private:
+    bool attached;
   };
 
   class Button : public Control
@@ -159,7 +191,12 @@ namespace WinAPI
     INT getCheck();
   };
 
-  class ImageList
+  class Edit : public Control
+  {
+  public:
+  };
+
+  class ImageList : Uncopyable
   {
   public:
     ImageList() : himagelist(0) {}
@@ -180,6 +217,18 @@ namespace WinAPI
   public:
     bool setImageList(HIMAGELIST imageList, INT iImageList);
     INT addItem(LVITEM& item);
+    bool deleteItem(INT item);
+    bool deleteAllItems();
+    bool setView(UINT viewStyle);
+    bool setExtendedStyle(UINT extendedListViewStyle);
+    bool setItem(LVITEM& item);
+    bool setItemText(INT item, INT subItem, LPCTSTR text);
+    bool getItemData(INT item, void*& data);
+    bool getEditControl(Edit& edit);
+    INT getFirstItem(UINT flags);
+    INT getNextItem(INT start, UINT flags);
+    HWND editLabel(INT item);
+    bool setCheckState(INT item, BOOL fCheck);
   };
 
   class TreeView : public Control
@@ -187,6 +236,27 @@ namespace WinAPI
   public:
     bool setImageList(HIMAGELIST imageList, INT iImageList);
     HTREEITEM insertItem(TVINSERTSTRUCT& item);
+    bool deleteItem(HTREEITEM hItem);
+    bool deleteAllItems();
+    bool getItem(TVITEM& item);
+    HTREEITEM getParent(HTREEITEM hItem);
+    HTREEITEM getItemParent(HTREEITEM hItem);
+    LPARAM getItemData(HTREEITEM hItem);
+    bool selectItem(HTREEITEM hItem);
+    bool setItemText(HTREEITEM hItem, LPCTSTR str);
+    bool getItemText(HTREEITEM hItem, String& str);
+  };
+
+  class Toolbar : public Control
+  {
+  public:
+    bool create(HWND hParent, UINT windowStyle = WS_CHILD | WS_VISIBLE | TBSTYLE_WRAPABLE | TBSTYLE_LIST);
+
+    bool setImageList(INT imageListID, HIMAGELIST hImageList);
+    bool addButtons(TBBUTTON* buttons, UINT numButtons);
+    bool autoSize();
+    bool setExtendedStyle(UINT extendedStyle);
+    bool setButtonState(UINT cmdId, BYTE state);
   };
 
 } // namespace

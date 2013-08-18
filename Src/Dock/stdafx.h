@@ -21,6 +21,7 @@ namespace API
 #include <nstd/Array.h>
 #include <nstd/HashMap.h>
 #include <nstd/HashSet.h>
+#include <nstd/List.h>
 #include <nstd/String.h>
 #include <nstd/File.h>
 

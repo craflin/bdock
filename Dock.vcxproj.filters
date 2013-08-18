@@ -43,6 +43,9 @@
     <None Include="Src\Dock\Icons\tab.ico">
       <Filter>Icons</Filter>
     </None>
+    <None Include="Src\Dock\Icons\tabs.ico">
+      <Filter>Icons</Filter>
+    </None>
     <None Include="Src\Dock\Icons\tab_add.ico">
       <Filter>Icons</Filter>
     </None>

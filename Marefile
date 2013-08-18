@@ -26,7 +26,7 @@ targets = {
     linkFlags += { "\"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'\"" }
     includePaths = { "Ext/libnstd/include", "Ext/libWinAPI/include" }
     libPaths = { "Build/$(configuration)_$(platform)/libnstd", "Build/$(configuration)_$(platform)/libWinAPI" }
-    libs = { "Msimg32", "nstd", "WinAPI" }
+    libs = { "Msimg32", "Version", "nstd", "WinAPI" }
     root = { "Src/Dock", "Src" }
     files = {
       "Src/Dock/**.cpp" = cppSource
