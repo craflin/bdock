@@ -77,7 +77,8 @@ bool Launcher::hasTaskBarIcon(HWND hwnd)
   {
     DWORD exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     HANDLE owner = GetWindow(hwnd, GW_OWNER);
-    if((!(exstyle & WS_EX_TOOLWINDOW) && owner == 0) || (exstyle & WS_EX_APPWINDOW && owner != 0))
+    //if((!(exstyle & WS_EX_TOOLWINDOW) && owner == 0) || (exstyle & WS_EX_APPWINDOW && owner != 0))
+    if((owner == 0 && !(exstyle & WS_EX_TOOLWINDOW)) || (exstyle & WS_EX_APPWINDOW))
     {
       TCHAR name[32];
       GetClassName(hwnd, name, 31);
