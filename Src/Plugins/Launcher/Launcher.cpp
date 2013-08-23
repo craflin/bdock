@@ -598,6 +598,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
 
         iconData->launcherIndex = index;
         iconData->pinned = true;
+        handleMoveEvent(iconData->icon); // ensure pinned icon will be saved in correct order
       }
     }
     break;
