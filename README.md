@@ -1,6 +1,8 @@
 BDock
 =====
 
+![BDock Screenshot](/bdock.png)
+
 BDock is a very basic dock style launcher for Windows 7.
 It hides the Windows taskbar and adds an overlay (the Dock) to your desktop.
 The Dock lists all running applications similar to the taskbar and allows you to switch between the windows on your desktop.
