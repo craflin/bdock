@@ -4,7 +4,7 @@
 ;--------------------------------
 
 !define DISPLAYNAME "BDock (64-bit)"
-!define VERSION "0.2"
+!define VERSION "0.3"
 !define PUBLISHER "Colin Graf"
 !define BUILDDIR "Build\Release_x64"
 !define ARCHITECTURE "64-bit"

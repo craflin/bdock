@@ -13,6 +13,12 @@ You need Visual Studio 2010 (or newer) if you want to compile it yourself.
 Change Log
 ----------
 
+v0.3
+* Added launcher icon drag & drop
+* Optimized launcher performance
+* Fixed not working pinned icon saving
+* Fixed various minor issues
+
 v0.2
 * Added mouseover icon background
 * Added launcher hotkeys for switching applications (Win + Alt + Left / Right)
