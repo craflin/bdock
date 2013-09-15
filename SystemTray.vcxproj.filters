@@ -7,10 +7,12 @@
     <ClCompile Include="Src\Plugins\SystemTray\stdafx.cpp" />
     <ClCompile Include="Src\Plugins\SystemTray\SystemTray.cpp" />
     <ClCompile Include="Src\Plugins\SystemTray\SysTools.cpp" />
+    <ClInclude Include="Src\Plugins\SystemTray\resource.h" />
     <ClInclude Include="Src\Plugins\SystemTray\stdafx.h" />
     <ClInclude Include="Src\Plugins\SystemTray\SystemTray.h" />
     <ClInclude Include="Src\Plugins\SystemTray\SysTools.h" />
     <ClInclude Include="Src\Plugins\SystemTray\targetver.h" />
+    <ResourceCompile Include="Src\Plugins\SystemTray\SystemTray.rc" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>
