@@ -7,8 +7,10 @@
     <ClCompile Include="Src\Plugins\Clock\dllmain.cpp" />
     <ClCompile Include="Src\Plugins\Clock\stdafx.cpp" />
     <ClInclude Include="Src\Plugins\Clock\Clock.h" />
+    <ClInclude Include="Src\Plugins\Clock\resource.h" />
     <ClInclude Include="Src\Plugins\Clock\stdafx.h" />
     <ClInclude Include="Src\Plugins\Clock\targetver.h" />
+    <ResourceCompile Include="Src\Plugins\Clock\Clock.rc" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>

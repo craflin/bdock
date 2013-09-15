@@ -161,8 +161,10 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClInclude Include="Src\Plugins\Clock\Clock.h" />
+    <ClInclude Include="Src\Plugins\Clock\resource.h" />
     <ClInclude Include="Src\Plugins\Clock\stdafx.h" />
     <ClInclude Include="Src\Plugins\Clock\targetver.h" />
+    <ResourceCompile Include="Src\Plugins\Clock\Clock.rc" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
