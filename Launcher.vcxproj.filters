@@ -21,7 +21,7 @@
     <ClInclude Include="Src\Plugins\Launcher\stdafx.h" />
     <ClInclude Include="Src\Plugins\Launcher\SysTools.h" />
     <ClInclude Include="Src\Plugins\Launcher\targetver.h" />
-    <ResourceCompile Include="Src\Plugins\Launcher\launcher.rc" />
+    <ResourceCompile Include="Src\Plugins\Launcher\Launcher.rc" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>
