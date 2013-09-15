@@ -7,8 +7,10 @@
     <ClCompile Include="Src\Plugins\HideTaskbar\HideTaskbar.cpp" />
     <ClCompile Include="Src\Plugins\HideTaskbar\stdafx.cpp" />
     <ClInclude Include="Src\Plugins\HideTaskbar\HideTaskbar.h" />
+    <ClInclude Include="Src\Plugins\HideTaskbar\resource.h" />
     <ClInclude Include="Src\Plugins\HideTaskbar\stdafx.h" />
     <ClInclude Include="Src\Plugins\HideTaskbar\targetver.h" />
+    <ResourceCompile Include="Src\Plugins\HideTaskbar\HideTaskbar.rc" />
     <ClInclude Include="Src\Dock2.h" />
   </ItemGroup>
 </Project>
