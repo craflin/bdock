@@ -75,5 +75,5 @@ private:
 
   virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
-  static bool isFullscreen(HWND hwnd);
+  static bool isFullscreen(HWND hwnd, HMONITOR hmon);
 };

@@ -441,7 +441,7 @@ LRESULT Dock::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
     if(wParam == 0) // check full screen app timer
     {
       //killTimer(0);
-      bool hideWindow = isFullscreen(GetForegroundWindow());
+      bool hideWindow = isFullscreen(GetForegroundWindow(), MonitorFromWindow(hwnd, MONITOR_DEFAULTTONULL));
       if(!!IsWindowVisible(hwnd) == hideWindow)
       {
         if(!hideWindow)
@@ -706,14 +706,14 @@ void Dock::updateTimer(Timer* timer)
   }
 }
 
-bool Dock::isFullscreen(HWND hwnd)
+bool Dock::isFullscreen(HWND hwnd, HMONITOR hmon)
 {
-  HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONULL);
-  if(!hMon)
+  HMONITOR hwndMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONULL);
+  if(!hwndMon || hwndMon != hmon)
     return false;
   MONITORINFO mi;
   mi.cbSize = sizeof(mi);
-  if(!GetMonitorInfo(hMon, &mi))
+  if(!GetMonitorInfo(hwndMon, &mi))
     return false;
 
   RECT clientRect;
