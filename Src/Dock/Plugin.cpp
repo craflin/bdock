@@ -67,6 +67,18 @@ bool Plugin::init(const String& name)
     hmodule = LoadLibrary(path);
     if(!hmodule)
       return false;
+#ifdef _DEBUG
+    TCHAR filenameBuf[MAX_PATH];
+    DWORD filenameLen = GetModuleFileName(hmodule, filenameBuf, MAX_PATH);
+    String copyFilename(filenameBuf, filenameLen);
+    copyFilename +=L"-copy";
+    FreeLibrary(hmodule);
+    if(!CopyFileW(filenameBuf, copyFilename, FALSE))
+      return false;
+    hmodule = LoadLibrary(copyFilename);
+    if(!hmodule)
+      return false;
+#endif
   }
 
   if(plugins.find(hmodule) != plugins.end())

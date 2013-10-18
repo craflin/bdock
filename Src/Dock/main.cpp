@@ -68,14 +68,58 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
+  // Unless there is a debugger attached, create a copy of the executabe and launch the copy.
+  // That way debugging is a lot easier since we can recompile and restart the process without having to close it in advanced.
+#ifdef _DEBUG
+  {
+    HWND hwndDock = FindWindow(_T("BDOCK"), NULL);
+    if(hwndDock != NULL)
+      SendMessage(hwndDock, WM_CLOSE, 0, 0);
+    BOOL isDebuggerPresent = FALSE;
+    if(!CheckRemoteDebuggerPresent(GetCurrentProcess(), &isDebuggerPresent) || !isDebuggerPresent)
+    {
+      TCHAR moduleFilenameBuf[256];
+      DWORD moduleFilenameLen = GetModuleFileName(NULL, moduleFilenameBuf, sizeof(moduleFilenameBuf));
+      String moduleFilename(moduleFilenameBuf, moduleFilenameLen);
+      String filename(moduleFilename);
+      const tchar_t* lastDelimiter = filename.findLastOf(L"\\/");
+      if(lastDelimiter)
+        filename = filename.substr(lastDelimiter + 1 - (const tchar_t*)filename);
+      if(filename == L"BDock.exe")
+      {
+        String copyFilename = moduleFilename + L"-copy";
+        DWORD firstTry = GetTickCount();
+        for(;;)
+        {
+          if(CopyFile(moduleFilename, copyFilename, FALSE))
+            break;
+          Sleep(10); // it may take awhile for the running process to close
+          if(GetTickCount() - firstTry > 1000)
+            goto copyTimeout; // somethings is wrong, skip this debug code
+        }
+        STARTUPINFO si;
+        PROCESS_INFORMATION pi;
+        ZeroMemory(&si, sizeof(si));
+        si.cb = sizeof(si);
+        ZeroMemory(&pi, sizeof(pi));
+        CreateProcess(copyFilename, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+        return EXIT_SUCCESS;
+      copyTimeout: ;
+      }
+    }
+  }
+#endif
+
   HANDLE hMutex = CreateMutex(NULL, TRUE, _T("BDock"));
   if(!hMutex)
     return -1;
+#ifndef _DEBUG
   if(GetLastError() == ERROR_ALREADY_EXISTS)
   {
     CloseHandle(hMutex);
     return -1;
   }
+#endif
 
   WinAPI::Application application(hInstance, ICC_LINK_CLASS);
 
