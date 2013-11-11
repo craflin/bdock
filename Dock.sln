@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dock", "Dock.vcxproj", "{035213F3-19F5-7901-29D5-5B4EE3561543}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Launcher", "Launcher.vcxproj", "{14F571FD-BFDE-D75C-B6D4-8E6645DA7934}"
@@ -11,7 +11,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HideTaskbar", "HideTaskbar.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SystemTray", "SystemTray.vcxproj", "{B80E43E1-32E0-79C6-3453-053B7F5F0115}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libnstd", "libnstd.vcxproj", "{36EDF082-248F-174A-86A0-B30440EF2640}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{BB38096A-B391-60DC-20D4-4F3EA6B44507}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{AEB42855-4A0A-CC6C-C503-A2E4DA6AE61A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,14 @@ Global
 		{B80E43E1-32E0-79C6-3453-053B7F5F0115}.Debug|x64.Build.0 = Debug|x64
 		{B80E43E1-32E0-79C6-3453-053B7F5F0115}.Release|x64.ActiveCfg = Release|x64
 		{B80E43E1-32E0-79C6-3453-053B7F5F0115}.Release|x64.Build.0 = Release|x64
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Debug|Win32.ActiveCfg = Debug|Win32
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Debug|Win32.Build.0 = Debug|Win32
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Release|Win32.ActiveCfg = Release|Win32
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Release|Win32.Build.0 = Release|Win32
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Debug|x64.ActiveCfg = Debug|x64
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Debug|x64.Build.0 = Debug|x64
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Release|x64.ActiveCfg = Release|x64
+		{36EDF082-248F-174A-86A0-B30440EF2640}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +82,6 @@ Global
 		{98A892AE-A335-9481-AE30-E7B66C44D7A8} = {BB38096A-B391-60DC-20D4-4F3EA6B44507}
 		{0D451763-0EB8-6EFF-F3D9-774E5B150204} = {BB38096A-B391-60DC-20D4-4F3EA6B44507}
 		{B80E43E1-32E0-79C6-3453-053B7F5F0115} = {BB38096A-B391-60DC-20D4-4F3EA6B44507}
+		{36EDF082-248F-174A-86A0-B30440EF2640} = {AEB42855-4A0A-CC6C-C503-A2E4DA6AE61A}
 	EndGlobalSection
 EndGlobal

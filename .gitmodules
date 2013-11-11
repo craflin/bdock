@@ -1,0 +1,3 @@
+[submodule "Ext/libnstd"]
+	path = Ext/libnstd
+	url = git@github.com:craflin/libnstd.git

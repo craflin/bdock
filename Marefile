@@ -19,13 +19,15 @@ plugins = { "Launcher", "Clock", "HideTaskbar", "SystemTray" }
 targets = {
 
   Dock = cppApplication + {
-    dependencies = plugins
+    dependencies = plugins + { "libnstd" }
     buildDir = "Build/$(configuration)_$(platform)"
     output = "Build/$(configuration)_$(platform)/BDock.exe"
-    root = { "Src/Dock", "Src" }
     cppFlags += { "/Yu" }
     linkFlags += { "\"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'\"" }
-    libs = { "Msimg32" }
+    includePaths = { "Ext/libnstd/include" }
+    libPaths = { "Build/$(configuration)_$(platform)/libnstd" }
+    libs = { "Msimg32", "nstd" }
+    root = { "Src/Dock", "Src" }
     files = {
       "Src/Dock/**.cpp" = cppSource
       "Src/Dock/WinAPI.cpp" = cppSource + {
@@ -64,5 +66,16 @@ targets = {
     }
   }
 
+  libnstd = cppStaticLibrary + {
+    folder = "Libraries"
+    includePaths = { "Ext/libnstd/include" }
+    buildDir = "Build/$(configuration)_$(platform)/$(target)"
+    defines += { "_CRT_SECURE_NO_WARNINGS" }
+    root = { "Ext/libnstd/src", "Ext/libnstd/include/nstd" }
+    files = {
+      "Ext/libnstd/src/*.cpp" = cppSource,
+      "Ext/libnstd/include/nstd/*.h"
+    }
+  }
 }
 
