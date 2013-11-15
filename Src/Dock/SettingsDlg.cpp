@@ -18,7 +18,7 @@ bool SettingsDlg::onInitDialog()
   */
   VERIFY(autostartButton.initialize(*this, IDC_AUTOSTART));
   
-  VERIFY(autostartButton.setCheck(globalStorage.getUInt("autostart", 0) ? BST_CHECKED : BST_UNCHECKED));
+  VERIFY(autostartButton.setCheck(globalStorage.getUInt(_T("autostart"), 0) ? BST_CHECKED : BST_UNCHECKED));
   /*
   WinAPI::String text(IDS_SETTINGS_PAGE_GENERAL);
 
@@ -38,7 +38,7 @@ bool SettingsDlg::onCommand(UINT command, HWND source)
   if(command == IDOK)
   {
     bool autostart = autostartButton.getCheck() == BST_CHECKED;
-    globalStorage.setUInt("autostart", autostart);
+    globalStorage.setUInt(_T("autostart"), autostart);
   }
   return WinAPI::Dialog::onCommand(command, source);
 }

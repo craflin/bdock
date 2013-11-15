@@ -15,11 +15,11 @@
 #include <memory.h>
 #include <tchar.h>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include "list_set.h"
+//#include <vector>
+//#include <string>
+//#include <unordered_map>
+//#include <unordered_set>
+//#include "list_set.h"
 
 #include "resource.h"
 
@@ -31,7 +31,14 @@ namespace API
 typedef unsigned int uint;
 typedef wchar_t wchar;
 
-#include "Assert.h"
+#include <nstd/Debug.h>
+#include <nstd/Memory.h>
+#include <nstd/Array.h>
+#include <nstd/HashMap.h>
+#include <nstd/HashSet.h>
+#include <nstd/String.h>
+#include <nstd/File.h>
+
 #include "Storage.h"
 #include "Settings.h"
 #include "Skin.h"

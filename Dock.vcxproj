@@ -173,7 +173,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Dock\AboutDlg.cpp" />
-    <ClCompile Include="Src\Dock\Assert.cpp" />
     <ClCompile Include="Src\Dock\Dock.cpp" />
     <ClCompile Include="Src\Dock\Icon.cpp" />
     <ClCompile Include="Src\Dock\main.cpp" />
@@ -195,7 +194,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClInclude Include="Src\Dock\AboutDlg.h" />
-    <ClInclude Include="Src\Dock\Assert.h" />
     <ClInclude Include="Src\Dock\Dock.h" />
     <ClInclude Include="Src\Dock\Icon.h" />
     <ClInclude Include="Src\Dock\list_map.h" />

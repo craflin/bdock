@@ -85,12 +85,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     WCHAR path[MAX_PATH];
     if(WinAPI::Shell::getFolderPath(CSIDL_APPDATA | CSIDL_FLAG_CREATE, path, MAX_PATH)) 
     {
-      std::wstring storageFile = path;
+      String storageFile(path, String::length(path));
       storageFile += L"/BDock";
-      if(GetFileAttributes(storageFile.c_str()) == INVALID_FILE_ATTRIBUTES)
-        CreateDirectory(storageFile.c_str(), 0);
+      if(GetFileAttributes(storageFile) == INVALID_FILE_ATTRIBUTES)
+        CreateDirectory(storageFile, 0);
       storageFile += L"/config.bd";
-      storage.load(storageFile.c_str());
+      storage.load(storageFile);
     }
   }
   if(storage.getNumSectionCount() == 0)
@@ -101,10 +101,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     storage.enterNumSection(0);
     storage.setNumSectionCount(2);
     storage.enterNumSection(0);
-    storage.setStr("name", L"launcher", 0);
+    storage.setStr(_T("name"), _T("launcher"));
     storage.leave();
     storage.enterNumSection(1);
-    storage.setStr("name", L"hidetaskbar", 0);
+    storage.setStr(_T("name"), _T("hidetaskbar"));
     storage.leave();
     storage.leave();
 
@@ -125,21 +125,21 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
   }
 
   // create docks
-  std::vector<Dock*> docks(storage.getNumSectionCount());
+  Array<Dock*> docks(storage.getNumSectionCount());
   for(int i = 0, count = storage.getNumSectionCount(); i < count; ++i)
   {
     Dock* dock = new Dock(storage, *storage.getNumSection(i));
     if(!dock->create())
       delete dock;
     else
-      docks.push_back(dock);
+      docks.append(dock);
   }
 
   // Main message loop:
   UINT exitCode = application.run();
 
   // delete docks
-  for(std::vector<Dock*>::iterator i = docks.begin(), end = docks.end(); i != end; ++i)
+  for(Array<Dock*>::Iterator i = docks.begin(), end = docks.end(); i != end; ++i)
     delete *i;
   docks.clear();
 

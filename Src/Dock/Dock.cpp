@@ -18,8 +18,8 @@ Dock::~Dock()
     delete skin;
   while(plugins.begin() != plugins.end())
     deletePlugin(*plugins.begin());
-  ASSERT(icons.empty());
-  ASSERT(timers.empty());
+  ASSERT(icons.isEmpty());
+  ASSERT(timers.isEmpty());
 }
 
 bool Dock::create()
@@ -37,9 +37,10 @@ bool Dock::create()
   for(int i = 0, count = dockStorage.getNumSectionCount(); i < count; ++i)
   {
     dockStorage.enterNumSection(i);
-    const wchar* name = dockStorage.getStr("name");
-    if(name)
-      if(!loadPlugin(name, *dockStorage.getSection("config")))
+    String name = dockStorage.getStr(_T("name"));
+    Storage* config = dockStorage.getSection(_T("config"));
+    if (!name.isEmpty() && config)
+      if (!loadPlugin(name, *config))
       {
         // TODO: error message
       }
@@ -50,7 +51,7 @@ bool Dock::create()
   if(!WinAPI::Window::create(_T("BDOCK"), CS_DBLCLKS, 0, WinAPI::Icon(IDI_BDOCK), WinAPI::Icon(IDI_SMALL), 
     WinAPI::Cursor(IDC_ARROW), _T("BDOCK"), WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOPMOST, WS_POPUP))
     return false;
-  for(std::unordered_set<Timer*>::iterator i = timers.begin(), end = timers.end(); i != end; ++i)
+  for(HashSet<Timer*>::Iterator i = timers.begin(), end = timers.end(); i != end; ++i)
     setTimer((UINT_PTR)*i, (*i)->interval, 0);
 
   if(!registerShellHookWindow())
@@ -64,7 +65,7 @@ bool Dock::create()
    return true;
 }
 
-bool Dock::loadSkin(const wchar* name)
+bool Dock::loadSkin(const String& name)
 {
   Skin* skin = new Skin;
   if(!skin->init(name))
@@ -78,7 +79,7 @@ bool Dock::loadSkin(const wchar* name)
   return true;
 }
 
-bool Dock::loadPlugin(const wchar* name, Storage& storage)
+bool Dock::loadPlugin(const String& name, Storage& storage)
 {
   Plugin* plugin = new Plugin(*this, storage);
   if(!plugin->init(name))
@@ -166,7 +167,7 @@ void Dock::update(RECT* update)
   SIZE size;
   {
 
-    size.cx = (icons.empty() ? settings.leftMargin : icons.back()->rect.right) + settings.rightMargin;
+    size.cx = (icons.isEmpty() ? settings.leftMargin : icons.back()->rect.right) + settings.rightMargin;
     if(skin->leftBg.bmp && skin->rightBg.bmp && skin->midBg.bmp)
       if(size.cx < skin->leftBg.size.cx + skin->rightBg.size.cx)
         size.cx = skin->leftBg.size.cx + skin->rightBg.size.cx;
@@ -349,11 +350,11 @@ void Dock::dragMove(int x, int y)
     auto a = icons.find(icon);
     auto b = icons.find(dragIcon);
     auto c = icons.insert(b, (Icon*)0);
-    icons.erase(b);
+    icons.remove(b);
     icons.insert(a, dragIcon);
-    icons.erase(a);
+    icons.remove(a);
     icons.insert(c, icon);
-    icons.erase(c);
+    icons.remove(c);
     icon->plugin->swapIcons(icon, dragIcon);
     calcIconRects(icons.begin()); // TODO: optimize this
     update();
@@ -623,10 +624,10 @@ bool Dock::saveStorage()
 
 void Dock::addIcon(Icon* insertAfter, Icon* icon)
 {
-  std::list<Icon*>::iterator iconIt;
+  HashSet<Icon*>::Iterator iconIt;
   if(insertAfter)
   {
-    std::list<Icon*>::iterator insertAfterit = icons.find(insertAfter);
+    HashSet<Icon*>::Iterator insertAfterit = icons.find(insertAfter);
     if(insertAfterit != icons.end())
     {
       iconIt = icons.insert(++insertAfterit, icon);
@@ -651,7 +652,7 @@ void Dock::removeIcon(Icon* icon)
 
   auto nextIt = it;
   ++nextIt;
-  icons.erase(it);
+  icons.remove(it);
 
   if(icon == lastHitIcon)
     lastHitIcon = 0;
@@ -664,16 +665,16 @@ void Dock::removeIcon(Icon* icon)
     calcIconRects(nextIt);
 }
 
-void Dock::calcIconRects(const list_set<Icon*>::iterator& firstToUpdate)
+void Dock::calcIconRects(const HashSet<Icon*>::Iterator& firstToUpdate)
 {
   RECT rect = { settings.leftMargin, 0, 0, settings.barHeight };
   if(firstToUpdate != icons.begin())
   {
-    std::list<Icon*>::iterator previous = firstToUpdate;
+    HashSet<Icon*>::Iterator previous = firstToUpdate;
     --previous;
     rect.left = (*previous)->rect.right;
   }
-  for(std::list<Icon*>::iterator i  = firstToUpdate, end = icons.end(); i != end; ++i)
+  for(HashSet<Icon*>::Iterator i  = firstToUpdate, end = icons.end(); i != end; ++i)
   {
     Icon* icon = *i;
     rect.right = rect.left + (icon->flags & IF_SMALL ? settings.itemWidth / 2 : settings.itemWidth);
@@ -684,14 +685,14 @@ void Dock::calcIconRects(const list_set<Icon*>::iterator& firstToUpdate)
 
 void Dock::addTimer(Timer* timer)
 {
-  timers.insert(timer);
+  timers.append(timer);
   if(hwnd)
     setTimer((UINT_PTR)timer, timer->interval, 0);
 }
 
 void Dock::removeTimer(Timer* timer)
 {
-  timers.erase(timer);
+  timers.remove(timer);
   if(hwnd)
     killTimer((UINT_PTR)timer);
 }
@@ -746,12 +747,12 @@ bool Dock::showSettingsDlg()
   _tcscat_s(startupLinkFilePath, _T("\\BDock.lnk"));
   
   bool startup = GetFileAttributes(startupLinkFilePath) != INVALID_FILE_ATTRIBUTES;
-  globalStorage.setUInt("autostart", startup);
+  globalStorage.setUInt(L"autostart", startup);
 
   if(SettingsDlg(globalStorage).show(hwnd) != IDOK)
     return false;
 
-  if(globalStorage.getUInt("autostart", 0))
+  if(globalStorage.getUInt(L"autostart", 0))
   {
     if(GetFileAttributes(startupLinkFilePath) == INVALID_FILE_ATTRIBUTES)
     {

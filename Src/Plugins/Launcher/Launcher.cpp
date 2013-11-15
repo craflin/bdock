@@ -23,14 +23,14 @@ bool Launcher::create()
   {
     dock.enterStorageNumSection(i);
     BITMAP* header;
-    char* data;
+    const void* data;
     unsigned int len;
     HBITMAP bitmap = 0;
-    if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
-      if(!dock.getStorageData("iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
+    if(!dock.getStorageData(L"iconHeader", (const void**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
+      if(!dock.getStorageData(L"iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
         bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
-    const wchar* path = dock.getStorageString("path", 0, L"", 0);
-    const wchar* parameters = dock.getStorageString("parameters", 0, L"", 0);
+    const wchar* path = dock.getStorageString(L"path", 0, L"", 0);
+    const wchar* parameters = dock.getStorageString(L"parameters", 0, L"", 0);
     dock.leaveStorageSection();
 
     Icon* icon = dock.createIcon(bitmap, IF_GHOST);
@@ -283,11 +283,11 @@ void Launcher::removeIcon(HWND hwnd)
     if(dock.enterStorageNumSection(iconData->launcherIndex) == 0)
     {
       BITMAP* header;
-      char* data;
+      const void* data;
       unsigned int len;
       HBITMAP bitmap = 0;
-      if(!dock.getStorageData("iconHeader", (char**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
-        if(!dock.getStorageData("iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
+      if(!dock.getStorageData(L"iconHeader", (const void**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
+        if(!dock.getStorageData(L"iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
           bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
       dock.leaveStorageSection();
       if(bitmap)
@@ -579,18 +579,18 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
 
       if(dock.enterStorageNumSection(index) == 0)
       {
-        dock.setStorageString("path", iconData->path.c_str(), (uint)iconData->path.length());
-        dock.setStorageString("parameters", iconData->parameters.c_str(), (uint)iconData->parameters.length());
+        dock.setStorageString(L"path", iconData->path.c_str(), (uint)iconData->path.length());
+        dock.setStorageString(L"parameters", iconData->parameters.c_str(), (uint)iconData->parameters.length());
         BITMAP bm;
         if(GetObject(icon->icon, sizeof(BITMAP), &bm))
         {
-          dock.setStorageData("iconHeader", (char*)&bm, sizeof(bm) - sizeof(LPVOID));
+          dock.setStorageData(L"iconHeader", (char*)&bm, sizeof(bm) - sizeof(LPVOID));
           uint size = bm.bmWidthBytes * bm.bmHeight;
           char* buffer = (char*)malloc(size);
           if(buffer)
           {
             if(GetBitmapBits(icon->icon, size, buffer))
-              dock.setStorageData("iconData", buffer, size);
+              dock.setStorageData(L"iconData", buffer, size);
             free(buffer);
           }
         }

@@ -13,39 +13,44 @@ void Storage::Variant::free()
   switch(type)
   {
   case Str:
-    if(str)
-      delete str;
+    delete str;
+    str = 0;
     break;
   case Data:
-    if(data)
-      delete data;
+    delete data;
+    data = 0;
     break;
   }
 }
 
-Storage::Data::Data(const char* data, uint length) : data((char*)malloc(length)), length(length)
+Storage::Variant& Storage::Variant::operator=(const Variant& other)
 {
-  memcpy(this->data, data, length);
+  free();
+  type = other.type;
+  switch (type)
+  {
+  case Str:
+    if (other.str)
+      str = new String(*other.str);
+    break;
+  case Data:
+    if (other.data)
+      data = new Storage::Data(other.data->data, other.data->length);
+    break;
+  }
+  return *this;
+}
+
+Storage::Data::Data(const void_t* data, uint length)
+{
+  this->data = Memory::alloc(length);
+  this->length = length;
+  Memory::copy(this->data, data, length);
 }
 
 Storage::Data::~Data()
 {
-  if(data)
-    ::free(data);
-}
-
-Storage::Str::Str(const wchar* data, uint length) : length(length)
-{
-  uint size = (length + 1) * sizeof(wchar);
-  this->data = (wchar*)malloc(size);
-  memcpy(this->data, data, size);
-  this->data[length] = L'\0';
-}
-
-Storage::Str::~Str()
-{
-  if(data)
-    ::free(data);
+  Memory::free(data);
 }
 
 Storage::Storage() : parent(0)
@@ -60,18 +65,18 @@ Storage::Storage(Storage* parent) : parent(parent)
 
 Storage::~Storage()
 {
-  free();
+  clear();
 }
 
-void Storage::free()
+void Storage::clear()
 {
-  for(std::unordered_map<std::string, Storage*>::iterator i = storages.begin(), end = storages.end(); i != end; ++i)
-    delete i->second;
-  for(std::vector<Storage*>::iterator i = array.begin(), end = array.end(); i != end; ++i)
+  for (HashMap<String, Storage*>::Iterator i = storages.begin(), end = storages.end(); i != end; ++i)
+    delete *i;
+  for(Array<Storage*>::Iterator i = array.begin(), end = array.end(); i != end; ++i)
     delete *i;
   entries.clear();
   storages.clear();
-  array.resize(0);
+  array.clear();
 }
 
 Storage* Storage::getCurrentStorage()
@@ -85,25 +90,24 @@ void Storage::setCurrentStorage(Storage* storage)
   current = storage ? storage : this;
 }
 
-bool Storage::enterSection(const char* name)
+bool Storage::enterSection(const String& name)
 {
-  std::string key(name);
-  std::unordered_map<std::string, Storage*>::iterator i = current->storages.find(key);
+  HashMap<String, Storage*>::Iterator i = current->storages.find(name);
   if(i == current->storages.end())
   {
     Storage* storage = new Storage(current);
-    current->storages[key] = storage;
+    current->storages.append(name, storage);
     current = storage;
     return true;
   }
   else
   {
-    current = i->second;
+    current = *i;
     return true;
   }
 }
 
-Storage* Storage::getSection(const char* name)
+Storage* Storage::getSection(const String& name)
 {
   if(!enterSection(name))
     return 0;
@@ -112,7 +116,7 @@ Storage* Storage::getSection(const char* name)
   return storage;
 }
 
-bool Storage::leave()
+bool_t Storage::leave()
 {
   if(!current->parent)
     return false;
@@ -137,30 +141,29 @@ Storage* Storage::getNumSection(uint pos)
   return storage;
 }
 
-bool Storage::deleteSection(const char* name)
+bool_t Storage::deleteSection(const String& name)
 {
-  std::string key(name);
-  std::unordered_map<std::string, Storage*>::iterator i = current->storages.find(key);
+  HashMap<String, Storage*>::Iterator i = current->storages.find(name);
   if(i == current->storages.end())
     return false;
   else  
   {
-    delete i->second;
-    current->storages.erase(i);
+    delete *i;
+    current->storages.remove(i);
     return true;
   }
 }
 
-bool Storage::deleteNumSection(uint pos)
+bool_t Storage::deleteNumSection(uint_t pos)
 {
   if(pos >= current->array.size())
     return false;
   delete current->array[pos];
-  current->array.erase(current->array.begin() + pos);
+  current->array.remove(pos);
   return true;
 }
 
-bool Storage::swapNumSections(uint pos1, uint pos2)
+bool_t Storage::swapNumSections(uint_t pos1, uint_t pos2)
 {
   uint size = (uint) current->array.size();
   if(pos1 >= size || pos2 >= size)
@@ -171,12 +174,12 @@ bool Storage::swapNumSections(uint pos1, uint pos2)
   return true;
 }
 
-uint Storage::getNumSectionCount() const
+uint_t Storage::getNumSectionCount() const
 {
-  return (uint)current->array.size();
+  return (uint_t)current->array.size();
 }
 
-bool Storage::setNumSectionCount(uint size)
+bool_t Storage::setNumSectionCount(uint_t size)
 {
   if(size < current->array.size())
   {
@@ -194,296 +197,284 @@ bool Storage::setNumSectionCount(uint size)
   return true;
 }
 
-const wchar* Storage::getStr(const char* name, uint* length, const wchar* default, uint defaultLength) const
+const String& Storage::getStr(const String& name, const String& default) const
 {
-  std::unordered_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
+  HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
-  {
-    if(length)
-      *length = defaultLength;
     return default;
-  }
-  const Variant& val(i->second);
-  if(val.type != Variant::Str)
-  {
-    if(length)
-      *length = defaultLength;
+  const Variant& val = *i;
+  if (val.type != Variant::Str)
     return default;
-  }
-  if(length)
-    *length = val.str->length;
-  return val.str->data;
+  return *val.str;
 }
 
-int Storage::getInt(const char* name, int default) const
+int_t Storage::getInt(const String& name, int_t default) const
 {
-  std::unordered_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
+  HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
     return default;
-  const Variant& val(i->second);
+  const Variant& val = *i;
   if(val.type != Variant::Int)
     return default;
   return val._int;
 }
 
-uint Storage::getUInt(const char* name, uint default) const
+uint_t Storage::getUInt(const String& name, uint default) const
 {
-  std::unordered_map<std::string, Variant>::const_iterator i = current->entries.find(std::string(name));
+  HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
     return default;
-  const Variant& val(i->second);
+  const Variant& val = *i;
   if(val.type != Variant::UInt)
     return default;
   return val._uint;
 }
 
-bool Storage::getData(const char* name, char** data, uint* length, const char* defaultData, uint defaultLength) const
+bool_t Storage::getData(const String& name, const void_t*& data, uint& length, const void_t* defaultData, uint_t defaultLength) const
 {
-  std::unordered_map<std::string, Variant>::iterator i = current->entries.find(std::string(name));
+  HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
   {
-    *data = (char*)defaultData;
-    if(length)
-      *length = defaultLength; 
+    data = defaultData;
+    length = defaultLength;
     return false;
   }
-  const Variant& val(i->second);
+  const Variant& val = *i;
   if(val.type != Variant::Data)
   {
-    *data = (char*)defaultData;
-    if(length)
-      *length = defaultLength; 
+    data = defaultData;
+    length = defaultLength;
     return false;
   }
-  *data = (char*)val.data->data;
-  if(length)
-    *length = val.data->length;
+  data = val.data->data;
+  length = val.data->length;
   return true;
 }
 
-
-bool Storage::setStr(const char* name, const wchar* value, uint length)
+bool_t Storage::setStr(const String& name, const String& value)
 {
-  Variant& val(current->entries[std::string(name)]);
-  val.free();
+  Variant& val = current->entries.append(name, Variant());
   val.type = Variant::Str;
-  val.str = new Str(value, length ? length : (uint)wcslen(value));
+  val.str = new String(value);
   return true;
 }
 
-bool Storage::setInt(const char* name, int value)
+bool_t Storage::setInt(const String& name, int_t value)
 {
-  Variant& val(current->entries[std::string(name)]);
-  val.free();
+  Variant& val = current->entries.append(name, Variant());
   val.type = Variant::Int;
   val._int = value;
   return true;
 }
 
-bool Storage::setUInt(const char* name, uint value)
+bool_t Storage::setUInt(const String& name, uint_t value)
 {
-  Variant& val(current->entries[std::string(name)]);
-  val.free();
+  Variant& val = current->entries.append(name, Variant());
   val.type = Variant::UInt;
   val._uint = value;
   return true;
 }
 
-bool Storage::setData(const char* name, char* data, uint length)
+bool_t Storage::setData(const String& name, const void_t* data, uint length)
 {
-  Variant& val(current->entries[std::string(name)]);
-  val.free();
+  Variant& val = current->entries.append(name, Variant());
   val.type = Variant::Data;
   val.data = new Data(data, length);
   return true;
 }
 
-bool Storage::deleteEntry(const char* name)
+bool_t Storage::deleteEntry(const String& name)
 {
-  std::unordered_map<std::string, Variant>::iterator i = current->entries.find(std::string(name));
+  HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
     return false;
-  current->entries.erase(i);
+  current->entries.remove(i);
   return true;
 }
 
-bool Storage::save()
+bool_t Storage::save()
 {
-  if(filename.empty())
+  if(filename.isEmpty())
     return false;
-  HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (hFile == INVALID_HANDLE_VALUE)
-    return false;    
-  uint header = 1; // minimal header
-  bool ret = write(hFile, &header, sizeof(header)) && save(hFile);
-  CloseHandle(hFile);
-  return ret;
+  File file;
+  if (!file.open(filename, File::writeFlag))
+    return false;
+  uint_t header = 1; // minimal header
+  return write(file, &header, sizeof(header)) && save(file);
 }
 
-bool Storage::load(const wchar* file)
+bool_t Storage::load(const String& filename)
 {
-  filename = file;
-  HANDLE hFile = CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL); 
-  if (hFile == INVALID_HANDLE_VALUE)
+  this->filename = filename;
+  File file;
+  if (!file.open(filename, File::readFlag))
     return false;
   uint header;
-  bool ret = read(hFile, &header, sizeof(header)) && header == 1 && load(hFile);
-  CloseHandle(hFile);
-  return ret;
+  return read(file, &header, sizeof(header)) && header == 1 && load(file);
 }
 
-bool Storage::read(HANDLE hFile, void* buffer, unsigned size) const
+bool_t Storage::read(File& file, void_t* buffer, uint_t size)
 {
-  DWORD bi;
-  return ReadFile(hFile, buffer, size, &bi, NULL) && bi == size;
+  return file.read(buffer, size) == size;
 }
 
-bool Storage::write(HANDLE hFile, const void* buffer, unsigned size) const
+bool_t Storage::write(File& file, const void_t* buffer, uint_t size)
 {
-  DWORD bi;
-  return WriteFile(hFile, buffer, size, &bi, NULL) ? true : false;
+  return file.write(buffer, size) == size;
 }
 
-bool Storage::load(HANDLE hFile)
+bool_t Storage::load(File& file)
 {
-  free();  
+  clear();
 
   // read all entries
-  uint size;
-  if(!read(hFile, &size, sizeof(size)))
+  uint_t size;
+  if(!read(file, &size, sizeof(size)))
     return false;
-  std::vector<char> keybuffer;
-  uint keysize;  
+  String keybuffer;
+  uint_t keysize;
   for(uint i = 0; i < size; ++i)
   {
-    if(!read(hFile, &keysize, sizeof(keysize)))
+    if(!read(file, &keysize, sizeof(keysize)))
       return false;
-    keybuffer.resize(keysize + 1);
-    if(!read(hFile, &keybuffer[0], keysize))
+    keybuffer.clear();
+    keybuffer.reserve(keysize);
+    if(!read(file, &keybuffer[0], keysize * sizeof(tchar_t)))
       return false;
-    keybuffer[keysize] = '\0';
-    Variant& var(entries[std::string(&keybuffer[0])]);
-    if(!read(hFile, &var.type, sizeof(var.type)))
+    keybuffer.resize(keysize);
+    Variant& var = entries.append(keybuffer, Variant());
+    if(!read(file, &var.type, sizeof(var.type)))
       return false;
     switch(var.type)
     {
     case Variant::Int:
     case Variant::UInt:
-      if(!read(hFile, &var._int, sizeof(int)))
+      if(!read(file, &var._int, sizeof(int_t)))
         return false;
       break;
     case Variant::Str:
       {
-        var.str = new Str;
-        if(!read(hFile, &var.str->length, sizeof(var.str->length)))
+        var.str = new String;
+        uint_t length;
+        if(!read(file, &length, sizeof(uint_t)))
           return false;
-        uint size = var.str->length * sizeof(wchar);
-        var.str->data = (wchar*)malloc(size + sizeof(wchar));
-        if(!read(hFile, var.str->data, size) )
+        var.str->reserve(length);
+        if (!read(file, &(*var.str)[0], length * sizeof(tchar_t)))
           return false;
-        var.str->data[var.str->length] = L'\0';
+        var.str->resize(length);
       }
       break;
     case Variant::Data:
       var.data = new Data;
-      if(!read(hFile, &var.data->length, sizeof(var.data->length)))
+      if(!read(file, &var.data->length, sizeof(var.data->length)))
         return false;
-      var.data->data = (char*)malloc(var.data->length);
-      if(!read(hFile, var.data->data, var.data->length) )
+      var.data->data = Memory::alloc(var.data->length);
+      if(!read(file, var.data->data, var.data->length))
         return false;
       break;
     }
   }
 
   // read substorages
-  if(!read(hFile, &size, sizeof(size)))
+  if(!read(file, &size, sizeof(size)))
     return false;
-  for(uint i = 0; i < size; ++i)
+  for(uint_t i = 0; i < size; ++i)
   {
-    if(!read(hFile, &keysize, sizeof(keysize)))
+    if (!read(file, &keysize, sizeof(keysize)))
       return false;
-    keybuffer.resize(keysize + 1);
-    if(!read(hFile, &keybuffer[0], keysize))
+    keybuffer.clear();
+    keybuffer.reserve(keysize);
+    if (!read(file, &keybuffer[0], keysize * sizeof(tchar_t)))
       return false;
-    keybuffer[keysize] = '\0';
+    keybuffer.resize(keysize);
     
-    Storage*& storage = storages[std::string(&keybuffer[0])];
-    storage = new Storage(this);
-    if(!storage->load(hFile))
+    HashMap<String, Storage*>::Iterator it = storages.find(keybuffer);
+    Storage** storage;
+    if (it == storages.end())
+      storage = &storages.append(keybuffer, 0);
+    else
+    {
+      delete *it;
+      storage = &*it;
+    }
+    *storage = new Storage(this);
+    if(!(*storage)->load(file))
       return false;
   }
 
   // read array
-  if(!read(hFile, &size, sizeof(size)))
+  if(!read(file, &size, sizeof(size)))
     return false;
-  array.resize(size);
+  array.reserve(size);
   for(uint i = 0; i < size; ++i)
   {
-    Storage*& storage = array[i];
-    storage = new Storage(this);
-    if(!storage->load(hFile))
+    Storage* storage = array.append(new Storage(this));
+    if(!storage->load(file))
       return false;
   }
 
   return true;
 }
 
-bool Storage::save(HANDLE hFile) const
+bool Storage::save(File& file) const
 {
   // save all entries
-  uint size = (uint)entries.size();
-  if(!write(hFile, &size, sizeof(size)))
+  uint_t size = (uint_t)entries.size();
+  if(!write(file, &size, sizeof(size)))
     return false;
-  for(std::unordered_map<std::string, Variant>::const_iterator i = entries.begin(), end = entries.end(); i != end; ++i)
+  for(HashMap<String, Variant>::Iterator i = entries.begin(), end = entries.end(); i != end; ++i)
   {
-    const std::string& key(i->first);
-    const Variant& var(i->second);
-    uint keysize = (uint)key.size();
-    if(!write(hFile, &keysize, sizeof(keysize)) ||
-       !write(hFile, key.c_str(), keysize) ||
-       !write(hFile, &var.type, sizeof(var.type)) )
-      return false;    
+    const String& key(i.key());
+    const Variant& var(*i);
+    uint_t keysize = (uint_t)key.length();
+    if(!write(file, &keysize, sizeof(keysize)) ||
+       !write(file, &key[0], keysize * sizeof(tchar_t)) ||
+       !write(file, &var.type, sizeof(var.type)) )
+      return false;
     switch(var.type)
     {
     case Variant::Int:
     case Variant::UInt:
-      if(!write(hFile, &var._int, sizeof(int)))
+      if(!write(file, &var._int, sizeof(int)))
         return false;
       break;
     case Variant::Str:
-      if(!write(hFile, &var.str->length, sizeof(var.str->length)) ||
-         !write(hFile, var.str->data, var.str->length * sizeof(wchar)) )
+    {
+      uint_t length = var.str->length();
+      if (!write(file, &length, sizeof(uint_t)) ||
+        !write(file, &(*var.str)[0], length * sizeof(tchar_t)))
         return false;
       break;
+    }
     case Variant::Data:
-      if(!write(hFile, &var.data->length, sizeof(var.data->length)) ||
-         !write(hFile, var.data->data, var.data->length) )
+      if(!write(file, &var.data->length, sizeof(var.data->length)) ||
+         !write(file, var.data->data, var.data->length))
         return false;
       break;
     }
   }
 
   // save substorages
-  size = (uint)storages.size();
-  if(!write(hFile, &size, sizeof(size)))
+  size = (uint_t)storages.size();
+  if(!write(file, &size, sizeof(size)))
     return false;
-  for(std::unordered_map<std::string, Storage*>::const_iterator i = storages.begin(), end = storages.end(); i != end; ++i)
+  for(HashMap<String, Storage*>::Iterator i = storages.begin(), end = storages.end(); i != end; ++i)
   {
-    const std::string& key(i->first);
-    Storage* storage(i->second);
-    uint keysize = (uint)key.size();
-    if(!write(hFile, &keysize, sizeof(keysize)) ||
-       !write(hFile, key.c_str(), keysize) ||
-       !storage->save(hFile))
+    const String& key = i.key();
+    Storage* storage = *i;
+    uint_t keysize = key.length();
+    if(!write(file, &keysize, sizeof(keysize)) ||
+       !write(file, &key[0], keysize * sizeof(tchar_t)) ||
+       !storage->save(file))
       return false;
   }
 
   // save array
-  size = (uint)array.size();
-  if(!write(hFile, &size, sizeof(size)))
+  size = (uint_t)array.size();
+  if(!write(file, &size, sizeof(size)))
     return false;
-  for(std::vector<Storage*>::const_iterator i = array.begin(), end = array.end(); i != end; ++i)
-    if(!(*i)->save(hFile))
+  for(Array<Storage*>::Iterator i = array.begin(), end = array.end(); i != end; ++i)
+    if(!(*i)->save(file))
       return false;
 
   return true;

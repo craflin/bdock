@@ -8,55 +8,45 @@ public:
   ~Storage();
 
   Storage* getCurrentStorage();
-  void setCurrentStorage(Storage* storage);
+  void_t setCurrentStorage(Storage* storage);
 
-  bool enterSection(const char* name);
-  bool enterNumSection(uint pos);
-  Storage* getSection(const char* name); 
-  Storage* getNumSection(uint pos);
+  bool_t enterSection(const String& name);
+  bool_t enterNumSection(uint_t pos);
+  Storage* getSection(const String& name); 
+  Storage* getNumSection(uint_t pos);
   
-  bool deleteSection(const char* name);
-  bool deleteNumSection(uint pos);
+  bool_t deleteSection(const String& name);
+  bool_t deleteNumSection(uint_t pos);
 
-  bool swapNumSections(uint pos1, uint pos2);
+  bool_t swapNumSections(uint_t pos1, uint_t pos2);
 
-  uint getNumSectionCount() const;
-  bool setNumSectionCount(uint size);
+  uint_t getNumSectionCount() const;
+  bool_t setNumSectionCount(uint_t size);
 
-  bool leave();
+  bool_t leave();
 
-  const wchar* getStr(const char* name, uint* length = 0, const wchar* default = L"", uint defaultLength = 0) const;
-  int getInt(const char* name, int default) const;
-  uint getUInt(const char* name, uint default) const;
-  bool getData(const char* name, char** data, uint* length, const char* defaultData, uint defaultLength) const;
-  bool setStr(const char* name, const wchar* value, uint length);
-  bool setInt(const char* name, int value);
-  bool setUInt(const char* name, uint value);
-  bool setData(const char* name, char* data, uint length);
-  bool deleteEntry(const char* name);
+  const String& getStr(const String& name, const String& default = String()) const;
+  int_t getInt(const String& name, int default) const;
+  uint_t getUInt(const String& name, uint default) const;
+  bool_t getData(const String& name, const void_t*& data, uint_t& length, const void_t* defaultData, uint_t defaultLength) const;
+  bool_t setStr(const String& name, const String& value);
+  bool_t setInt(const String& name, int_t value);
+  bool_t setUInt(const String& name, uint_t value);
+  bool_t setData(const String& name, const void_t* data, uint_t length);
+  bool_t deleteEntry(const String& name);
 
-  bool save();
-  bool load(const wchar* file);
+  bool_t save();
+  bool_t load(const String& file);
 
 private:
   class Data
   {
   public:
-    char* data;
-    uint length;
-    Data(const char* data, uint length);
-    Data() {};
+    void_t* data;
+    uint_t length;
+    Data(const void_t* data, uint length);
+    Data() : data(0), length(0) {};
     ~Data();
-  };
-
-  class Str
-  {
-  public:
-    wchar* data;
-    uint length;
-    Str(const wchar* data, uint length);
-    Str() {};
-    ~Str();
   };
 
   class Variant
@@ -65,7 +55,7 @@ private:
     enum Type
     {
       Null,
-      Str, // special kind of data
+      Str,
       Int,
       UInt,
       Data,
@@ -74,32 +64,32 @@ private:
     Type type;
     union
     {
-      int _int;
-      uint _uint;
-      Storage::Str* str;
+      int_t _int;
+      uint_t _uint;
+      String* str;
       Storage::Data* data;
     };
 
     Variant();
     ~Variant();
     void free();
+    Variant& operator=(const Variant& other);
   };
 
-  std::wstring filename;
-  std::unordered_map<std::string, Variant> entries;
-  std::unordered_map<std::string, Storage*> storages;
-  std::vector<Storage*> array;
+  String filename;
+  HashMap<String, Variant> entries;
+  HashMap<String, Storage*> storages;
+  Array<Storage*> array;
   Storage* current;
   Storage* parent;
 
   Storage(Storage* parent);
 
-  void free();
+  void_t clear();
 
-  bool load(HANDLE hFile);
-  bool save(HANDLE hFile) const;
+  bool_t load(File& file);
+  bool_t save(File& file) const;
 
-  bool read(HANDLE hFile, void* buffer, uint size) const;
-  bool write(HANDLE hFile, const void* buffer, uint size) const;
-
+  static bool_t read(File& file, void_t* buffer, uint_t size);
+  static bool_t write(File& file, const void_t* buffer, uint_t size);
 };

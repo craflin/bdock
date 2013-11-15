@@ -37,7 +37,7 @@ public:
   Skin();
   ~Skin();
 
-  bool init(const wchar* name);
+  bool init(const String& name);
 
   void draw(HDC dest, const SIZE& size, const RECT& update);
 

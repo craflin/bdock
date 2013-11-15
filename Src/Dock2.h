@@ -56,27 +56,27 @@ struct Dock
   int (*updateTimer)(struct Timer* timer);
   int (*destroyTimer)(struct Timer* timer);
 
-  int (*enterStorageSection)(const char* name);
+  int (*enterStorageSection)(const wchar_t* name);
   int (*enterStorageNumSection)(unsigned int pos);
   int (*leaveStorageSection)();
 
-  int (*deleteStorageSection)(const char* name);
+  int (*deleteStorageSection)(const wchar_t* name);
   int (*deleteStorageNumSection)(unsigned int pos);
   int (*swapStorageNumSections)(unsigned int pos1, unsigned int pos2);
 
   unsigned int (*getStorageNumSectionCount)();
   int (*setStorageNumSectionCount)(unsigned int count);
 
-  const wchar_t* (*getStorageString)(const char* name, unsigned int* length, const wchar_t* default, unsigned int defaultLength);
-  int (*getStorageInt)(const char* name, int default);
-  unsigned int (*getStorageUInt)(const char* name, unsigned int default);
-  int (*getStorageData)(const char* name, char** data, unsigned int* length, const char* defaultData, unsigned int defaultLength);
-  int (*setStorageString)(const char* name, const wchar_t* value, unsigned int length);
-  int (*setStorageInt)(const char* name, int value);
-  int (*setStorageUInt)(const char* name, unsigned int value);
-  int (*setStorageData)(const char* name, char* data, unsigned int length);
+  const wchar_t* (*getStorageString)(const wchar_t* name, unsigned int* length, const wchar_t* default, unsigned int defaultLength);
+  int (*getStorageInt)(const wchar_t* name, int default);
+  unsigned int (*getStorageUInt)(const wchar_t* name, unsigned int default);
+  int (*getStorageData)(const wchar_t* name, const void** data, unsigned int* length, const void* defaultData, unsigned int defaultLength);
+  int (*setStorageString)(const wchar_t* name, const wchar_t* value, unsigned int length);
+  int (*setStorageInt)(const wchar_t* name, int value);
+  int (*setStorageUInt)(const wchar_t* name, unsigned int value);
+  int (*setStorageData)(const wchar_t* name, char* data, unsigned int length);
 
-  int (*deleteStorageEntry)(const char* name);
+  int (*deleteStorageEntry)(const wchar_t* name);
 };
 
 #ifdef __cplusplus

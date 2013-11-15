@@ -4,7 +4,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Dock\AboutDlg.cpp" />
-    <ClCompile Include="Src\Dock\Assert.cpp" />
     <ClCompile Include="Src\Dock\Dock.cpp" />
     <ClCompile Include="Src\Dock\Icon.cpp" />
     <ClCompile Include="Src\Dock\main.cpp" />
@@ -16,7 +15,6 @@
     <ClCompile Include="Src\Dock\Storage.cpp" />
     <ClCompile Include="Src\Dock\WinAPI.cpp" />
     <ClInclude Include="Src\Dock\AboutDlg.h" />
-    <ClInclude Include="Src\Dock\Assert.h" />
     <ClInclude Include="Src\Dock\Dock.h" />
     <ClInclude Include="Src\Dock\Icon.h" />
     <ClInclude Include="Src\Dock\list_map.h" />

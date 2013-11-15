@@ -37,11 +37,11 @@ private:
   Skin* skin;
   HBITMAP bmp;
   SIZE size;
-  list_set<Icon*> icons;
+  HashSet<Icon*> icons;
   Icon* lastHitIcon;
   Icon* hotIcon;
-  std::unordered_set<Plugin*> plugins;
-  std::unordered_set<Timer*> timers;
+  HashSet<Plugin*> plugins;
+  HashSet<Timer*> timers;
 
   enum DragState
   {
@@ -53,16 +53,16 @@ private:
   Icon* dragIcon;
   HIMAGELIST hDragImageList;
 
-  bool loadSkin(const wchar* name);
-  bool loadPlugin(const wchar* name, Storage& storage);
+  bool loadSkin(const String& name);
+  bool loadPlugin(const String& name, Storage& storage);
 
-  void addPlugin(Plugin* plugin) { plugins.insert(plugin); }
-  void removePlugin(Plugin* plugin) { plugins.erase(plugin); }
+  void addPlugin(Plugin* plugin) { plugins.append(plugin); }
+  void removePlugin(Plugin* plugin) { plugins.remove(plugin); }
   void deletePlugin(Plugin* plugin);
 
   void update(RECT* update);
   void draw(HDC dest, const RECT& update);
-  void calcIconRects(const list_set<Icon*>::iterator& firstToUpdate);
+  void calcIconRects(const HashSet<Icon*>::Iterator& firstToUpdate);
 
   Icon* hitTest(int x, int y);
 

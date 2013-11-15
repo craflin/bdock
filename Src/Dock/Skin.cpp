@@ -50,48 +50,47 @@ Skin::~Skin()
     DeleteObject(bg);
 }
 
-bool Skin::init(const wchar* name)
+bool Skin::init(const String& name)
 {
-  std::wstring file(L"Skins/");
+  String file(_T("Skins/"));
   file += name;
-  file += L'/';
-  size_t flen = file.length();
+  file += _T('/');
+  uint_t flen = file.length();
  
   file.resize(flen);
-  file += L"leftBg.bmp";
-  leftBg.load(file.c_str());
+  file += _T("leftBg.bmp");
+  leftBg.load(file);
 
   file.resize(flen);
-  file += L"rightBg.bmp";
-  rightBg.load(file.c_str());
+  file += _T("rightBg.bmp");
+  rightBg.load(file);
 
   file.resize(flen);
-  file += L"midBg.bmp";
-  midBg.load(file.c_str());
+  file += _T("midBg.bmp");
+  midBg.load(file);
 
   file.resize(flen);
-  file += L"activeBg.bmp";
-  activeBg.load(file.c_str());
+  file += _T("activeBg.bmp");
+  activeBg.load(file);
 
   file.resize(flen);
-  file += L"defaultBg.bmp";
-  defaultBg.load(file.c_str());
+  file += _T("defaultBg.bmp");
+  defaultBg.load(file);
 
   file.resize(flen);
-  file += L"hotBg.bmp";
-  hotBg.load(file.c_str());
+  file += _T("hotBg.bmp");
+  hotBg.load(file);
 
   file.resize(flen);
-  file += L"fullBg.bmp";
-  fullBg.load(file.c_str());
+  file += _T("fullBg.bmp");
+  fullBg.load(file);
 
   file.resize(flen);
-  file += L"halfBg.bmp";
-  halfBg.load(file.c_str());
+  file += _T("halfBg.bmp");
+  halfBg.load(file);
 
   return true;
 }
-
 
 void Skin::draw(HDC dest, const SIZE& size, const RECT& update)
 {
