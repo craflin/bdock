@@ -196,8 +196,6 @@
     <ClInclude Include="Src\Dock\AboutDlg.h" />
     <ClInclude Include="Src\Dock\Dock.h" />
     <ClInclude Include="Src\Dock\Icon.h" />
-    <ClInclude Include="Src\Dock\list_map.h" />
-    <ClInclude Include="Src\Dock\list_set.h" />
     <ClInclude Include="Src\Dock\Plugin.h" />
     <ClInclude Include="Src\Dock\resource.h" />
     <ClInclude Include="Src\Dock\Settings.h" />
