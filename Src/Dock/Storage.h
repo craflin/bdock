@@ -27,7 +27,7 @@ public:
 
   const String& getStr(const String& name, const String& default = String()) const;
   int_t getInt(const String& name, int default) const;
-  uint_t getUInt(const String& name, uint default) const;
+  uint_t getUInt(const String& name, uint_t default) const;
   bool_t getData(const String& name, const void_t*& data, uint_t& length, const void_t* defaultData, uint_t defaultLength) const;
   bool_t setStr(const String& name, const String& value);
   bool_t setInt(const String& name, int_t value);
@@ -44,7 +44,7 @@ private:
   public:
     void_t* data;
     uint_t length;
-    Data(const void_t* data, uint length);
+    Data(const void_t* data, uint_t length);
     Data() : data(0), length(0) {};
     ~Data();
   };

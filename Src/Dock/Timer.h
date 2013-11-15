@@ -7,7 +7,7 @@ class Timer : public API::Timer
 {
 public:
   Plugin* plugin;
-  uint id;
+  uint_t id;
 
-  Timer(uint interval, Plugin* plugin) : plugin(plugin), id(0) { this->interval = interval; }
+  Timer(uint_t interval, Plugin* plugin) : plugin(plugin), id(0) { this->interval = interval; }
 };

@@ -28,8 +28,8 @@ namespace API
 #include "../Dock2.h"
 };
 
-typedef unsigned int uint;
-typedef wchar_t wchar;
+//typedef unsigned int uint;
+//typedef wchar_t wchar;
 
 #include <nstd/Debug.h>
 #include <nstd/Memory.h>

@@ -41,7 +41,7 @@ Storage::Variant& Storage::Variant::operator=(const Variant& other)
   return *this;
 }
 
-Storage::Data::Data(const void_t* data, uint length)
+Storage::Data::Data(const void_t* data, uint_t length)
 {
   this->data = Memory::alloc(length);
   this->length = length;
@@ -124,7 +124,7 @@ bool_t Storage::leave()
   return true;
 }
 
-bool Storage::enterNumSection(uint pos)
+bool Storage::enterNumSection(uint_t pos)
 {
   if(pos >= current->array.size())
     setNumSectionCount(pos + 1);
@@ -132,7 +132,7 @@ bool Storage::enterNumSection(uint pos)
   return true;
 }
 
-Storage* Storage::getNumSection(uint pos)
+Storage* Storage::getNumSection(uint_t pos)
 {
   if(!enterNumSection(pos))
     return 0;
@@ -165,7 +165,7 @@ bool_t Storage::deleteNumSection(uint_t pos)
 
 bool_t Storage::swapNumSections(uint_t pos1, uint_t pos2)
 {
-  uint size = (uint) current->array.size();
+  uint_t size = (uint_t) current->array.size();
   if(pos1 >= size || pos2 >= size)
     return false;
   Storage* tmp = current->array[pos1];
@@ -183,13 +183,13 @@ bool_t Storage::setNumSectionCount(uint_t size)
 {
   if(size < current->array.size())
   {
-    for(uint i = size, count = (uint)current->array.size(); i < count; ++i)
+    for(uint_t i = size, count = (uint_t)current->array.size(); i < count; ++i)
       delete current->array[i];
     current->array.resize(size);
   }
   else if(size > current->array.size())
   {
-    uint i = (uint)current->array.size();
+    uint_t i = (uint_t)current->array.size();
     current->array.resize(size);
     for(; i < size; ++i)
       current->array[i] = new Storage(current);
@@ -219,7 +219,7 @@ int_t Storage::getInt(const String& name, int_t default) const
   return val._int;
 }
 
-uint_t Storage::getUInt(const String& name, uint default) const
+uint_t Storage::getUInt(const String& name, uint_t default) const
 {
   HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
@@ -230,7 +230,7 @@ uint_t Storage::getUInt(const String& name, uint default) const
   return val._uint;
 }
 
-bool_t Storage::getData(const String& name, const void_t*& data, uint& length, const void_t* defaultData, uint_t defaultLength) const
+bool_t Storage::getData(const String& name, const void_t*& data, uint_t& length, const void_t* defaultData, uint_t defaultLength) const
 {
   HashMap<String, Variant>::Iterator i = current->entries.find(name);
   if(i == current->entries.end())
@@ -275,7 +275,7 @@ bool_t Storage::setUInt(const String& name, uint_t value)
   return true;
 }
 
-bool_t Storage::setData(const String& name, const void_t* data, uint length)
+bool_t Storage::setData(const String& name, const void_t* data, uint_t length)
 {
   Variant& val = current->entries.append(name, Variant());
   val.type = Variant::Data;
@@ -309,7 +309,7 @@ bool_t Storage::load(const String& filename)
   File file;
   if (!file.open(filename, File::readFlag))
     return false;
-  uint header;
+  uint_t header;
   return read(file, &header, sizeof(header)) && header == 1 && load(file);
 }
 
@@ -333,7 +333,7 @@ bool_t Storage::load(File& file)
     return false;
   String keybuffer;
   uint_t keysize;
-  for(uint i = 0; i < size; ++i)
+  for(uint_t i = 0; i < size; ++i)
   {
     if(!read(file, &keysize, sizeof(keysize)))
       return false;
@@ -406,7 +406,7 @@ bool_t Storage::load(File& file)
   if(!read(file, &size, sizeof(size)))
     return false;
   array.reserve(size);
-  for(uint i = 0; i < size; ++i)
+  for(uint_t i = 0; i < size; ++i)
   {
     Storage* storage = array.append(new Storage(this));
     if(!storage->load(file))

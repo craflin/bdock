@@ -20,16 +20,16 @@ public:
   void_t swapIcons(Icon* icon1, Icon* icon2);
 
   // api functions
-  API::Icon* createIcon(HBITMAP icon, uint flags);
+  API::Icon* createIcon(HBITMAP icon, uint_t flags);
   bool_t destroyIcon(API::Icon* icon);
   bool_t updateIcon(API::Icon* icon);
-  bool_t updateIcons(API::Icon** icons, uint count);
+  bool_t updateIcons(API::Icon** icons, uint_t count);
   bool_t getIconRect(API::Icon* icon, RECT* rect);
   API::Icon* getFirstIcon();
   API::Icon* getLastIcon();
   API::Icon* getNextIcon(API::Icon* icon);
   API::Icon* getPreviousIcon(API::Icon* icon);
-  API::Timer* createTimer(uint interval);
+  API::Timer* createTimer(uint_t interval);
   bool_t updateTimer(API::Timer* timer);
   bool_t destroyTimer(API::Timer* timer);
 
@@ -55,7 +55,7 @@ private:
     static API::Icon* createIcon(HBITMAP icon, unsigned int flags);
     static int destroyIcon(API::Icon* icon);
     static int updateIcon(API::Icon* icon);
-    static int updateIcons(API::Icon** icons, uint count);
+    static int updateIcons(API::Icon** icons, uint_t count);
     static int getIconRect(API::Icon* icon, RECT* rect);
     static API::Icon* getFirstIcon();
     static API::Icon* getLastIcon();
@@ -69,11 +69,11 @@ private:
     static int enterStorageNumSection(unsigned int pos);
     static int leaveStorageSection();
     static int deleteStorageSection(const wchar_t* name);
-    static int deleteStorageNumSection(uint pos);
+    static int deleteStorageNumSection(uint_t pos);
     static int swapStorageNumSections(unsigned int pos1, unsigned int pos2);
     static unsigned int getStorageNumSectionCount();
     static int setStorageNumSectionCount(unsigned int count);
-    static const wchar* getStorageString(const wchar_t* name, unsigned int* length, const wchar_t* default, unsigned int defaultLength);
+    static const wchar_t* getStorageString(const wchar_t* name, unsigned int* length, const wchar_t* default, unsigned int defaultLength);
     static int getStorageInt(const wchar_t* name, int default);
     static unsigned int getStorageUInt(const wchar_t* name, unsigned int default);
     static int getStorageData(const wchar_t* name, const void** data, unsigned int* length, const void* defaultData, unsigned int defaultLength);

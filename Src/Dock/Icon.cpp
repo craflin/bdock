@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 
-Icon::Icon(HBITMAP icon, uint flags, Plugin* plugin) : 
+Icon::Icon(HBITMAP icon, uint_t flags, Plugin* plugin) : 
   plugin(plugin)
 {
   memset((API::Icon*)this, 0, sizeof(API::Icon));

@@ -17,7 +17,7 @@ public:
     Bitmap();
     ~Bitmap();
 
-    bool load(const wchar* file);
+    bool load(const wchar_t* file);
 
     friend class Skin;
   };

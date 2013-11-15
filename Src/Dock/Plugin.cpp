@@ -131,7 +131,7 @@ void_t Plugin::swapIcons(Icon* icon1, Icon* icon2)
   icons.remove(c);
 }
 
-API::Icon* Plugin::createIcon(HBITMAP icon, uint flags)
+API::Icon* Plugin::createIcon(HBITMAP icon, uint_t flags)
 {
   Icon* newIcon = new Icon(icon, flags, this);
   Icon* lastIcon = icons.isEmpty() ? 0 : icons.back();
@@ -158,7 +158,7 @@ bool Plugin::updateIcon(API::Icon* icon)
   return true;
 }
 
-bool Plugin::updateIcons(API::Icon** icons, uint count)
+bool Plugin::updateIcons(API::Icon** icons, uint_t count)
 {
   //if(icons.find((Icon*)icon) == icons.end())
     //return false;
@@ -208,7 +208,7 @@ API::Icon* Plugin::getPreviousIcon(API::Icon* icon)
   return *(--i);
 }
 
-API::Timer* Plugin::createTimer(uint interval)
+API::Timer* Plugin::createTimer(uint_t interval)
 {
   Timer* newTimer = new Timer(interval, this);
   addTimer(newTimer);
@@ -281,7 +281,7 @@ int Plugin::Interface::updateIcon(API::Icon* icon)
   return -1;
 }
 
-int Plugin::Interface::updateIcons(API::Icon** icons, uint count)
+int Plugin::Interface::updateIcons(API::Icon** icons, uint_t count)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->updateIcons(icons, count))
@@ -397,7 +397,7 @@ int Plugin::Interface::deleteStorageSection(const wchar_t* name)
   return -1;
 }
 
-int Plugin::Interface::deleteStorageNumSection(uint pos)
+int Plugin::Interface::deleteStorageNumSection(uint_t pos)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin && plugin->storage.deleteNumSection(pos) && plugin->dock.saveStorage())
@@ -429,7 +429,7 @@ int Plugin::Interface::setStorageNumSectionCount(unsigned int count)
   return -1;
 }
 
-const wchar* Plugin::Interface::getStorageString(const wchar_t* name, unsigned int* length, const wchar* default, unsigned int defaultLength)
+const wchar_t* Plugin::Interface::getStorageString(const wchar_t* name, unsigned int* length, const wchar_t* default, unsigned int defaultLength)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)

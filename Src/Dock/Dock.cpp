@@ -115,7 +115,7 @@ void Dock::draw(HDC dest, const RECT& update)
   for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
   {
     Icon* icon = *i;
-    uint flags = icon->flags;
+    uint_t flags = icon->flags;
     if(icon == dragIcon)
     {
       flags &= ~(IF_ACTIVE | IF_HALFBG | IF_FULLBG);
@@ -587,7 +587,7 @@ DWORD Dock::showMenu(HMENU hmenu, int x, int y)
   HMENU menu = LoadMenu(WinAPI::Application::getInstance(), MAKEINTRESOURCE(IDC_BDOCK));
   if(!deleteHMenu)
     InsertMenu(hmenu, 0, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL);
-  wchar name[64];
+  WCHAR name[64];
   GetMenuString(menu, 0, name, sizeof(name), MF_BYPOSITION); 
   InsertMenu(hmenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)GetSubMenu(menu, 0), name);
 

@@ -9,7 +9,7 @@ Skin::Bitmap::~Bitmap()
     DeleteObject(bmp);
 }
 
-bool Skin::Bitmap::load(const wchar* file)
+bool Skin::Bitmap::load(const wchar_t* file)
 {
   ASSERT(!bmp);
   bmp = (HBITMAP) LoadImage(NULL, file, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
