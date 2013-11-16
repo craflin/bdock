@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Dock">
-      <UniqueIdentifier>{035213F3-19F5-7901-29D5-5B4EE3561543}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Plugins\Launcher\dllmain.cpp" />
     <ClCompile Include="Src\Plugins\Launcher\Launcher.cpp" />
     <ClCompile Include="Src\Plugins\Launcher\stdafx.cpp" />
     <ClCompile Include="Src\Plugins\Launcher\SysTools.cpp" />
-    <ClCompile Include="Src\Dock\WinAPI.cpp">
-      <Filter>Dock</Filter>
-    </ClCompile>
-    <ClInclude Include="Src\Dock\WinAPI.h">
-      <Filter>Dock</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Plugins\Launcher\Launcher.h" />
     <ClInclude Include="Src\Plugins\Launcher\resource.h" />
     <ClInclude Include="Src\Plugins\Launcher\stdafx.h" />

@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "../../Dock/WinAPI.h"
+#include <WinAPI.h>
 
 #include <unordered_map>
 #include <set>

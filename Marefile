@@ -19,20 +19,17 @@ plugins = { "Launcher", "Clock", "HideTaskbar", "SystemTray" }
 targets = {
 
   Dock = cppApplication + {
-    dependencies = plugins + { "libnstd" }
+    dependencies = plugins + { "libnstd", "libWinAPI" }
     buildDir = "Build/$(configuration)_$(platform)"
     output = "Build/$(configuration)_$(platform)/BDock.exe"
     cppFlags += { "/Yu" }
     linkFlags += { "\"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'\"" }
-    includePaths = { "Ext/libnstd/include" }
-    libPaths = { "Build/$(configuration)_$(platform)/libnstd" }
-    libs = { "Msimg32", "nstd" }
+    includePaths = { "Ext/libnstd/include", "Ext/libWinAPI/include" }
+    libPaths = { "Build/$(configuration)_$(platform)/libnstd", "Build/$(configuration)_$(platform)/libWinAPI" }
+    libs = { "Msimg32", "nstd", "WinAPI" }
     root = { "Src/Dock", "Src" }
     files = {
       "Src/Dock/**.cpp" = cppSource
-      "Src/Dock/WinAPI.cpp" = cppSource + {
-        cppFlags += { -"/Yu" }
-      }
       "Src/Dock/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
       }
@@ -44,21 +41,19 @@ targets = {
   }
 
   "$(plugins)" = cppDynamicLibrary + {
+    dependencies = { "libnstd", "libWinAPI" }
     buildDir = "Build/$(configuration)_$(platform)/$(target)"
     output = "Build/$(configuration)_$(platform)/$(target).dll"
     folder = "Plugins"
+    includePaths = { "Ext/libnstd/include", "Ext/libWinAPI/include" }
+    libPaths = { "Build/$(configuration)_$(platform)/libnstd", "Build/$(configuration)_$(platform)/libWinAPI" }
+    libs = { "nstd", "WinAPI" }
     root = { "Src/Plugins/$(target)", "Src" }
     cppFlags += { "/Yu" }
     files = {
       "Src/Plugins/$(target)/**.cpp" = cppSource
       "Src/Plugins/$(target)/stdafx.cpp" = cppSource + {
         cppFlags += { "/Yc" }
-      }
-      if target == "Launcher" {
-        "Src/Dock/WinAPI.cpp" = cppSource + {
-          cppFlags += { -"/Yu" }
-        }
-        "Src/Dock/WinAPI.h"
       }
       "Src/Plugins/$(target)/**.h"
       "Src/Plugins/$(target)/**.rc" = rcSource
@@ -75,6 +70,18 @@ targets = {
     files = {
       "Ext/libnstd/src/*.cpp" = cppSource,
       "Ext/libnstd/include/nstd/*.h"
+    }
+  }
+
+  libWinAPI = cppStaticLibrary + {
+    folder = "Libraries"
+    includePaths = { "Ext/libWinAPI/include" }
+    buildDir = "Build/$(configuration)_$(platform)/$(target)"
+    //defines += { "_CRT_SECURE_NO_WARNINGS" }
+    root = { "Ext/libWinAPI/src", "Ext/libWinAPI/include" }
+    files = {
+      "Ext/libWinAPI/src/*.cpp" = cppSource,
+      "Ext/libWinAPI/include/*.h"
     }
   }
 }

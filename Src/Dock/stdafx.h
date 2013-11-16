@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "WinAPI.h"
+#include <WinAPI.h>
 
 #include "resource.h"
 

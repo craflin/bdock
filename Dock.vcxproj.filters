@@ -13,7 +13,6 @@
     <ClCompile Include="Src\Dock\Skin.cpp" />
     <ClCompile Include="Src\Dock\stdafx.cpp" />
     <ClCompile Include="Src\Dock\Storage.cpp" />
-    <ClCompile Include="Src\Dock\WinAPI.cpp" />
     <ClInclude Include="Src\Dock\AboutDlg.h" />
     <ClInclude Include="Src\Dock\Dock.h" />
     <ClInclude Include="Src\Dock\Icon.h" />
@@ -26,7 +25,6 @@
     <ClInclude Include="Src\Dock\Storage.h" />
     <ClInclude Include="Src\Dock\targetver.h" />
     <ClInclude Include="Src\Dock\Timer.h" />
-    <ClInclude Include="Src\Dock\WinAPI.h" />
     <ResourceCompile Include="Src\Dock\Dock.rc" />
     <None Include="Src\Dock\Dock.ico" />
     <None Include="Src\Dock\Small.ico" />
