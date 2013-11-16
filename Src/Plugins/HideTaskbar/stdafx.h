@@ -7,15 +7,9 @@
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
-
+#include <WinAPI.h>
 #include <shellapi.h>
 
 #include "../../Dock2.h"
-
-typedef unsigned int uint;
-typedef wchar_t wchar;
 
 #include "HideTaskbar.h"
