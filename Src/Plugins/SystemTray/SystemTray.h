@@ -7,7 +7,7 @@ public:
   DllInjection();
   ~DllInjection();
 
-  bool init(DWORD pid, const wchar* dll);
+  bool init(DWORD pid, const wchar_t* dll);
 
 private:
   HANDLE process;
@@ -48,9 +48,9 @@ public:
   HICON hicon;
   Icon* icon;
   HWND hwnd;
-  uint callbackMessage;
-  uint version;
-  uint id;
+  uint_t callbackMessage;
+  uint_t version;
+  uint_t id;
 
   IconData(SystemTray& systemTray, HICON hicon, Icon* icon, PNOTIFYICONDATA32 nid);
   ~IconData();
@@ -72,7 +72,7 @@ private:
 
   DllInjection dllInjection;
   HWND hwnd;
-  stdext::hash_map<std::string, Icon*> icons;
+  HashMap<String, Icon*> icons;
 
   static int handleMouseEvent(Icon* icon, unsigned int message, int x, int y);
   static LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

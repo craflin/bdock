@@ -23,13 +23,13 @@ DllInjection::~DllInjection()
   }
 }
 
-bool DllInjection::init(DWORD pid, const wchar* dll)
+bool DllInjection::init(DWORD pid, const wchar_t* dll)
 {
   process = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, FALSE, pid);
   if(!process)
     return false;
 
-  uint injectedStringSize = (uint)(wcslen(dll) + 1) * sizeof(wchar);
+  uint_t injectedStringSize = (uint_t)(wcslen(dll) + 1) * sizeof(wchar_t);
   void* injectedString = VirtualAllocEx(process, NULL, injectedStringSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
   WriteProcessMemory(process, injectedString, dll, injectedStringSize, NULL);
   HANDLE hthread  = CreateRemoteThread(process, NULL, NULL, (LPTHREAD_START_ROUTINE)
@@ -98,8 +98,8 @@ SystemTray::~SystemTray()
     DestroyWindow(hwnd);
   }
 
-  for(stdext::hash_map<std::string,Icon*>::iterator i = icons.begin(), end = icons.end(); i != end; ++i)
-    delete (IconData*)i->second->userData;
+  for(auto i = icons.begin(), end = icons.end(); i != end; ++i)
+    delete (IconData*)(*i)->userData;
 
   --instances;
   if(instances == 0)
@@ -122,7 +122,7 @@ bool SystemTray::init()
   if(!GetWindowThreadProcessId(hshell, &pid))
     return false;
 
-  wchar thisDll[MAX_PATH];
+  WCHAR thisDll[MAX_PATH];
   GetModuleFileName(GetModuleHandle(L"systemtray.dll"), thisDll, MAX_PATH);
   if(!dllInjection.init(pid, thisDll))
     return false;
@@ -157,35 +157,35 @@ bool SystemTray::init()
   return true;
 }
 
-const char* keyOfIcon(PNOTIFYICONDATA32 nid)
+void_t keyOfIcon(const PNOTIFYICONDATA32 nid, wchar_t (&key)[sizeof(GUID) + 1])
 {
-  static char key[sizeof(GUID) + 1];
-  char* keypos = key;
+  wchar_t* keypos = key;
   if(nid->uFlags & NIF_GUID)
   {
-    char* src = (char*)&nid->guidItem;
-    char* srcEnd = src + sizeof(GUID);
+    wchar_t* src = (wchar_t*)&nid->guidItem;
+    wchar_t* srcEnd = src + sizeof(GUID);
     for(; src < srcEnd; ++src)
       *(keypos++) = *src ? *src : 1;
   }
   else
   {
-    char* src = (char*)&nid->hWnd;
-    char* srcEnd = src + sizeof(HWND);
+    wchar_t* src = (wchar_t*)&nid->hWnd;
+    wchar_t* srcEnd = src + sizeof(HWND);
     for(; src < srcEnd; ++src)
       *(keypos++) = *src ? *src : 1;
-    src = (char*)&nid->uID;
+    src = (wchar_t*)&nid->uID;
     srcEnd = src + sizeof(UINT);
     for(; src < srcEnd; ++src)
       *(keypos++) = *src ? *src : 1;
   }
   *keypos = 0;
-  return key;
 }
 
 void SystemTray::addIcon(PNOTIFYICONDATA32 nid)
 {
-  std::string key(keyOfIcon(nid));
+  wchar_t keyBuffer[sizeof(GUID) + 1];
+  keyOfIcon(nid, keyBuffer);
+  String key(keyBuffer);
   if(icons.find(key) != icons.end())
   {
     updateIcon2(nid);
@@ -207,20 +207,22 @@ void SystemTray::addIcon(PNOTIFYICONDATA32 nid)
   icon->handleMouseEvent = handleMouseEvent;
 //  if(nid->uFlags & NIF_GUID)
 //    memcpy(&iconData->guidItem, &nid->guidItem, sizeof(GUID));
-  icons[key] = icon;
+  icons.append(key, icon);
 }
 
 void SystemTray::updateIcon2(PNOTIFYICONDATA32 nid)
 {
-  std::string key(keyOfIcon(nid));
-  stdext::hash_map<std::string,Icon*>::iterator i = icons.find(key);
+  wchar_t keyBuffer[sizeof(GUID) + 1];
+  keyOfIcon(nid, keyBuffer);
+  String key(keyBuffer);
+  auto i = icons.find(key);
   if(i == icons.end())
   {
     //addIcon(nid);
     return;
   }
   
-  Icon* icon = i->second;
+  Icon* icon = *i;
   IconData* iconData = (IconData*)icon->userData;
 
   if(nid->uFlags & NIF_ICON && (HICON)nid->hIcon != iconData->hicon)
@@ -239,27 +241,32 @@ void SystemTray::updateIcon2(PNOTIFYICONDATA32 nid)
 
 void SystemTray::setIconVersion(PNOTIFYICONDATA32 nid)
 {
-  std::string key(keyOfIcon(nid));
-  stdext::hash_map<std::string,Icon*>::iterator i = icons.find(key);
+  wchar_t keyBuffer[sizeof(GUID) + 1];
+  keyOfIcon(nid, keyBuffer);
+  String key(keyBuffer);
+
+  auto i = icons.find(key);
   if(i == icons.end())
     return;
   
-  Icon* icon = i->second;
+  Icon* icon = *i;
   IconData* iconData = (IconData*)icon->userData;
   iconData->version = nid->uVersion;
 }
 
 void SystemTray::removeIcon(PNOTIFYICONDATA32 nid)
 {
-  std::string key(keyOfIcon(nid));
+  wchar_t keyBuffer[sizeof(GUID) + 1];
+  keyOfIcon(nid, keyBuffer);
+  String key(keyBuffer);
 
-  stdext::hash_map<std::string,Icon*>::iterator i = icons.find(key);
+  auto i = icons.find(key);
   if(i == icons.end())
     return;
 
-  Icon* icon = i->second;
+  Icon* icon = *i;
   delete (IconData*)icon->userData;
-  icons.erase(i);
+  icons.remove(i);
 }
 
 LRESULT CALLBACK SystemTray::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -277,7 +284,7 @@ LRESULT CALLBACK SystemTray::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
       PCOPYDATASTRUCT cds = (PCOPYDATASTRUCT)lParam;
       if(cds->dwData == 1)
       {
-        uint cmd = *((uint*)((char*)cds->lpData + 4));
+        uint_t cmd = *((uint_t*)((char*)cds->lpData + 4));
         PNOTIFYICONDATA32 nid = (PNOTIFYICONDATA32)((char*)cds->lpData + 8);
         switch(cmd)
         {

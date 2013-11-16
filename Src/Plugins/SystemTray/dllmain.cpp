@@ -12,9 +12,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
   case DLL_PROCESS_ATTACH:
     hmodule = hModule;
     {
-      wchar filename[MAX_PATH];
+      WCHAR filename[MAX_PATH];
       GetModuleFileName(NULL, filename, MAX_PATH);
-      wchar* name = wcsrchr(filename, L'\\');
+      wchar_t* name = wcsrchr(filename, L'\\');
       if(name && !_wcsicmp(name + 1, L"explorer.exe"))
       { // thats it! we, are running in the address space of explorer.exe        
         hookedWnd = FindWindow(L"Shell_TrayWnd", 0);

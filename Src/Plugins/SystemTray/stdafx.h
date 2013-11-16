@@ -7,19 +7,14 @@
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
-
+#include <WinAPI.h>
 #include <shellapi.h>
-
-#include <string>
-#include <hash_map>
 
 #include "../../Dock2.h"
 
-typedef unsigned int uint;
-typedef wchar_t wchar;
+#include <nstd/Debug.h>
+#include <nstd/String.h>
+#include <nstd/HashMap.h>
 
 #include "SystemTray.h"
 #include "SysTools.h"
