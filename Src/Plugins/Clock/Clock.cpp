@@ -93,12 +93,11 @@ void Clock::update()
   FillRect(dest, &rc, bgBrush);
 
   GetLocalTime(&st);
-  wchar time[32];
+  wchar_t time[32];
   swprintf_s(time, L"%02u:%02u", st.wHour, st.wMinute);
-  
-  
+
   DrawText(dest, time, 5, &rc, DT_SINGLELINE | DT_CALCRECT);
-  
+
   int height = rc.bottom - rc.top;
   rc.top = 16 + (16 - height) / 2;
   rc.bottom = rc.top + height;
@@ -106,7 +105,6 @@ void Clock::update()
   rc.left = (32 - width) / 2;
   rc.right = rc.left + width;
   DrawText(dest, time, 5, &rc,  DT_SINGLELINE);
-
 
   SelectObject(dest, oldBmp);
   SelectObject(dest, oldFont);
