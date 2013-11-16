@@ -29,8 +29,8 @@ bool Launcher::create()
     if(!dock.getStorageData(L"iconHeader", (const void**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
       if(!dock.getStorageData(L"iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
         bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
-    const wchar* path = dock.getStorageString(L"path", 0, L"", 0);
-    const wchar* parameters = dock.getStorageString(L"parameters", 0, L"", 0);
+    const wchar_t* path = dock.getStorageString(L"path", 0, L"", 0);
+    const wchar_t* parameters = dock.getStorageString(L"parameters", 0, L"", 0);
     dock.leaveStorageSection();
 
     Icon* icon = dock.createIcon(bitmap, IF_GHOST);
@@ -40,10 +40,10 @@ bool Launcher::create()
     {
       icon->handleMouseEvent = handleMouseEvent;
       icon->handleMoveEvent = handleMoveEvent;
-      IconData* iconData = new IconData(*this, 0, icon, 0, path, parameters, i);
+      IconData* iconData = new IconData(*this, 0, icon, 0, String(path), String(parameters), i);
       icon->userData = iconData;
       iconData->pinned = true;
-      icons.insert(iconData);
+      icons.append(iconData);
     }
   }
 
@@ -99,7 +99,7 @@ void Launcher::addIcon(HWND hwnd)
     return; // wtf
 
   // get command line
-  std::wstring path, parameters;
+  String path, parameters;
   getCommandLine(hwnd, path, parameters);
 
   // there might be an unused pinned icon for this window. if so, use that icon
@@ -110,7 +110,7 @@ void Launcher::addIcon(HWND hwnd)
     {
       iconData->hwnd = hwnd;
       iconData->icon->flags &= ~IF_GHOST;
-      iconsByHWND[hwnd] = iconData;
+      iconsByHWND.append(hwnd, iconData);
       updateIcon(hwnd, true);
       return;
     }
@@ -137,8 +137,8 @@ void Launcher::addIcon(HWND hwnd)
   icon->userData = iconData;
   //GetWindowText(hwnd, newIcon->title, sizeof(newIcon->title));
 
-  icons.insert(iconData);
-  iconsByHWND[hwnd] = iconData;
+  icons.append(iconData);
+  iconsByHWND.append(hwnd, iconData);
 }
 
 void Launcher::activateIcon(HWND hwnd)
@@ -151,7 +151,7 @@ void Launcher::activateIcon(HWND hwnd)
   }
 
   Icon* updateIcons[2];
-  uint updateIconsCount = 0;
+  uint_t updateIconsCount = 0;
 
   if(activeHwnd)
   {
@@ -162,7 +162,7 @@ void Launcher::activateIcon(HWND hwnd)
       auto i = iconsByHWND.find(activeHwnd);
       if(i != iconsByHWND.end())
       {
-        Icon* icon = i->second->icon;
+        Icon* icon = (*i)->icon;
         if(icon->flags & IF_ACTIVE)
         {
           icon->flags &= ~IF_ACTIVE;
@@ -184,7 +184,7 @@ void Launcher::activateIcon(HWND hwnd)
       auto i = iconsByHWND.find(hwnd);
       if(i != iconsByHWND.end())
       {
-        Icon* icon = i->second->icon;
+        Icon* icon = (*i)->icon;
         if(!(icon->flags & IF_ACTIVE))
         {
           icon->flags |= IF_ACTIVE;
@@ -211,7 +211,7 @@ void Launcher::updateIcon(HWND hwnd, bool forceUpdate)
     return;
   }
 
-  IconData* iconData = i->second;
+  IconData* iconData = *i;
   Icon* icon = iconData->icon;
 
   HICON hicon;
@@ -240,8 +240,8 @@ void Launcher::removeIcon(HWND hwnd)
   if(i == iconsByHWND.end())
     return;
 
-  IconData* iconData = i->second;
-  iconsByHWND.erase(i);
+  IconData* iconData = *i;
+  iconsByHWND.remove(i);
 
   if(iconData->pinned)
   {
@@ -257,8 +257,8 @@ void Launcher::removeIcon(HWND hwnd)
         {
           iconData->hwnd = itIconData->hwnd;
           iconData->icon->flags = itIconData->icon->flags;
-          iconsByHWND.erase(itIconData->hwnd);
-          iconsByHWND[iconData->hwnd] = iconData;
+          iconsByHWND.remove(itIconData->hwnd);
+          iconsByHWND.append(iconData->hwnd, iconData);
           
           removeIcon(*itIconData);
           updateIcon(iconData->hwnd, true);
@@ -268,8 +268,8 @@ void Launcher::removeIcon(HWND hwnd)
         {
           iconData->hwnd = itIconData->hwnd;
           iconData->icon->flags = itIconData->icon->flags;
-          iconsByHWND.erase(itIconData->hwnd);
-          iconsByHWND[iconData->hwnd] = iconData;
+          iconsByHWND.remove(itIconData->hwnd);
+          iconsByHWND.append(iconData->hwnd, iconData);
 
           updateIcon(iconData->hwnd, true);
 
@@ -309,7 +309,7 @@ void Launcher::removeIcon(HWND hwnd)
 
 void Launcher::removeIcon(IconData& iconData)
 {
-  icons.erase(&iconData);
+  icons.remove(&iconData);
   delete &iconData;
 
   if(&iconData == hotIcon)
@@ -319,17 +319,14 @@ void Launcher::removeIcon(IconData& iconData)
 bool Launcher::launch(Icon& icon)
 {
   IconData* iconData = (IconData*)icon.userData;
-  std::wstring dir(iconData->path);
-  size_t pos = dir.find_last_of(L'\\');
-  size_t pos2 = dir.find_last_of(L'/');
-  if(pos == std::wstring::npos || (pos != std::wstring::npos && pos2 != std::wstring::npos && pos2 > pos))
-    pos = pos2;
-  if(pos != std::wstring::npos)
-    dir.resize(pos);
+  String dir(iconData->path);
+  const tchar_t* pos = dir.findLastOf(L"/\\");
+  if(pos)
+    dir.resize(pos - (const tchar_t*)dir);
   else
-    dir.empty();
-  HINSTANCE inst = WinAPI::Shell::execute(NULL, NULL, iconData->path.c_str(), iconData->parameters.c_str(),
-    dir.empty() ? NULL : dir.c_str(), SW_SHOWNORMAL);
+    dir.clear();
+  HINSTANCE inst = WinAPI::Shell::execute(NULL, NULL, iconData->path, iconData->parameters,
+    dir.isEmpty() ? NULL : (const tchar_t*)dir, SW_SHOWNORMAL);
   if((DWORD)inst <= 32)
     return false;
   return true;
@@ -380,11 +377,11 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
       {
         auto i = iconsByHWND.find(activeHwnd);
         if(i != iconsByHWND.end())
-          hotIcon = i->second;
+          hotIcon = *i;
       }
       IconData* iconToHighlight = 0;
 
-      if(!icons.empty())
+      if(!icons.isEmpty())
       {
         if(!hotIcon)
           iconToHighlight = (IconData*) dock.getFirstIcon()->userData;
@@ -446,7 +443,7 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
             if(i != iconsByHWND.end())
             {
               RECT rect;
-              dock.getIconRect(i->second->icon, &rect);
+              dock.getIconRect((*i)->icon, &rect);
               shi->left = short(rect.left);
               shi->top = short(rect.top);
               shi->right = short(rect.right);
@@ -473,7 +470,7 @@ LRESULT Launcher::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
-bool Launcher::getCommandLine(HWND hwnd, std::wstring& path, std::wstring& param)
+bool Launcher::getCommandLine(HWND hwnd, String& path, String& param)
 {
   DWORD pid;
   if(!GetWindowThreadProcessId(hwnd, &pid))
@@ -490,17 +487,17 @@ bool Launcher::getCommandLine(HWND hwnd, std::wstring& path, std::wstring& param
   LPCWSTR parameters = wcschr(result, quoted ? L'"' : L' ');
   if(!parameters)
   {
-    path = result;
-    param = std::wstring();
+    path = String(result);
+    param = String();
   }
   else
   { 
-    path = std::wstring(result, parameters - result);
+    path = String(result, parameters - result);
     if(quoted)
       ++parameters;
     if(*parameters == ' ')
       ++parameters;
-    param = parameters;
+    param = String(parameters);
   }
   return true;
 }
@@ -526,7 +523,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
   else
     hmenu = CreatePopupMenu();
 
-  wchar str[32];
+  WCHAR str[32];
   LoadString(WinAPI::Application::getInstance(), IDS_LAUNCH, str, sizeof(str));
   InsertMenu(hmenu, 0, MF_BYPOSITION |  MF_STRING, 2, str);
   LoadString(WinAPI::Application::getInstance(), iconData->pinned ? IDS_UNPIN : IDS_PIN, str, sizeof(str));
@@ -545,7 +542,7 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
   if(hwnd)
   {
     auto i = iconsByHWND.find(hwnd);
-    if(i == iconsByHWND.end() || i->second != iconData || iconData->icon != icon)
+    if(i == iconsByHWND.end() || *i != iconData || iconData->icon != icon)
       return;
   }
   
@@ -579,13 +576,13 @@ void Launcher::showContextMenu(Icon* icon, int x, int y)
 
       if(dock.enterStorageNumSection(index) == 0)
       {
-        dock.setStorageString(L"path", iconData->path.c_str(), (uint)iconData->path.length());
-        dock.setStorageString(L"parameters", iconData->parameters.c_str(), (uint)iconData->parameters.length());
+        dock.setStorageString(L"path", iconData->path, (uint_t)iconData->path.length());
+        dock.setStorageString(L"parameters", iconData->parameters, (uint_t)iconData->parameters.length());
         BITMAP bm;
         if(GetObject(icon->icon, sizeof(BITMAP), &bm))
         {
           dock.setStorageData(L"iconHeader", (char*)&bm, sizeof(bm) - sizeof(LPVOID));
-          uint size = bm.bmWidthBytes * bm.bmHeight;
+          uint_t size = bm.bmWidthBytes * bm.bmHeight;
           char* buffer = (char*)malloc(size);
           if(buffer)
           {
@@ -682,14 +679,14 @@ int Launcher::handleMoveEvent(Icon* icon)
             iconData->launcherIndex = launcherIndex;
             break;
           }
-        assert(iconData->launcherIndex == launcherIndex);
+        ASSERT(iconData->launcherIndex == launcherIndex);
       }
     }
   }
   return 0;
 }
 
-IconData::IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const std::wstring& path, const std::wstring& parameters, int launcherIndex) :
+IconData::IconData(Launcher& launcher, HICON hicon, Icon* icon, HWND hwnd, const String& path, const String& parameters, int launcherIndex) :
   launcher(launcher), hicon(hicon), icon(icon), hwnd(hwnd), path(path), parameters(parameters), pinned(false), launcherIndex(launcherIndex) {}
 
 IconData::~IconData()

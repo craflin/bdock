@@ -6,7 +6,7 @@ HMENU CopyMenu(HMENU hmenu)
   MENUITEMINFO mii;
   mii.cbSize = sizeof(mii);
   mii.fMask = MIIM_STATE | MIIM_STRING | MIIM_FTYPE | MIIM_ID | MIIM_SUBMENU | MIIM_CHECKMARKS | MIIM_BITMAP;
-  wchar* buf = 0;
+  WCHAR* buf = 0;
   int buflen = 0;
   HMENU hmenuCopy = CreatePopupMenu();
   const int count = GetMenuItemCount(hmenu);
@@ -17,7 +17,7 @@ HMENU CopyMenu(HMENU hmenu)
     {
       if(buf)
         free(buf);
-      buf = (wchar*)malloc((len + 1) * sizeof(wchar));
+      buf = (WCHAR*)malloc((len + 1) * sizeof(WCHAR));
       buflen = len;
     }
     buf[0] = 0;

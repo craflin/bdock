@@ -9,18 +9,14 @@
 
 #include <WinAPI.h>
 
-#include <unordered_map>
-#include <set>
-//#include <vector>
-
-#include <cassert>
-
 #include "resource.h"
 
 #include "../../Dock2.h"
 
-typedef unsigned int uint;
-typedef wchar_t wchar;
+#include <nstd/Debug.h>
+#include <nstd/String.h>
+#include <nstd/HashSet.h>
+#include <nstd/HashMap.h>
 
 #include "Launcher.h"
 #include "SysTools.h"

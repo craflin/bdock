@@ -85,7 +85,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     WCHAR path[MAX_PATH];
     if(WinAPI::Shell::getFolderPath(CSIDL_APPDATA | CSIDL_FLAG_CREATE, path, MAX_PATH)) 
     {
-      String storageFile(path, String::length(path));
+      String storageFile(path);
       storageFile += L"/BDock";
       if(GetFileAttributes(storageFile) == INVALID_FILE_ATTRIBUTES)
         CreateDirectory(storageFile, 0);
