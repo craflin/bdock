@@ -376,8 +376,13 @@ int Plugin::Interface::destroyTimer(struct API::Timer* timer)
 int Plugin::Interface::enterStorageSection(const wchar_t* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if(plugin && plugin->storage.enterSection(String(name, String::length(name))))
-    return 0;
+  if(plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.enterSection(nameStr))
+      return 0;
+  }
   return -1;
 }
 
@@ -404,8 +409,13 @@ int Plugin::Interface::leaveStorageSection()
 int Plugin::Interface::deleteStorageSection(const wchar_t* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if (plugin && plugin->storage.deleteSection(String(name, String::length(name))) && plugin->dock.saveStorage())
-    return 0;
+  if (plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.deleteSection(nameStr) && plugin->dock.saveStorage())
+      return 0;
+  }
   return -1;
 }
 
@@ -447,7 +457,9 @@ const wchar_t* Plugin::Interface::getStorageString(const wchar_t* name, unsigned
   if(plugin)
   {
     String defaultStr;
-    const String& result = plugin->storage.getStr(String(name, String::length(name)), defaultStr);
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    const String& result = plugin->storage.getStr(nameStr, defaultStr);
     if(&result != &defaultStr)
     {
       if(length)
@@ -464,7 +476,11 @@ int Plugin::Interface::getStorageInt(const wchar_t* name, int default)
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage.getInt(String(name, String::length(name)), default);
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    return plugin->storage.getInt(nameStr, default);
+  }
   return default;
 }
 
@@ -480,7 +496,11 @@ int Plugin::Interface::getStorageData(const wchar_t* name, const void** data, un
 {
   Plugin* plugin = lookup(_ReturnAddress());
   if(plugin)
-    return plugin->storage.getData(String(name, String::length(name)), *data, *length, defaultData, defaultLength) ? 0 : -1;
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    return plugin->storage.getData(nameStr, *data, *length, defaultData, defaultLength) ? 0 : -1;
+  }
   *data = (char*)defaultData;
   if(length)
     *length = defaultLength;
@@ -490,39 +510,64 @@ int Plugin::Interface::getStorageData(const wchar_t* name, const void** data, un
 int Plugin::Interface::setStorageString(const wchar_t* name, const wchar_t* value, unsigned int length)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if (plugin && plugin->storage.setStr(String(name, String::length(name)), String(value, length)) && plugin->dock.saveStorage())
-    return 0;
+  if (plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.setStr(nameStr, String(value, length)) && plugin->dock.saveStorage())
+      return 0;
+  }
   return -1;
 }
 
 int Plugin::Interface::setStorageInt(const wchar_t* name, int value)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if (plugin && plugin->storage.setInt(String(name, String::length(name)), value) && plugin->dock.saveStorage())
-    return 0;
+  if (plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.setInt(nameStr, value) && plugin->dock.saveStorage())
+      return 0;
+  }
   return -1;
 }
 
 int Plugin::Interface::setStorageUInt(const wchar_t* name, unsigned int value)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if (plugin && plugin->storage.setUInt(String(name, String::length(name)), value) && plugin->dock.saveStorage())
-    return 0;
+  if (plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.setUInt(nameStr, value) && plugin->dock.saveStorage())
+      return 0;
+  }
   return -1;
 }
 
 int Plugin::Interface::setStorageData(const wchar_t* name, char* data, unsigned int length)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if (plugin && plugin->storage.setData(String(name,String::length(name)), data, length) && plugin->dock.saveStorage())
-    return 0;
+  if (plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.setData(nameStr, data, length) && plugin->dock.saveStorage())
+      return 0;
+  }
   return -1;
 }
 
 int Plugin::Interface::deleteStorageEntry(const wchar_t* name)
 {
   Plugin* plugin = lookup(_ReturnAddress());
-  if (plugin && plugin->storage.deleteEntry(String(name, String::length(name))) && plugin->dock.saveStorage())
-    return 0;
+  if (plugin)
+  {
+    String nameStr;
+    nameStr.attach(name, String::length(name));
+    if(plugin->storage.deleteEntry(nameStr) && plugin->dock.saveStorage())
+      return 0;
+  }
   return -1;
 }

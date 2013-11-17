@@ -30,8 +30,8 @@ bool Launcher::create()
       if(!dock.getStorageData(L"iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
         bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
     unsigned int pathLen, paramLen;
-    const wchar_t* path = dock.getStorageString(L"path", &pathLen, L"", 0);
-    const wchar_t* parameters = dock.getStorageString(L"parameters", &paramLen, L"", 0);
+    const wchar_t* pathBuf = dock.getStorageString(L"path", &pathLen, L"", 0);
+    const wchar_t* parametersBuf = dock.getStorageString(L"parameters", &paramLen, L"", 0);
     dock.leaveStorageSection();
 
     Icon* icon = dock.createIcon(bitmap, IF_GHOST);
@@ -39,9 +39,12 @@ bool Launcher::create()
       DeleteObject(bitmap);
     else
     {
+      String path, parameters;
+      path.attach(pathBuf, pathLen);
+      parameters.attach(parametersBuf, paramLen);
       icon->handleMouseEvent = handleMouseEvent;
       icon->handleMoveEvent = handleMoveEvent;
-      IconData* iconData = new IconData(*this, 0, icon, 0, String(path, pathLen), String(parameters, paramLen), i);
+      IconData* iconData = new IconData(*this, 0, icon, 0, path, parameters, i);
       icon->userData = iconData;
       iconData->pinned = true;
       icons.append(iconData);
