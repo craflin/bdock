@@ -339,7 +339,7 @@ bool_t Storage::load(File& file)
       return false;
     keybuffer.clear();
     keybuffer.reserve(keysize);
-    if(!read(file, &keybuffer[0], keysize * sizeof(tchar_t)))
+    if(!read(file, (tchar_t*)keybuffer, keysize * sizeof(tchar_t)))
       return false;
     keybuffer.resize(keysize);
     Variant& var = entries.append(keybuffer, Variant());
@@ -359,7 +359,7 @@ bool_t Storage::load(File& file)
         if(!read(file, &length, sizeof(uint_t)))
           return false;
         var.str->reserve(length);
-        if (!read(file, &(*var.str)[0], length * sizeof(tchar_t)))
+        if (!read(file, (tchar_t*)(*var.str), length * sizeof(tchar_t)))
           return false;
         var.str->resize(length);
       }
@@ -384,7 +384,7 @@ bool_t Storage::load(File& file)
       return false;
     keybuffer.clear();
     keybuffer.reserve(keysize);
-    if (!read(file, &keybuffer[0], keysize * sizeof(tchar_t)))
+    if (!read(file, (tchar_t*)keybuffer, keysize * sizeof(tchar_t)))
       return false;
     keybuffer.resize(keysize);
     
@@ -440,9 +440,9 @@ bool Storage::save(File& file) const
       break;
     case Variant::Str:
     {
-      uint_t length = var.str->length();
+      uint_t length = (uint_t)var.str->length();
       if (!write(file, &length, sizeof(uint_t)) ||
-        !write(file, &(*var.str)[0], length * sizeof(tchar_t)))
+        !write(file, (tchar_t*)(*var.str), length * sizeof(tchar_t)))
         return false;
       break;
     }
@@ -462,7 +462,7 @@ bool Storage::save(File& file) const
   {
     const String& key = i.key();
     Storage* storage = *i;
-    uint_t keysize = key.length();
+    uint_t keysize = (uint_t)key.length();
     if(!write(file, &keysize, sizeof(keysize)) ||
        !write(file, &key[0], keysize * sizeof(tchar_t)) ||
        !storage->save(file))

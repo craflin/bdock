@@ -55,7 +55,7 @@ bool Skin::init(const String& name)
   String file(_T("Skins/"));
   file += name;
   file += _T('/');
-  uint_t flen = file.length();
+  size_t flen = file.length();
  
   file.resize(flen);
   file += _T("leftBg.bmp");

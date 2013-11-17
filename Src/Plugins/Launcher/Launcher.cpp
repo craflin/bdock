@@ -29,8 +29,9 @@ bool Launcher::create()
     if(!dock.getStorageData(L"iconHeader", (const void**)&header, &len, 0, 0) && len >= sizeof(BITMAP) - sizeof(LPVOID))
       if(!dock.getStorageData(L"iconData", &data, &len, 0, 0) && len == header->bmWidthBytes * header->bmHeight)
         bitmap = CreateBitmap(header->bmWidth, header->bmHeight, header->bmPlanes, header->bmBitsPixel, data);
-    const wchar_t* path = dock.getStorageString(L"path", 0, L"", 0);
-    const wchar_t* parameters = dock.getStorageString(L"parameters", 0, L"", 0);
+    unsigned int pathLen, paramLen;
+    const wchar_t* path = dock.getStorageString(L"path", &pathLen, L"", 0);
+    const wchar_t* parameters = dock.getStorageString(L"parameters", &paramLen, L"", 0);
     dock.leaveStorageSection();
 
     Icon* icon = dock.createIcon(bitmap, IF_GHOST);
@@ -40,7 +41,7 @@ bool Launcher::create()
     {
       icon->handleMouseEvent = handleMouseEvent;
       icon->handleMoveEvent = handleMoveEvent;
-      IconData* iconData = new IconData(*this, 0, icon, 0, String(path), String(parameters), i);
+      IconData* iconData = new IconData(*this, 0, icon, 0, String(path, pathLen), String(parameters, paramLen), i);
       icon->userData = iconData;
       iconData->pinned = true;
       icons.append(iconData);
@@ -487,7 +488,7 @@ bool Launcher::getCommandLine(HWND hwnd, String& path, String& param)
   LPCWSTR parameters = wcschr(result, quoted ? L'"' : L' ');
   if(!parameters)
   {
-    path = String(result);
+    path = String(result, String::length(result));
     param = String();
   }
   else
@@ -497,7 +498,7 @@ bool Launcher::getCommandLine(HWND hwnd, String& path, String& param)
       ++parameters;
     if(*parameters == ' ')
       ++parameters;
-    param = String(parameters);
+    param = String(parameters, String::length(parameters));
   }
   return true;
 }
