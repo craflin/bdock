@@ -7,24 +7,32 @@
     <ClCompile Include="Ext\libnstd\src\Console.cpp" />
     <ClCompile Include="Ext\libnstd\src\Debug.cpp" />
     <ClCompile Include="Ext\libnstd\src\Directory.cpp" />
+    <ClCompile Include="Ext\libnstd\src\Error.cpp" />
     <ClCompile Include="Ext\libnstd\src\File.cpp" />
     <ClCompile Include="Ext\libnstd\src\Memory.cpp" />
     <ClCompile Include="Ext\libnstd\src\Mutex.cpp" />
+    <ClCompile Include="Ext\libnstd\src\Semaphore.cpp" />
     <ClCompile Include="Ext\libnstd\src\String.cpp" />
+    <ClCompile Include="Ext\libnstd\src\Thread.cpp" />
     <ClCompile Include="Ext\libnstd\src\Time.cpp" />
     <ClInclude Include="Ext\libnstd\include\nstd\Array.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Atomic.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Base.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Buffer.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Console.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Debug.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Directory.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Error.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\File.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\HashMap.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\HashSet.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\List.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Memory.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Mutex.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Semaphore.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\String.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Thread.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Time.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Variant.h" />
   </ItemGroup>
 </Project>

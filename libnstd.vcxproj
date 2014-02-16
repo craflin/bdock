@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -26,25 +26,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -160,25 +156,33 @@
     <ClCompile Include="Ext\libnstd\src\Console.cpp" />
     <ClCompile Include="Ext\libnstd\src\Debug.cpp" />
     <ClCompile Include="Ext\libnstd\src\Directory.cpp" />
+    <ClCompile Include="Ext\libnstd\src\Error.cpp" />
     <ClCompile Include="Ext\libnstd\src\File.cpp" />
     <ClCompile Include="Ext\libnstd\src\Memory.cpp" />
     <ClCompile Include="Ext\libnstd\src\Mutex.cpp" />
+    <ClCompile Include="Ext\libnstd\src\Semaphore.cpp" />
     <ClCompile Include="Ext\libnstd\src\String.cpp" />
+    <ClCompile Include="Ext\libnstd\src\Thread.cpp" />
     <ClCompile Include="Ext\libnstd\src\Time.cpp" />
     <ClInclude Include="Ext\libnstd\include\nstd\Array.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Atomic.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Base.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Buffer.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Console.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Debug.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Directory.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Error.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\File.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\HashMap.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\HashSet.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\List.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Memory.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Mutex.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Semaphore.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\String.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Thread.h" />
     <ClInclude Include="Ext\libnstd\include\nstd\Time.h" />
+    <ClInclude Include="Ext\libnstd\include\nstd\Variant.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
